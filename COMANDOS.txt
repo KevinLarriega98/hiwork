@@ -1,8 +1,12 @@
 ##Cambiar a otra rama:
-git checkout dev
+git checkout nombre-de-la-rama
 
 ##Eliminar la rama local:
 git branch -d nombre-de-la-rama
 
 ##Prune de las referencias remotas:
 git fetch --prune
+
+##Para tener la rama de manera local
+git fetch origin
+git checkout nombre-de-la-rama-remota
