@@ -4,13 +4,10 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyAPniDZiM4LjWlFDC5RSUxHkvWoEsIN9Y0",
-    authDomain: "hiwork-43f78.firebaseapp.com",
-    projectId: "hiwork-43f78",
-    storageBucket: "hiwork-43f78.appspot.com",
-    messagingSenderId: "645110135985",
-    appId: "1:645110135985:web:5c321abc783bed6638f690",
-    measurementId: "G-T4DLV7KX0F",
+    apiKey: process.env.EXPO_PUBLIC_API_KEY,
+    authDomain: process.env.EXPO_PUBLIC_PROJECT_ID + '.firebaseapp.com',
+    projectId: process.env.EXPO_PUBLIC_PROJECT_ID,
+    storageBucket: process.env.EXPO_PUBLIC_PROJECT_ID + ".appspot.com",
 };
 
 const app = initializeApp(firebaseConfig);
