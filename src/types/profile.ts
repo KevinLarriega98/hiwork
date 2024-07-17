@@ -1,7 +1,7 @@
 export interface ProfileState {
-    perfil: Record<string, any>;
+  profile: Record<string, any>;
 }
 
 export interface ProfileActions {
-    setPerfil: (perfil: Record<string, any>) => void;
+  setProfile: (profile: Record<string, any>) => void;
 }
