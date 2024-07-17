@@ -1,11 +1,11 @@
 export interface ProjectState {
-    ongs: Array<any>;
-    proyectos: Array<any>;
-    proyectoActual: any | null;
+  ongs: any[];
+  projects: any[];
+  actualProject: any | null;
 }
 
 export interface ProjectActions {
-    setOngs: (ongs: Array<any>) => void;
-    setProyectos: (proyectos: Array<any>) => void;
-    setProyectoActual: (proyecto: any) => void;
+  setOngs: (ongs: any[]) => void;
+  setProject: (projects: any[]) => void;
+  setActualProject: (projects: any) => void;
 }

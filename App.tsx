@@ -1,14 +1,17 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
-import AuthComponent from "./src/components/AuthComponent";
+import { View } from "react-native";
+import Main from "./src/components/Main";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 const App = () => {
-    return (
-        <View style={{ flex: 1 }}>
-            <Text>Hello World!!</Text>
-            <AuthComponent />
-        </View>
-    );
+  return (
+    <SafeAreaProvider>
+      <View>
+        <StatusBar style="auto" />
+        <Main />
+      </View>
+    </SafeAreaProvider>
+  );
 };
 
 export default App;
