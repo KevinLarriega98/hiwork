@@ -10,12 +10,11 @@ const Main = () => {
   return (
     <View
       style={{
-        flex: 1,
         paddingBottom: insets.bottom,
         paddingTop: insets.top,
+        paddingHorizontal: 20,
       }}
     >
-      <Text>Hello World!!</Text>
       <AuthComponent />
     </View>
   );

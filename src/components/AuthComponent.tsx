@@ -41,7 +41,7 @@ const AuthComponent = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View>
       <Text style={styles.title}>Authentication</Text>
       <TextInput
         style={styles.input}
@@ -57,8 +57,10 @@ const AuthComponent = () => {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button title="Login" onPress={handleLogin} />
-      <Button title="Register" onPress={handleRegister} />
+      <View style={{ display: "flex", gap: 10 }}>
+        <Button title="Login" onPress={handleLogin} />
+        <Button title="Register" onPress={handleRegister} />
+      </View>
       {isAuthenticated && <Button title="Logout" onPress={handleLogout} />}
       {user && <Text>Welcome, {user.email}</Text>}
     </View>
