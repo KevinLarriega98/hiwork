@@ -2,12 +2,12 @@ import { create } from "zustand";
 import { ProjectState, ProjectActions } from "../types/project";
 
 const useProjectStore = create<ProjectState & ProjectActions>((set) => ({
-    ongs: [],
-    projects: [],
-    proyectoActual: null,
-    setOngs: (ongs) => set({ ongs }),
-    setProyectos: (proyectos) => set({ projects: proyectos }),
-    setProyectoActual: (proyecto) => set({ proyectoActual: proyecto }),
+  ongs: [],
+  projects: [],
+  actualProject: null,
+  setOngs: (ongs) => set({ ongs }),
+  setProject: (projects) => set({ projects: projects }),
+  setActualProject: (project) => set({ actualProject: project }),
 }));
 
 export default useProjectStore;
