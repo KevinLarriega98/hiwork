@@ -7,6 +7,7 @@ const AuthComponent = () => {
     const [email, setEmail] = useState("");
     const [error, setError] = useState("");
     const [password, setPassword] = useState("");
+    const [type, setType] = useState("volunteer");
     const { user, isAuthenticated, login, register, logout, initializeAuth } =
         useAuthStore();
 
@@ -32,7 +33,7 @@ const AuthComponent = () => {
 
     const handleRegister = async () => {
         try {
-            await register(email, password);
+            await register(email, password, type);
             console.log("Registered successfully");
         } catch (error) {
             if (error instanceof Error) {
@@ -58,6 +59,7 @@ const AuthComponent = () => {
     return (
         <View>
             <Text style={styles.title}>Authentication</Text>
+            <Text>Type: {type}</Text>
             <TextInput
                 style={styles.input}
                 placeholder="Email"
@@ -72,6 +74,28 @@ const AuthComponent = () => {
                 onChangeText={setPassword}
                 secureTextEntry
             />
+
+            <View
+                style={{
+                    display: "flex",
+                    gap: 10,
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    marginBottom: 16,
+                }}
+            >
+                <Button
+                    title="Volunteer"
+                    onPress={() => setType("volunteer")}
+                    color={"red"}
+                />
+                <Button
+                    title="ONG"
+                    onPress={() => setType("ong")}
+                    color={"red"}
+                />
+            </View>
+
             <View style={{ display: "flex", gap: 10 }}>
                 <Button title="Login" onPress={handleLogin} />
                 <Button title="Register" onPress={handleRegister} />

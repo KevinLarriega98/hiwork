@@ -26,8 +26,8 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
         set({ user, isAuthenticated: true });
     },
 
-    register: async (email: string, password: string) => {
-        const user = await register(email, password);
+    register: async (email: string, password: string, type: string) => {
+        const user = await register(email, password, type);
         set({ user, isAuthenticated: true });
     },
 

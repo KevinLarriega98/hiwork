@@ -19,7 +19,8 @@ export const login = async (email: string, password: string): Promise<User> => {
 
 export const register = async (
     email: string,
-    password: string
+    password: string,
+    type: string
 ): Promise<User> => {
     const userCredential = await createUserWithEmailAndPassword(
         auth,
