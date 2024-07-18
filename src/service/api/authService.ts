@@ -6,7 +6,11 @@ import {
     onAuthStateChanged,
     User,
 } from "firebase/auth";
-import { auth } from "./firebase";
+import {
+    collection,
+    addDoc,
+} from "firebase/firestore";
+import { auth, db } from "./firebase";
 
 export const login = async (email: string, password: string): Promise<User> => {
     const userCredential = await signInWithEmailAndPassword(
@@ -27,6 +31,16 @@ export const register = async (
         email,
         password
     );
+
+    console.log('email', email)
+    console.log('password', password)
+    console.log('type', type)
+
+    const colRef = collection(db, type);
+    console.log('colRef', colRef)
+    await addDoc(colRef, { email: email, password: password, type: type });
+    // console.log('addDoc', addDoc)
+
     return userCredential.user;
 };
 
