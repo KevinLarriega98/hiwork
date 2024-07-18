@@ -32,14 +32,8 @@ export const register = async (
         password
     );
 
-    console.log('email', email)
-    console.log('password', password)
-    console.log('type', type)
-
     const colRef = collection(db, type);
-    console.log('colRef', colRef)
     await addDoc(colRef, { email: email, password: password, type: type });
-    // console.log('addDoc', addDoc)
 
     return userCredential.user;
 };
