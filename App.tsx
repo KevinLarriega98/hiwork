@@ -4,14 +4,12 @@ import Main from "./src/components/Main";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 const App = () => {
-  return (
-    <SafeAreaProvider>
-      <View>
-        <StatusBar style="auto" />
-        <Main />
-      </View>
-    </SafeAreaProvider>
-  );
+    return (
+        <SafeAreaProvider>
+            <StatusBar style="auto" />
+            <Main />
+        </SafeAreaProvider>
+    );
 };
 
 export default App;

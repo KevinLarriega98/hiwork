@@ -1,52 +1,45 @@
+// useAuthStore.ts
 import { create } from "zustand";
 import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-} from "firebase/auth";
+    login,
+    register,
+    logout,
+    initializeAuth,
+} from "../service/api/authService";
 import { AuthState, AuthActions } from "../types/auth";
-import { auth } from "../service/api/firebase";
+import { User } from "firebase/auth";
 
 const useAuthStore = create<AuthState & AuthActions>((set) => ({
-  user: null,
-  token: null,
-  isAuthenticated: false,
-  setUser: (user) => set({ user, isAuthenticated: !!user }),
-  setToken: (token) => set({ token }),
+    user: null,
+    token: null,
+    isAuthenticated: false,
+    setUser: (user: User | null) => set({ user, isAuthenticated: !!user }),
+    setToken: (token: string | null) => set({ token }),
 
-  logout: async () => {
-    await signOut(auth);
-    set({ user: null, token: null, isAuthenticated: false });
-  },
+    logout: async () => {
+        await logout();
+        set({ user: null, token: null, isAuthenticated: false });
+    },
 
-  login: async (email, password) => {
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    set({ user: userCredential.user, isAuthenticated: true });
-  },
+    login: async (email: string, password: string) => {
+        const user = await login(email, password);
+        set({ user, isAuthenticated: true });
+    },
 
-  register: async (email, password) => {
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    set({ user: userCredential.user, isAuthenticated: true });
-  },
+    register: async (email: string, password: string) => {
+        const user = await register(email, password);
+        set({ user, isAuthenticated: true });
+    },
 
-  initializeAuth: () => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        set({ user: user, isAuthenticated: true });
-      } else {
-        set({ user: null, isAuthenticated: false });
-      }
-    });
-  },
+    initializeAuth: () => {
+        initializeAuth((user) => {
+            if (user) {
+                set({ user, isAuthenticated: true });
+            } else {
+                set({ user: null, isAuthenticated: false });
+            }
+        });
+    },
 }));
 
 export default useAuthStore;

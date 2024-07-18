@@ -5,19 +5,21 @@ import AuthComponent from "./AuthComponent";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const Main = () => {
-  const insets = useSafeAreaInsets();
+    const insets = useSafeAreaInsets();
 
-  return (
-    <View
-      style={{
-        paddingBottom: insets.bottom,
-        paddingTop: insets.top,
-        paddingHorizontal: 20,
-      }}
-    >
-      <AuthComponent />
-    </View>
-  );
+    return (
+        <View
+            style={{
+                paddingBottom: insets.bottom,
+                paddingTop: insets.top,
+                paddingHorizontal: 20,
+                flex: 1,
+                justifyContent: "center",
+            }}
+        >
+            <AuthComponent />
+        </View>
+    );
 };
 
 export default Main;
