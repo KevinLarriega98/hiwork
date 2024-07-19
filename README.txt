@@ -16,6 +16,7 @@
 Comand: npx start run:ios
         npx start run:android
 
+-se crea un componente RegisterInput.tsx con varios props necesarios para poder funcionar, en llamada del componente se puede hacer (ctrl + space) para mostrar esos props
 
 --PROPUESTA--
 
