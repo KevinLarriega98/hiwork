@@ -122,6 +122,11 @@ export const LoginScreen = () => {
                 >
                     <Text>REGISTRARSE</Text>
                 </Pressable>
+                <Pressable
+                    onPress={() => navigation.navigate("TabsScreen")}
+                >
+                    <Text>Acceso a las tabs de prueba</Text>
+                </Pressable>
                 <GoogleButtonAcces />
                 {isAuthenticated && (
                     <Button title="Logout" onPress={handleLogout} />
