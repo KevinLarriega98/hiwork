@@ -4,8 +4,10 @@
         "firebaseapp",
         "Firestore",
         "hiwork",
+        "nativewind",
         "Ngrok",
         "ongs",
+        "Pressable",
         "zustand"
     ]
 }

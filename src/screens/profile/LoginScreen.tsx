@@ -1,14 +1,21 @@
-// AuthComponent.tsx
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, Button, StyleSheet, Pressable } from "react-native";
+import {
+    View,
+    Text,
+    TextInput,
+    Button,
+    StyleSheet,
+    Pressable,
+} from "react-native";
 import useAuthStore from "../../context/useAuthStore";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParams } from "../../routes/LoginStackNavigation";
 import { GoogleButtonAcces } from "../../service/auth/GoogleButtonAcces";
-
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const LoginScreen = () => {
-    const navigation = useNavigation<RootStackParams>()
+    const insets = useSafeAreaInsets();
+    const navigation = useNavigation<RootStackParams>();
 
     const [email, setEmail] = useState("");
     const [error, setError] = useState("");
@@ -63,7 +70,14 @@ export const LoginScreen = () => {
     };
 
     return (
-        <View>
+        <View
+            style={{
+                paddingBottom: insets.bottom,
+                paddingTop: insets.top,
+                paddingLeft: insets.left,
+                paddingRight: insets.right,
+            }}
+        >
             <Text style={styles.title}>Authentication</Text>
             <Text>Type: {type}</Text>
             <TextInput
@@ -80,7 +94,6 @@ export const LoginScreen = () => {
                 onChangeText={setPassword}
                 secureTextEntry
             />
-{/* ESTAS LINEAS */}
             <View
                 style={{
                     display: "flex",
@@ -101,12 +114,9 @@ export const LoginScreen = () => {
                     color={"red"}
                 />
             </View>
-{/* ESTAS LINEAS */}
-
             <View style={{ display: "flex", gap: 10 }}>
                 <Button title="Login" onPress={handleLogin} />
                 <Button title="Register" onPress={handleRegister} />
-
                 <Pressable
                     onPress={() => navigation.navigate("RegisterScreen")}
                 >
@@ -145,5 +155,3 @@ const styles = StyleSheet.create({
         paddingHorizontal: 8,
     },
 });
-
-
