@@ -32,6 +32,7 @@ export const LoginScreen = () => {
         try {
             await login(email, password);
             console.log("Logged in successfully");
+            navigation.navigate("TabsScreen");
         } catch (error) {
             if (error instanceof Error) {
                 setError(error.message);
@@ -122,9 +123,7 @@ export const LoginScreen = () => {
                 >
                     <Text>REGISTRARSE</Text>
                 </Pressable>
-                <Pressable
-                    onPress={() => navigation.navigate("TabsScreen")}
-                >
+                <Pressable onPress={() => navigation.navigate("TabsScreen")}>
                     <Text>Acceso a las tabs de prueba</Text>
                 </Pressable>
                 <GoogleButtonAcces />

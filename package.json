@@ -28,8 +28,8 @@
     "react-native-gesture-handler": "~2.16.1",
     "react-native-pager-view": "6.3.0",
     "react-native-paper": "^5.12.3",
+    "react-native-svg": "^15.4.0",
     "react-native-tab-view": "^3.5.2",
-    "react-native-vector-icons": "^10.1.0",
     "zustand": "^4.5.4"
   },
   "devDependencies": {
