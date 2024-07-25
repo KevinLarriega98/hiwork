@@ -13,6 +13,7 @@ const withSafeArea =
                     paddingBottom: insets.bottom,
                     paddingLeft: insets.left,
                     paddingRight: insets.right,
+                    backgroundColor: "white",
                 }}
             >
                 <WrappedComponent {...props} />
