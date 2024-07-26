@@ -37,7 +37,7 @@ export const TabsBottomNavigation = () => {
                     tabBarLabel: "Búsqueda",
                     tabBarIcon: ({ color }) => (
                         <MaterialCommunityIcons
-                            name="search-web"
+                            name="magnify"
                             color={color}
                             size={26}
                         />
