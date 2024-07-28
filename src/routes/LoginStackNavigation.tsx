@@ -4,17 +4,15 @@ import HomeScreen from "../screens/signIn-LogIn/HomeScreen";
 import LoginScreen from "../screens/signIn-LogIn/LoginScreen";
 import RegisterScreen from "../screens/signIn-LogIn/RegisterScreen";
 import withSafeArea from "../util/withSafeArea";
-import RegisterNameScreen from "../screens/signIn-LogIn/RegisterNameScreen";
-import RegisterProfileTypeScreen from "../screens/signIn-LogIn/RegisterProfileTypeScreen";
-import RegisterExpertiseScreen from "../screens/signIn-LogIn/RegisterExpertiseScreen";
+import { TabsBottomNavigation } from "./TabsBottomNavigation";
+import RegisterUserScreens from "../screens/signIn-LogIn/RegisterUserScreens";
 
 export type RootStackParamList = {
     Home: undefined;
     Login: undefined;
     Register: undefined;
-    RegisterName: undefined;
-    RegisterProfileType: undefined;
-    RegisterExpertise: undefined;
+    TabsBottom: undefined;
+    RegisterUserScreens: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -35,19 +33,15 @@ const LoginStackNavigation = () => {
             <Stack.Screen name="TabsScreen" component={TabsBottomNavigation} /> */}
             <Stack.Screen name="Home" component={withSafeArea(HomeScreen)} />
             <Stack.Screen name="Login" component={withSafeArea(LoginScreen)} />
-            <Stack.Screen name="RegisterName" component={RegisterNameScreen} />
-            <Stack.Screen
-                name="RegisterProfileType"
-                component={RegisterProfileTypeScreen}
-            />
-            <Stack.Screen
-                name="RegisterExpertise"
-                component={RegisterExpertiseScreen}
-            />
             <Stack.Screen
                 name="Register"
                 component={withSafeArea(RegisterScreen)}
             />
+            <Stack.Screen
+                name="RegisterUserScreens"
+                component={withSafeArea(RegisterUserScreens)}
+            />
+            <Stack.Screen name="TabsBottom" component={TabsBottomNavigation} />
         </Stack.Navigator>
     );
 };

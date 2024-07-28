@@ -29,7 +29,7 @@ export const UserRegisterScreen = () => {
 
       <RegisterInput 
         placeHolder='Email'
-        label='Correo Electronico'
+        label='Correo Electrónico'
         onChange={setLastName}
         value={lastName}
       />
