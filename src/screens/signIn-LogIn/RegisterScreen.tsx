@@ -4,10 +4,13 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { RootStackParamList } from "../../routes/LoginStackNavigation";
 import { FontAwesome } from "@expo/vector-icons";
 
-type LoginScreenNavigationProp = NavigationProp<RootStackParamList, "Login">;
+type RegisterScreenNavigationProp = NavigationProp<
+    RootStackParamList,
+    "Register"
+>;
 
 const LoginScreen: React.FC = () => {
-    const navigation = useNavigation<LoginScreenNavigationProp>();
+    const navigation = useNavigation<RegisterScreenNavigationProp>();
 
     return (
         <View className="flex-1 bg-white justify-between px-6 py-11">
@@ -44,7 +47,7 @@ const LoginScreen: React.FC = () => {
                     className="bg-[#666666] w-full py-3 rounded mb-4"
                     onPress={() => {
                         /* Handle login action */
-                        navigation.navigate("RegisterUserScreens");
+                        navigation.navigate("RegisterTypeUser");
                     }}
                 >
                     <Text className="text-center text-white font-bold">

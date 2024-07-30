@@ -2,60 +2,44 @@ import React, { useState, useRef, useCallback } from "react";
 import {
     View,
     Text,
-    TextInput,
-    TouchableOpacity,
-    Animated,
     FlatList,
+    Animated,
     useWindowDimensions,
     StyleSheet,
+    TouchableOpacity,
 } from "react-native";
 import { ExpandingDot } from "react-native-animated-pagination-dots";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
+import {
+    useNavigation,
+    RouteProp,
+    useRoute,
+    NavigationProp,
+} from "@react-navigation/native";
 import { RootStackParamList } from "../../routes/LoginStackNavigation";
+import { AnimatedCircularProgress } from "react-native-circular-progress";
+import {
+    StepItem,
+    renderItem,
+    handlePrev,
+    isNextDisabled,
+    handleNext,
+} from "../../util/loginStepsAndUtils";
 
-type LoginScreenNavigationProp = NavigationProp<RootStackParamList, "Login">;
+type TabsBottomScreenNavigationProp = NavigationProp<
+    RootStackParamList,
+    "TabsBottom"
+>;
 
-const REGISTRATION_STEPS = [
-    {
-        key: "1",
-        question: "¿Cuál es tu nombre?",
-        placeholder: "Nombre",
-        type: "input",
-    },
-    {
-        key: "2",
-        question: "¿Qué disciplinas eres experto?",
-        options: [
-            "Reducir el meu estrès",
-            "Reducir el meu estrès",
-            "Reducir el meu estrès",
-            "Reducir el meu estrès",
-            "Reducir el meu estrès",
-        ],
-        type: "options",
-    },
-    {
-        key: "3",
-        question: "Selecciona en qué tipo de proyectos te gustaría participar",
-        options: [
-            "Reducir el meu estrès",
-            "Reducir el meu estrès",
-            "Reducir el meu estrès",
-            "Reducir el meu estrès",
-            "Reducir el meu estrès",
-        ],
-        type: "options",
-    },
-    {
-        key: "4",
-        message: "Ya está tu perfil creado.\n¡A buscar proyectos!",
-        type: "message",
-    },
-];
+type RegistrationAppRouteProp = RouteProp<
+    RootStackParamList,
+    "RegisterUserScreens"
+>;
 
 const RegistrationApp: React.FC = () => {
-    const navigation = useNavigation<LoginScreenNavigationProp>();
+    const route = useRoute<RegistrationAppRouteProp>();
+    const { profileType } = route.params;
+    const navigation = useNavigation<TabsBottomScreenNavigationProp>();
 
     const { width } = useWindowDimensions();
     const scrollX = useRef(new Animated.Value(0)).current;
@@ -66,83 +50,20 @@ const RegistrationApp: React.FC = () => {
         [key: string]: string;
     }>({});
 
-    const handleInputChange = (key: string, value: string) => {
-        setFormData({ ...formData, [key]: value });
-    };
-
-    const handleOptionSelect = (key: string, option: string) => {
-        setSelectedOptions({ ...selectedOptions, [key]: option });
-    };
-
-    const isNextDisabled = () => {
-        const step = REGISTRATION_STEPS[activeIndex];
-        if (step.type === "input" && !formData[step.key]) {
-            return true;
-        }
-        if (step.type === "options" && !selectedOptions[step.key]) {
-            return true;
-        }
-        return false;
-    };
-
-    const renderItem = useCallback(
-        ({ item }: { item: any }) => {
-            return (
-                <View
-                    className="justify-center items-center p-10 mt-10 mx-10 rounded-2xl"
-                    style={{ width: width - 80 }}
-                >
-                    <Text className="text-lg font-bold mb-4 text-center">
-                        {item.question || item.message}
-                    </Text>
-                    {item.type === "input" && (
-                        <TextInput
-                            className="w-full p-2 border border-gray-300 rounded"
-                            placeholder={item.placeholder}
-                            value={formData[item.key] || ""}
-                            onChangeText={(text) =>
-                                handleInputChange(item.key, text)
-                            }
-                        />
-                    )}
-                    {item.type === "options" &&
-                        item.options.map((option: string, index: React.Key) => (
-                            <TouchableOpacity
-                                key={index}
-                                className="w-full p-3 border border-gray-300 rounded mb-2 items-center"
-                                onPress={() =>
-                                    handleOptionSelect(item.key, option)
-                                }
-                            >
-                                <Text className="text-black">{option}</Text>
-                            </TouchableOpacity>
-                        ))}
-                </View>
-            );
-        },
-        [width, formData, selectedOptions]
-    );
+    const REGISTRATION_STEPS =
+        profileType === "Voluntario"
+            ? StepItem.REGISTRATION_STEPS_VOLUNTARIO
+            : StepItem.REGISTRATION_STEPS_ONG;
 
     const keyExtractor = useCallback((item: { key: any }) => item.key, []);
 
-    const handleNext = () => {
-        if (activeIndex < REGISTRATION_STEPS.length - 1 && !isNextDisabled()) {
-            flatListRef.current?.scrollToIndex({ index: activeIndex + 1 });
-            setActiveIndex(activeIndex + 1);
-        }
-    };
-
-    const handlePrev = () => {
-        if (activeIndex > 0) {
-            flatListRef.current?.scrollToIndex({ index: activeIndex - 1 });
-            setActiveIndex(activeIndex - 1);
-        }
-    };
-
     return (
         <View className="flex-1 bg-white">
-            <Text className=" text-center text-[32px] font-bold mt-4">
+            <Text className="text-center text-[32px] font-bold mt-4">
                 Tu perfil
+            </Text>
+            <Text className="text-center text-black text-sm font-normal">
+                ¡Queremos saber de ti!
             </Text>
             <FlatList
                 data={REGISTRATION_STEPS}
@@ -150,16 +71,24 @@ const RegistrationApp: React.FC = () => {
                 showsHorizontalScrollIndicator={false}
                 onScroll={Animated.event(
                     [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-                    {
-                        useNativeDriver: false,
-                    }
+                    { useNativeDriver: false }
                 )}
+                scrollEnabled={false}
                 className="flex-1"
                 pagingEnabled
                 horizontal
                 decelerationRate={"normal"}
                 scrollEventThrottle={16}
-                renderItem={renderItem}
+                renderItem={(item) =>
+                    renderItem(
+                        item,
+                        width,
+                        formData,
+                        selectedOptions,
+                        setFormData,
+                        setSelectedOptions
+                    )
+                }
                 ref={flatListRef}
                 onMomentumScrollEnd={(event) => {
                     const index = Math.round(
@@ -180,44 +109,65 @@ const RegistrationApp: React.FC = () => {
                     containerStyle={styles.containerStyles}
                 />
             </View>
-            <View className="flex-row p-5 justify-between">
-                {activeIndex < REGISTRATION_STEPS.length - 1 ? (
-                    <>
-                        {activeIndex > 0 && (
-                            <TouchableOpacity
-                                className={`p-2 rounded-full w-12 h-12 justify-center items-center ${
-                                    activeIndex === 0
-                                        ? "bg-gray-400"
-                                        : "bg-primary"
-                                }`}
-                                onPress={handlePrev}
-                                disabled={activeIndex === 0}
-                            >
-                                <MaterialIcons
-                                    name="arrow-back"
-                                    size={24}
-                                    color="white"
-                                />
-                            </TouchableOpacity>
-                        )}
-
+            <View className="flex-row p-5 justify-between items-center">
+                <TouchableOpacity
+                    className={`${
+                        activeIndex === 0 ? "invisible" : "bg-primary"
+                    } p-2 rounded-full w-12 h-12 justify-center items-center`}
+                    onPress={() =>
+                        handlePrev(activeIndex, flatListRef, setActiveIndex)
+                    }
+                    disabled={activeIndex === 0}
+                >
+                    <MaterialIcons name="arrow-back" size={24} color="white" />
+                </TouchableOpacity>
+                <View className="flex-row">
+                    {activeIndex < REGISTRATION_STEPS.length - 1 ? (
                         <TouchableOpacity
-                            className={`p-2 rounded-full w-12 h-12 justify-center items-center ${
-                                isNextDisabled() ? "bg-gray-400" : "bg-primary"
+                            className={`p-2 rounded-full w-[42px] h-[42px] justify-center items-center ${
+                                isNextDisabled(
+                                    activeIndex,
+                                    REGISTRATION_STEPS,
+                                    formData,
+                                    selectedOptions
+                                )
+                                    ? "bg-gray-400"
+                                    : "bg-primary"
                             }`}
-                            onPress={handleNext}
-                            disabled={isNextDisabled()}
+                            onPress={() =>
+                                handleNext(
+                                    activeIndex,
+                                    flatListRef,
+                                    setActiveIndex
+                                )
+                            }
+                            disabled={isNextDisabled(
+                                activeIndex,
+                                REGISTRATION_STEPS,
+                                formData,
+                                selectedOptions
+                            )}
                         >
-                            <MaterialIcons
-                                name="arrow-forward"
-                                size={24}
-                                color="white"
-                            />
+                            <AnimatedCircularProgress
+                                size={58}
+                                width={4}
+                                fill={
+                                    (activeIndex + 1) *
+                                    (100 / REGISTRATION_STEPS.length + 1)
+                                }
+                                tintColor="#666"
+                                backgroundColor="#bbb8b8d6"
+                            >
+                                {() => (
+                                    <MaterialIcons
+                                        name="arrow-forward"
+                                        size={24}
+                                        color="white"
+                                    />
+                                )}
+                            </AnimatedCircularProgress>
                         </TouchableOpacity>
-                    </>
-                ) : (
-                    <>
-                        <View></View>
+                    ) : (
                         <TouchableOpacity
                             className="p-2 bg-primary rounded-full w-12 h-12 justify-center items-center"
                             onPress={() => navigation.navigate("TabsBottom")}
@@ -228,8 +178,8 @@ const RegistrationApp: React.FC = () => {
                                 color="white"
                             />
                         </TouchableOpacity>
-                    </>
-                )}
+                    )}
+                </View>
             </View>
         </View>
     );
@@ -244,14 +194,6 @@ const styles = StyleSheet.create({
     },
     containerStyles: {
         top: 30,
-    },
-    itemContainer: {
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 40,
-        marginTop: 40,
-        marginHorizontal: 40,
-        borderRadius: 20,
     },
 });
 

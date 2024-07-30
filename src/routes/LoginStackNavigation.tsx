@@ -6,13 +6,15 @@ import RegisterScreen from "../screens/signIn-LogIn/RegisterScreen";
 import withSafeArea from "../util/withSafeArea";
 import { TabsBottomNavigation } from "./TabsBottomNavigation";
 import RegisterUserScreens from "../screens/signIn-LogIn/RegisterUserScreens";
+import RegisterTypeUser from "../screens/signIn-LogIn/RegisterTypeUser";
 
 export type RootStackParamList = {
     Home: undefined;
     Login: undefined;
     Register: undefined;
+    RegisterUserScreens: { profileType: "Voluntario" | "ONG" };
+    RegisterTypeUser: undefined;
     TabsBottom: undefined;
-    RegisterUserScreens: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -36,6 +38,10 @@ const LoginStackNavigation = () => {
             <Stack.Screen
                 name="Register"
                 component={withSafeArea(RegisterScreen)}
+            />
+            <Stack.Screen
+                name="RegisterTypeUser"
+                component={withSafeArea(RegisterTypeUser)}
             />
             <Stack.Screen
                 name="RegisterUserScreens"
