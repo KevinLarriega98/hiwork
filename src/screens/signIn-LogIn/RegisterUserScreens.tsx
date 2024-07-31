@@ -73,7 +73,14 @@ const RegistrationApp: React.FC = () => {
                     [{ nativeEvent: { contentOffset: { x: scrollX } } }],
                     { useNativeDriver: false }
                 )}
-                scrollEnabled={false}
+                scrollEnabled={
+                    !isNextDisabled(
+                        activeIndex,
+                        REGISTRATION_STEPS,
+                        formData,
+                        selectedOptions
+                    )
+                }
                 className="flex-1"
                 pagingEnabled
                 horizontal
