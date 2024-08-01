@@ -11,6 +11,13 @@ export interface AuthActions {
     setToken: (token: string | null) => void;
     logout: () => Promise<void>;
     login: (email: string, password: string) => Promise<void>;
-    register: (email: string, password: string, type: string) => Promise<void>;
+    register: (
+        email: string,
+        password: string,
+        type: string,
+        name: string,
+        discipline: string,
+        typeOfProjects: string
+    ) => Promise<void>;
     initializeAuth: () => void;
 }

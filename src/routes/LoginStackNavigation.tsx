@@ -33,7 +33,7 @@ const LoginStackNavigation = () => {
                 component={RegisterTopNavigation}
             />
             <Stack.Screen name="TabsScreen" component={TabsBottomNavigation} /> */}
-            <Stack.Screen name="Home" component={withSafeArea(HomeScreen)} />
+            {/* <Stack.Screen name="Home" component={withSafeArea(HomeScreen)} />
             <Stack.Screen name="Login" component={withSafeArea(LoginScreen)} />
             <Stack.Screen
                 name="Register"
@@ -46,7 +46,7 @@ const LoginStackNavigation = () => {
             <Stack.Screen
                 name="RegisterUserScreens"
                 component={withSafeArea(RegisterUserScreens)}
-            />
+            /> */}
             <Stack.Screen name="TabsBottom" component={TabsBottomNavigation} />
         </Stack.Navigator>
     );

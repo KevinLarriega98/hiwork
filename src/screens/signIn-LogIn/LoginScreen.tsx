@@ -1,13 +1,31 @@
-import React from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { RootStackParamList } from "../../routes/LoginStackNavigation";
 import { FontAwesome } from "@expo/vector-icons";
+import { login } from "../../service/api/authService";
 
 type LoginScreenNavigationProp = NavigationProp<RootStackParamList, "Login">;
 
 const LoginScreen: React.FC = () => {
     const navigation = useNavigation<LoginScreenNavigationProp>();
+
+    const [user, setUser] = useState({ email: "", password: "" });
+    const [error, setError] = useState("");
+
+    const handleLogin = async () => {
+        const savedUser = await login(user.email, user.password);
+        if (savedUser) {
+            navigation.navigate("TabsBottom");
+        } else {
+            setError("Usuario o contraseña incorrectos");
+            Alert.alert("Error", "Usuario o contraseña incorrectos");
+        }
+
+        setTimeout(() => {
+            setError("");
+        }, 3000);
+    };
 
     return (
         <View className="flex-1 bg-white justify-between px-6 py-11">
@@ -24,6 +42,9 @@ const LoginScreen: React.FC = () => {
                     placeholder="Correo electrónico"
                     keyboardType="email-address"
                     autoCapitalize="none"
+                    onChange={(e) =>
+                        setUser({ ...user, email: e.nativeEvent.text })
+                    }
                 />
 
                 <TextInput
@@ -31,6 +52,9 @@ const LoginScreen: React.FC = () => {
                     placeholder="Contraseña"
                     secureTextEntry
                     autoCapitalize="none"
+                    onChange={(e) =>
+                        setUser({ ...user, password: e.nativeEvent.text })
+                    }
                 />
 
                 <TouchableOpacity className="w-full mb-8">
@@ -38,12 +62,11 @@ const LoginScreen: React.FC = () => {
                         ¿Olvidaste tu contraseña?
                     </Text>
                 </TouchableOpacity>
-
+                {error && <Text className="text-red-500 text-sm">{error}</Text>}
                 <TouchableOpacity
                     className="bg-[#666666] w-full py-3 rounded mb-4"
                     onPress={() => {
-                        navigation.navigate("TabsBottom");
-                        /* Handle login action */
+                        handleLogin();
                     }}
                 >
                     <Text className="text-center text-white font-bold">

@@ -2,6 +2,7 @@ import React from "react";
 import { Pressable, Text, View } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { RootStackParamList } from "../../routes/LoginStackNavigation";
+import useUserStore from "../../context/useRegisterStore";
 
 type RegisterTypeUserScreenNavigationProp = NavigationProp<
     RootStackParamList,
@@ -11,8 +12,16 @@ type RegisterTypeUserScreenNavigationProp = NavigationProp<
 const RegisterTypeUser = () => {
     const navigation = useNavigation<RegisterTypeUserScreenNavigationProp>();
 
-    const navigateToNextScreen = (profileType: "ONG" | "Voluntario") => {
-        navigation.navigate("RegisterUserScreens", { profileType });
+    const { setProfileType } = useUserStore();
+
+    const handleTypeUser = (type: "Voluntario" | "ONG") => {
+        type === "Voluntario"
+            ? setProfileType("Voluntario")
+            : setProfileType("ONG");
+
+        navigation.navigate("RegisterUserScreens", {
+            profileType: type,
+        });
     };
 
     return (
@@ -31,7 +40,7 @@ const RegisterTypeUser = () => {
                 <View className="flex-col items-center gap-2">
                     <Pressable
                         className="bg-[#666666] p-3 rounded-[10px] w-full"
-                        onPress={() => navigateToNextScreen("Voluntario")}
+                        onPress={() => handleTypeUser("Voluntario")}
                     >
                         <Text className="text-center text-white font-bold text-sm">
                             Voluntario
@@ -39,7 +48,7 @@ const RegisterTypeUser = () => {
                     </Pressable>
                     <Pressable
                         className="bg-[#666666] p-3 rounded-[10px] w-full"
-                        onPress={() => navigateToNextScreen("ONG")}
+                        onPress={() => handleTypeUser("ONG")}
                     >
                         <Text className="text-center text-white font-bold text-sm">
                             ONG

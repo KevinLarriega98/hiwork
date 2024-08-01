@@ -10,7 +10,7 @@ const HomeScreen: React.FC = () => {
 
     return (
         <View className="flex-1 justify-center items-center bg-white px-6">
-            <Text className=" text-3xl font-bold mb-4">
+            <Text className=" text-3xl font-bold mb-4 text-center">
                 Encuentra tu oportunidad de voluntariado perfecta.
             </Text>
             <Text className="text-center mb-8 text-base p-1">

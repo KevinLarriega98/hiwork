@@ -25,6 +25,8 @@ import {
     isNextDisabled,
     handleNext,
 } from "../../util/loginStepsAndUtils";
+import useUserStore from "../../context/useRegisterStore";
+import { register } from "../../service/api/authService";
 
 type TabsBottomScreenNavigationProp = NavigationProp<
     RootStackParamList,
@@ -49,6 +51,15 @@ const RegistrationApp: React.FC = () => {
     const [selectedOptions, setSelectedOptions] = useState<{
         [key: string]: string;
     }>({});
+    const [error, setError] = useState<string>("");
+
+    const {
+        setName,
+        setDiscipline,
+        setTypeOfProjects,
+        clearSensitiveData,
+        setCurrentUser,
+    } = useUserStore();
 
     const REGISTRATION_STEPS =
         profileType === "Voluntario"
@@ -56,6 +67,58 @@ const RegistrationApp: React.FC = () => {
             : StepItem.REGISTRATION_STEPS_ONG;
 
     const keyExtractor = useCallback((item: { key: any }) => item.key, []);
+
+    const handleNextStep = () => {
+        const step = REGISTRATION_STEPS[activeIndex];
+        if (step.key === "1") {
+            setName(formData[step.key] || "");
+        } else if (step.key === "2") {
+            setDiscipline(selectedOptions[step.key] || "");
+        } else if (step.key === "3") {
+            setTypeOfProjects(selectedOptions[step.key] || "");
+        }
+        handleNext(activeIndex, flatListRef, setActiveIndex);
+    };
+
+    const handleRegister = async () => {
+        try {
+            const {
+                email,
+                password,
+                profileType: type,
+                name,
+                discipline,
+                typeOfProjects,
+            } = useUserStore.getState();
+
+            const user = await register(
+                email,
+                password,
+                type,
+                name,
+                discipline,
+                typeOfProjects
+            );
+
+            console.log("Registered successfully", user);
+
+            const currentUser = useUserStore.getState().currentUser;
+            console.log("Current User:", currentUser);
+
+            clearSensitiveData();
+
+            navigation.navigate("TabsBottom");
+        } catch (error) {
+            if (error instanceof Error) {
+                setError(error.message);
+                console.error("Registration failed:", error.message);
+            } else {
+                setError("An unknown error occurred");
+                console.error("Registration failed:", error);
+            }
+            setTimeout(() => setError(""), 3000);
+        }
+    };
 
     return (
         <View className="flex-1 bg-white">
@@ -134,13 +197,7 @@ const RegistrationApp: React.FC = () => {
                                     ? "bg-gray-400"
                                     : "bg-primary"
                             }`}
-                            onPress={() =>
-                                handleNext(
-                                    activeIndex,
-                                    flatListRef,
-                                    setActiveIndex
-                                )
-                            }
+                            onPress={handleNextStep}
                             disabled={isNextDisabled(
                                 activeIndex,
                                 REGISTRATION_STEPS,
@@ -170,7 +227,7 @@ const RegistrationApp: React.FC = () => {
                     ) : (
                         <TouchableOpacity
                             className="p-2 bg-primary rounded-full w-12 h-12 justify-center items-center"
-                            onPress={() => navigation.navigate("TabsBottom")}
+                            onPress={() => handleRegister()}
                         >
                             <MaterialCommunityIcons
                                 name="check"

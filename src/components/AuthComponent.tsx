@@ -33,7 +33,7 @@ const AuthComponent = () => {
 
     const handleRegister = async () => {
         try {
-            await register(email, password, type);
+            // await register(email, password, type, );
             console.log("Registered successfully");
         } catch (error) {
             if (error instanceof Error) {
