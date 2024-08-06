@@ -2,14 +2,16 @@ import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "./firebase";
 
 export const createProject = async (
-    ong: string,
+    ongID: string,
+    ongName: string,
     title: string,
     description: string,
     objectiveTimeline: string,
     remote: boolean
 ): Promise<any> => {
     const project = {
-        ong: ong,
+        ongID: ongID,
+        ongName: ongName,
         title: title,
         description: description,
         objectiveTimeline: objectiveTimeline,

@@ -8,17 +8,19 @@ import {
     getUserDataFromFirestore,
 } from "../service/api/authService";
 import { AuthState, AuthActions } from "../types/auth";
-import { UserActions } from "../types/profile";
+import { UserActions, UserState } from "../types/profile";
 
 const useAuthStore = create<AuthState & AuthActions>((set) => ({
     user: null,
     token: null,
     isAuthenticated: false,
     userType: null as "Voluntario" | "ONG" | null,
+    currentUser: null,
     setUser: (user: UserActions | null) =>
         set({ user, isAuthenticated: !!user }),
     setToken: (token: string | null) => set({ token }),
     setUserType: (userType: "Voluntario" | "ONG" | null) => set({ userType }),
+    setCurrentUser: (currentUser: UserState | null) => set({ currentUser }),
 
     logout: async (navigateToHome: () => void) => {
         await logout();
@@ -34,9 +36,10 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
 
                 console.log(userData);
                 set({
-                    user: { currentUser: userData, ...user },
+                    user: { ...user },
                     isAuthenticated: !!user,
                     userType: userData.profileType,
+                    currentUser: userData,
                 });
             }
             return user;
@@ -67,9 +70,10 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
 
                 console.log(userData);
                 set({
-                    user: { currentUser: userData, ...user },
+                    user: { ...user },
                     isAuthenticated: !!user,
                     userType: userData.profileType,
+                    currentUser: userData,
                 });
             }
             return user;

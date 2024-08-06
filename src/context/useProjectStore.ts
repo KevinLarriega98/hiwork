@@ -24,7 +24,8 @@ const useProjectStore = create<ProjectActions & ProjectState>((set) => ({
     setRemote: (remote) => set({ remote }),
 
     createProject: async (
-        ong: string,
+        ongID: string,
+        ongName: string,
         title: string,
         description: string,
         objectiveTimeline: string,
@@ -32,7 +33,8 @@ const useProjectStore = create<ProjectActions & ProjectState>((set) => ({
     ) => {
         try {
             const project = await createProjectService(
-                ong,
+                ongID,
+                ongName,
                 title,
                 description,
                 objectiveTimeline,
@@ -57,6 +59,7 @@ const useProjectStore = create<ProjectActions & ProjectState>((set) => ({
                 ...doc.data(),
             }));
             set({ projects });
+            return projects;
         } catch (error) {
             console.error("Error fetching projects:", error);
         }

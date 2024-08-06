@@ -1,11 +1,12 @@
 import { View, Text, TextInput, Button, Alert, Switch } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useAuthStore from "../../context/useAuthStore";
 import useProjectStore from "../../context/useProjectStore";
 import BellComponent from "../../components/Projects/BellComponent";
 
 const HomeTabScreen = () => {
     const { user, userType } = useAuthStore();
+
     const { createProject } = useProjectStore((state) => ({
         createProject: state.createProject,
         fetchProjects: state.fetchProjects,
@@ -25,11 +26,13 @@ const HomeTabScreen = () => {
         try {
             await createProject(
                 user?.uid,
+                user?.currentUser?.name,
                 title,
                 description,
                 objectiveTimeline,
                 remote
             );
+
             Alert.alert("Success", "Project created successfully.");
             setTitle("");
             setDescription("");
@@ -80,9 +83,6 @@ const HomeTabScreen = () => {
                         />
                     </View>
                 )}
-                <Text className="mt-4">
-                    {user && JSON.stringify(user.currentUser.profileType)}
-                </Text>
             </View>
         </View>
     );

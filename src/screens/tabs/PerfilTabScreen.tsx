@@ -8,7 +8,7 @@ import BellComponent from "../../components/Projects/BellComponent";
 type HomeScreenNavigationProp = NavigationProp<RootStackParamList, "Home">;
 
 const PerfilTabScreen = () => {
-    const { user } = useAuthStore();
+    const { user, currentUser } = useAuthStore();
     const logOut = useAuthStore((state) => state.logout);
 
     const navigation = useNavigation<HomeScreenNavigationProp>();
@@ -20,8 +20,11 @@ const PerfilTabScreen = () => {
     return (
         <ScrollView className="flex-1 bg-white">
             <BellComponent />
-            <View>
-                <Text>Perfil</Text>
+            <View className="px-4 flex-1">
+                <Text className="text-xl font-bold mb-4 text-center">
+                    {currentUser?.name}
+                </Text>
+
                 <Text>{user && user.uid}</Text>
                 <Text>{JSON.stringify(user)}</Text>
                 <Button title="LogOut" onPress={() => logOut(navigateToHome)} />

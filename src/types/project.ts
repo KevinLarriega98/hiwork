@@ -19,11 +19,12 @@ export interface ProjectActions {
     setUpdatedAt: (updatedAt: string) => void;
     setRemote: (remote: boolean) => void;
     createProject: (
-        ong: string,
+        ongID: string,
+        ongName: string,
         title: string,
         description: string,
         objectiveTimeline: string,
         remote: boolean
     ) => Promise<any>;
-    fetchProjects: () => Promise<void>;
+    fetchProjects: () => Promise<{ id: string }[] | undefined>;
 }

@@ -4,47 +4,18 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import BookMarkSVG from "../../components/Projects/svg/BookMarkSVG";
 import InfoSVG from "../../components/Projects/svg/InfoSVG";
 import BellComponent from "../../components/Projects/BellComponent";
-import useAuthStore from "../../context/useAuthStore";
-
-const data = [
-    {
-        id: "1",
-        title: "JOB 1",
-        org: "ONG HELDSN",
-        duration: "2-4 weeks",
-        type: "Virtual",
-    },
-    {
-        id: "2",
-        title: "JOB 2",
-        org: "ONG HELDSN",
-        duration: "2-4 weeks",
-        type: "Virtual",
-    },
-    {
-        id: "3",
-        title: "JOB 3",
-        org: "ONG HELDSN",
-        duration: "2-4 weeks",
-        type: "Virtual",
-    },
-    {
-        id: "4",
-        title: "JOB 4",
-        org: "ONG HELDSN",
-        duration: "2-4 weeks",
-        type: "Virtual",
-    },
-    {
-        id: "5",
-        title: "JOB 5",
-        org: "ONG HELDSN",
-        duration: "2-4 weeks",
-        type: "Virtual",
-    },
-];
+import useProjectStore from "../../context/useProjectStore";
 
 const ProyectosTabScreen = () => {
+    const { projects, fetchProjects } = useProjectStore((state) => ({
+        projects: state.projects,
+        fetchProjects: state.fetchProjects,
+    }));
+
+    useEffect(() => {
+        fetchProjects();
+    }, []);
+
     const renderItem = ({ item, index }: { item: any; index: number }) => {
         return (
             <View className="bg-[#d9d9d9] p-4 rounded-lg mb-4 w-[48%]">
@@ -63,17 +34,17 @@ const ProyectosTabScreen = () => {
                         color={"black"}
                         size={26}
                     />
-                    <Text className="text-gray-500">{item.org}</Text>
+                    <Text className="text-gray-500">{item.ongName}</Text>
                 </View>
-                <View className="flex flex-col items-start mb-2">
-                    <Text className="text-gray-500 mr-2">{item.duration}</Text>
-                    <Text className="text-gray-500">{item.type}</Text>
+                <View className="flex flex-col items-start mb-1">
+                    <Text className="text-gray-500 mr-2">
+                        {item.objectiveTimeline}
+                    </Text>
+                    <Text className="text-gray-500">
+                        {item.remote ? "Remote" : "Local"}
+                    </Text>
                 </View>
-
-                <Text className="text-gray-500">
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry.
-                </Text>
+                <Text className="text-gray-500">{item.description}</Text>
             </View>
         );
     };
@@ -94,7 +65,7 @@ const ProyectosTabScreen = () => {
                     interesar...
                 </Text>
                 <FlatList
-                    data={data}
+                    data={projects}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id}
                     numColumns={2}
