@@ -14,9 +14,11 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
     user: null,
     token: null,
     isAuthenticated: false,
+    userType: null as "Voluntario" | "ONG" | null,
     setUser: (user: UserActions | null) =>
         set({ user, isAuthenticated: !!user }),
     setToken: (token: string | null) => set({ token }),
+    setUserType: (userType: "Voluntario" | "ONG" | null) => set({ userType }),
 
     logout: async (navigateToHome: () => void) => {
         await logout();
@@ -34,6 +36,7 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
                 set({
                     user: { currentUser: userData, ...user },
                     isAuthenticated: !!user,
+                    userType: userData.profileType,
                 });
             }
             return user;
@@ -66,6 +69,7 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
                 set({
                     user: { currentUser: userData, ...user },
                     isAuthenticated: !!user,
+                    userType: userData.profileType,
                 });
             }
             return user;

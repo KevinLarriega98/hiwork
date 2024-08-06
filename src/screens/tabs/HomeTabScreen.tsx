@@ -5,7 +5,7 @@ import useProjectStore from "../../context/useProjectStore";
 import BellComponent from "../../components/Projects/BellComponent";
 
 const HomeTabScreen = () => {
-    const { user } = useAuthStore();
+    const { user, userType } = useAuthStore();
     const { createProject } = useProjectStore((state) => ({
         createProject: state.createProject,
         fetchProjects: state.fetchProjects,
@@ -15,8 +15,6 @@ const HomeTabScreen = () => {
     const [description, setDescription] = useState("");
     const [objectiveTimeline, setObjectiveTimeline] = useState("");
     const [remote, setRemote] = useState(false);
-
-    const typeOfUser = user?.currentUser?.profileType;
 
     const handleCreateProject = async () => {
         if (!title || !description || !objectiveTimeline) {
@@ -47,7 +45,7 @@ const HomeTabScreen = () => {
         <View className="flex-1 bg-white">
             <BellComponent />
             <View className="px-4 flex-1">
-                {typeOfUser === "Voluntario" ? (
+                {userType === "Voluntario" ? (
                     <Text>VOLUNTARIO</Text>
                 ) : (
                     <View>

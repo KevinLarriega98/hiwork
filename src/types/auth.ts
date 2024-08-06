@@ -6,6 +6,7 @@ export interface AuthState {
     user: UserState | DocumentData | null;
     token: string | null;
     isAuthenticated: boolean;
+    userType: "Voluntario" | "ONG" | null;
 }
 
 export interface AuthActions {
@@ -22,4 +23,5 @@ export interface AuthActions {
         typeOfProjects: string
     ) => Promise<User | null>;
     initializeAuth: () => void;
+    setUserType: (userType: "Voluntario" | "ONG" | null) => void;
 }

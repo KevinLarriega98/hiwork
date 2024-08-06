@@ -1,5 +1,5 @@
 import { View, Text, FlatList } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import BookMarkSVG from "../../components/Projects/svg/BookMarkSVG";
 import InfoSVG from "../../components/Projects/svg/InfoSVG";
@@ -45,8 +45,6 @@ const data = [
 ];
 
 const ProyectosTabScreen = () => {
-    const { user } = useAuthStore();
-
     const renderItem = ({ item, index }: { item: any; index: number }) => {
         return (
             <View className="bg-[#d9d9d9] p-4 rounded-lg mb-4 w-[48%]">
