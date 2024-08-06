@@ -1,12 +1,15 @@
-##Cambiar a otra rama:
-git checkout nombre-de-la-rama
+##Change to another branch:
+git checkout name-of-the-branch
 
-##Eliminar la rama local:
-git branch -d nombre-de-la-rama
+##Delete local branch:
+git branch -d name-of-the-branch
 
-##Prune de las referencias remotas:
+##Prune references remotes:
 git fetch --prune
 
-##Para tener la rama de manera local
+##Fetch branches to have it locally
 git fetch origin
-git checkout nombre-de-la-rama-remota
+git checkout name-of-the-branch-locally
+
+
+Ngrok can be a problem with antivirus.
