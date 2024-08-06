@@ -1,17 +1,28 @@
-import { View, Text } from "react-native";
+import { View, Text, Button, ScrollView } from "react-native";
 import React from "react";
-import useUserStore from "../../context/useRegisterStore";
-const { auth } = require("firebase/auth");
+import useAuthStore from "../../context/useAuthStore";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "../../routes/LoginStackNavigation";
+
+type HomeScreenNavigationProp = NavigationProp<RootStackParamList, "Home">;
 
 const PerfilTabScreen = () => {
-    console.log(auth);
-    const { currentUser } = useUserStore();
+    const { user } = useAuthStore();
+    const logOut = useAuthStore((state) => state.logout);
+
+    const navigation = useNavigation<HomeScreenNavigationProp>();
+
+    const navigateToHome = () => {
+        navigation.navigate("Home");
+    };
 
     return (
-        <View>
+        <ScrollView className="flex-1 bg-white">
             <Text>Perfil</Text>
-            <Text>{JSON.stringify(currentUser)}</Text>
-        </View>
+            <Text>{user && user.uid}</Text>
+            <Text>{JSON.stringify(user)}</Text>
+            <Button title="LogOut" onPress={() => logOut(navigateToHome)} />
+        </ScrollView>
     );
 };
 

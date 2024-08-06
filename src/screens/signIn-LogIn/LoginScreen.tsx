@@ -3,11 +3,12 @@ import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { RootStackParamList } from "../../routes/LoginStackNavigation";
 import { FontAwesome } from "@expo/vector-icons";
-import { login } from "../../service/api/authService";
+import useAuthStore from "../../context/useAuthStore";
 
 type LoginScreenNavigationProp = NavigationProp<RootStackParamList, "Login">;
 
 const LoginScreen: React.FC = () => {
+    const login = useAuthStore((state) => state.login);
     const navigation = useNavigation<LoginScreenNavigationProp>();
 
     const [user, setUser] = useState({ email: "", password: "" });

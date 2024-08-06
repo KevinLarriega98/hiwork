@@ -1,7 +1,7 @@
 import { AuthState, AuthActions } from "./auth";
-import { ProfileState, ProfileActions } from "./profile";
+import { UserState, UserActions } from "./profile";
 import { ProjectState, ProjectActions } from "./project";
 
-export type State = AuthState & ProfileState & ProjectState;
+export type State = AuthState & UserState & ProjectState;
 
-export type Actions = AuthActions & ProfileActions & ProjectActions;
+export type Actions = AuthActions & UserActions & ProjectActions;

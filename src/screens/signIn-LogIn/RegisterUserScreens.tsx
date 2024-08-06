@@ -26,7 +26,7 @@ import {
     handleNext,
 } from "../../util/loginStepsAndUtils";
 import useUserStore from "../../context/useRegisterStore";
-import { register } from "../../service/api/authService";
+import useAuthStore from "../../context/useAuthStore";
 
 type TabsBottomScreenNavigationProp = NavigationProp<
     RootStackParamList,
@@ -47,19 +47,15 @@ const RegistrationApp: React.FC = () => {
     const scrollX = useRef(new Animated.Value(0)).current;
     const flatListRef = useRef<FlatList<any>>(null);
     const [activeIndex, setActiveIndex] = useState(0);
+    const register = useAuthStore((state) => state.register);
     const [formData, setFormData] = useState<{ [key: string]: string }>({});
     const [selectedOptions, setSelectedOptions] = useState<{
         [key: string]: string;
     }>({});
     const [error, setError] = useState<string>("");
 
-    const {
-        setName,
-        setDiscipline,
-        setTypeOfProjects,
-        clearSensitiveData,
-        setCurrentUser,
-    } = useUserStore();
+    const { setName, setDiscipline, setTypeOfProjects, clearSensitiveData } =
+        useUserStore();
 
     const REGISTRATION_STEPS =
         profileType === "Voluntario"
@@ -101,9 +97,6 @@ const RegistrationApp: React.FC = () => {
             );
 
             console.log("Registered successfully", user);
-
-            const currentUser = useUserStore.getState().currentUser;
-            console.log("Current User:", currentUser);
 
             clearSensitiveData();
 

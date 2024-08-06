@@ -5,44 +5,74 @@ import {
     register,
     logout,
     initializeAuth,
+    getUserDataFromFirestore,
 } from "../service/api/authService";
 import { AuthState, AuthActions } from "../types/auth";
-import { User } from "firebase/auth";
+import { UserActions } from "../types/profile";
 
 const useAuthStore = create<AuthState & AuthActions>((set) => ({
     user: null,
     token: null,
     isAuthenticated: false,
-    setUser: (user: User | null) => set({ user, isAuthenticated: !!user }),
+    setUser: (user: UserActions | null) =>
+        set({ user, isAuthenticated: !!user }),
     setToken: (token: string | null) => set({ token }),
 
-    logout: async () => {
+    logout: async (navigateToHome: () => void) => {
         await logout();
+        navigateToHome();
         set({ user: null, token: null, isAuthenticated: false });
     },
 
     login: async (email: string, password: string) => {
-        const user = await login(email, password);
-        set({ user, isAuthenticated: true });
-    },
+        try {
+            const user = await login(email, password);
+            if (user) {
+                const userData = await getUserDataFromFirestore(user);
 
+                console.log(userData);
+                set({
+                    user: { currentUser: userData, ...user },
+                    isAuthenticated: !!user,
+                });
+            }
+            return user;
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    },
     register: async (
         email: string,
         password: string,
-        type: string,
+        profileType: string,
         name: string,
         discipline: string,
         typeOfProjects: string
     ) => {
-        const user = await register(
-            email,
-            password,
-            type,
-            name,
-            discipline,
-            typeOfProjects
-        );
-        set({ user, isAuthenticated: true });
+        try {
+            const user = await register(
+                email,
+                password,
+                profileType,
+                name,
+                discipline,
+                typeOfProjects
+            );
+            if (user) {
+                const userData = await getUserDataFromFirestore(user);
+
+                console.log(userData);
+                set({
+                    user: { currentUser: userData, ...user },
+                    isAuthenticated: !!user,
+                });
+            }
+            return user;
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
     },
 
     initializeAuth: () => {

@@ -1,15 +1,26 @@
-// authService.ts
 import {
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     signOut,
     onAuthStateChanged,
+    updateProfile,
     User,
 } from "firebase/auth";
-import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, db } from "./firebase";
-import useUserStore from "../../context/useRegisterStore";
-import { UserProfile } from "../../types/profile";
+
+export const getUserDataFromFirestore = async (user: User) => {
+    const collections = ["Voluntarios", "ONGs"];
+    for (const collectionName of collections) {
+        const docRef = doc(db, collectionName, user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            return docSnap.data();
+        }
+    }
+    throw new Error("No data found for the user.");
+};
 
 export const login = async (email: string, password: string): Promise<User> => {
     const userCredential = await signInWithEmailAndPassword(
@@ -17,46 +28,40 @@ export const login = async (email: string, password: string): Promise<User> => {
         email,
         password
     );
+
     return userCredential.user;
 };
 
 export const register = async (
     email: string,
     password: string,
-    type: string,
+    profileType: string,
     name: string,
     discipline: string,
     typeOfProjects: string
 ): Promise<User> => {
-    const { setCurrentUser } = useUserStore.getState();
-
     const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
     );
 
-    const colRef = collection(db, type + "s");
-    await addDoc(colRef, {
+    const user = userCredential.user;
+
+    await updateProfile(user, {
+        displayName: name,
+    });
+
+    const docRef = doc(db, profileType + "s", user.uid);
+    await setDoc(docRef, {
         email: email,
-        type: type,
+        profileType: profileType,
         name: name,
         discipline: discipline,
         typeOfProjects: typeOfProjects,
     });
 
-    const userQuery = query(colRef, where("email", "==", email));
-    const querySnapshot = await getDocs(userQuery);
-    let userData = null;
-    querySnapshot.forEach((doc) => {
-        userData = doc.data() as UserProfile["currentUser"];
-    });
-
-    if (userData) {
-        setCurrentUser(userData);
-    }
-
-    return userCredential.user;
+    return user;
 };
 
 export const logout = async (): Promise<void> => {

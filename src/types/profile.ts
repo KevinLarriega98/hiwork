@@ -1,4 +1,5 @@
-export type UserProfile = {
+export interface UserState {
+    uid: string;
     email: string;
     password: string;
     profileType: "ONG" | "Voluntario";
@@ -8,11 +9,14 @@ export type UserProfile = {
     currentUser: {
         id: string;
         email: string;
-        type: string;
+        profileType: string;
         name: string;
         discipline: string;
         typeOfProjects: string;
     } | null;
+}
+
+export interface UserActions {
     setEmail: (email: string) => void;
     setPassword: (password: string) => void;
     setProfileType: (profileType: "ONG" | "Voluntario") => void;
@@ -20,5 +24,13 @@ export type UserProfile = {
     setDiscipline: (discipline: string) => void;
     setTypeOfProjects: (typeOfProjects: string) => void;
     clearSensitiveData: () => void;
-    setCurrentUser: (currentUser: UserProfile["currentUser"]) => void;
-};
+}
+
+export interface RegisterState {
+    email: string;
+    password: string;
+    profileType: "ONG" | "Voluntario";
+    name: string;
+    discipline: string;
+    typeOfProjects: string;
+}

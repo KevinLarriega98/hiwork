@@ -1,14 +1,13 @@
 import { create } from "zustand";
-import { UserProfile } from "../types/profile";
+import { RegisterState, UserActions } from "../types/profile";
 
-const useUserStore = create<UserProfile>((set) => ({
+const useUserStore = create<UserActions & RegisterState>((set) => ({
     email: "",
     password: "",
     profileType: "Voluntario",
     name: "",
     discipline: "",
     typeOfProjects: "",
-    currentUser: null,
     setEmail: (email) => set({ email }),
     setPassword: (password) => set({ password }),
     setProfileType: (profileType) => set({ profileType }),
@@ -16,7 +15,6 @@ const useUserStore = create<UserProfile>((set) => ({
     setDiscipline: (discipline) => set({ discipline }),
     setTypeOfProjects: (typeOfProjects) => set({ typeOfProjects }),
     clearSensitiveData: () => set({ password: "" }),
-    setCurrentUser: (currentUser) => set({ currentUser }),
 }));
 
 export default useUserStore;
