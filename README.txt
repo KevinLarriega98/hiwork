@@ -21,3 +21,10 @@ Comand: npx start run:ios
 --PROPUESTA--
 
 -Redefinir el safe-area-view para la nueva navegacion
+
+
+## MARC
+
+--CurrentUser información de la db del usuario logged auth store--
+-- User es el auth de firebase --
+-- UserType es el tipo de usuario (Voluntario o ONG) --
