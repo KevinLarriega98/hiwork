@@ -109,16 +109,16 @@ const styles = StyleSheet.create({
   },
   editButton: {
     position: 'absolute',
-    top: '31.3%', // Ajusta la posición para que el botón quede parcialmente en la imagen y parcialmente en el fondo gris
+    top: '31.3%',
     left: '53.7%',
-    transform: [{ translateX: 30 }, { translateY: -15 }], // Ajusta la posición horizontal y vertical
+    transform: [{ translateX: 30 }, { translateY: -15 }],
     backgroundColor: '#FFFFFF',
     width: 36,
     height: 36,
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 2, // Asegura que el botón esté por encima de la imagen y el fondo
+    zIndex: 2,
     borderWidth: 1,
     borderColor: '#E6E6E6',
   },
