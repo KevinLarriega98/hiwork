@@ -1,8 +1,16 @@
-import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import React from "react";
 import useAuthStore from "../../context/useAuthStore";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../../routes/LoginStackNavigation";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import profileImage from "../../../assets/profile-image.jpg";
 
@@ -26,11 +34,12 @@ const PerfilTabScreen = () => {
         </View>
 
         <View style={styles.imageWrapper}>
-          <Image
-            source={profileImage} // Usar la imagen local
-            style={styles.profileImage}
-          />
+          <Image source={profileImage} style={styles.profileImage} />
         </View>
+
+        <TouchableOpacity style={styles.editButton}>
+          <MaterialCommunityIcons name="pencil" size={20} color="#666666" />
+        </TouchableOpacity>
 
         <View style={styles.bottomBackground}>
           <Text style={styles.stats}>
@@ -74,7 +83,7 @@ const styles = StyleSheet.create({
   bottomBackground: {
     minHeight: "100%",
     backgroundColor: "#E6E6E6",
-    paddingTop: 100,
+    paddingTop: 90,
     marginBottom: 200,
     borderTopLeftRadius: 35,
     borderTopRightRadius: 35,
@@ -85,11 +94,33 @@ const styles = StyleSheet.create({
     left: "50%",
     transform: [{ translateX: -75 }, { translateY: -75 }],
     zIndex: 1,
-  },
-  profileImage: {
+    overflow: "hidden",
     width: 150,
     height: 150,
     borderRadius: 75,
+  },
+  profileImage: {
+    width: 300,
+    height: 300,
+    transform: [{ scale: 1 }],
+    position: "absolute",
+    top: "-7%",
+    left: "-50%",
+  },
+  editButton: {
+    position: 'absolute',
+    top: '31.3%', // Ajusta la posición para que el botón quede parcialmente en la imagen y parcialmente en el fondo gris
+    left: '53.7%',
+    transform: [{ translateX: 30 }, { translateY: -15 }], // Ajusta la posición horizontal y vertical
+    backgroundColor: '#FFFFFF',
+    width: 36,
+    height: 36,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 2, // Asegura que el botón esté por encima de la imagen y el fondo
+    borderWidth: 1,
+    borderColor: '#E6E6E6',
   },
   name: {
     fontSize: 24,
@@ -100,7 +131,7 @@ const styles = StyleSheet.create({
   stats: {
     fontSize: 16,
     textAlign: "center",
-    marginBottom: 10,
+    marginBottom: 20,
     fontWeight: "bold",
   },
   description: {
