@@ -1,180 +1,77 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Image,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import useAuthStore from "../../context/useAuthStore";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../../routes/LoginStackNavigation";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-
-import profileImage from "../../../assets/profile-image.jpg";
+import profileImage from "../../assets/profile-image.jpg";
 
 type HomeScreenNavigationProp = NavigationProp<RootStackParamList, "Home">;
 
 const PerfilTabScreen = () => {
-  const { user, currentUser } = useAuthStore();
-  const logOut = useAuthStore((state) => state.logout);
+    const { user, currentUser } = useAuthStore();
+    const logOut = useAuthStore((state) => state.logout);
 
-  const navigation = useNavigation<HomeScreenNavigationProp>();
+    const navigation = useNavigation<HomeScreenNavigationProp>();
 
-  const navigateToHome = () => {
-    navigation.navigate("Home");
-  };
+    const navigateToHome = () => {
+        navigation.navigate("Home");
+    };
 
-  return (
-    <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <View style={styles.topBackground}>
-          <Text style={styles.name}>Carolina Díaz</Text>
-        </View>
+    return (
+        <ScrollView
+            contentContainerStyle={{ paddingTop: 0 }}
+            className="flex-1"
+        >
+            <View className="h-[13%] bg-white justify-top items-center relative z-0 mt-3">
+                <Text className="text-2xl font-bold text-center">
+                    Carolina Díaz
+                </Text>
+            </View>
 
-        <View style={styles.imageWrapper}>
-          <Image source={profileImage} style={styles.profileImage} />
-        </View>
+            <View className="absolute inset-x-0 top-[6%] flex items-center z-20">
+                <Image
+                    source={profileImage}
+                    className="w-40 h-40 rounded-full border-4 border-white"
+                />
+                <TouchableOpacity className="absolute top-[75%] left-[63%]  bg-white w-9 h-9 rounded-full justify-center items-center z-20 border border-gray-200">
+                    <MaterialCommunityIcons
+                        name="pencil"
+                        size={20}
+                        color="#666666"
+                    />
+                </TouchableOpacity>
+            </View>
 
-        <TouchableOpacity style={styles.editButton}>
-          <MaterialCommunityIcons name="pencil" size={20} color="#666666" />
-        </TouchableOpacity>
-
-        <View style={styles.bottomBackground}>
-          <Text style={styles.stats}>
-            23 trabajos realizados | 22 feedbacks
-          </Text>
-          <Text style={styles.description}>
-            Soy Carolina Díaz, historiadora y estudiante de Diseño UX en
-            Barcelona. Trabajo como freelancer, optimizando mi flujo de trabajo
-            con herramientas digitales. Me apasiona el diseño, la tecnología y
-            el aprendizaje continuo. Disfruto de paseos por la ciudad con mi
-            gato, Luna.
-          </Text>
-          <Text style={styles.sectionTitle}>Trabajos en curso</Text>
-          <View style={styles.currentWorks}>
-            <View style={styles.currentWorksItem} />
-          </View>
-          <Text style={styles.sectionTitle}>Trabajos Anteriores</Text>
-          <View style={styles.previousWorks}>
-            <View style={styles.workItem} />
-            <View style={styles.workItem} />
-            <View style={styles.workItem} />
-            <View style={styles.workItem} />
-          </View>
-        </View>
-      </ScrollView>
-    </View>
-  );
+            <View className="min-h-full bg-gray-200 pt-24 mb-24 rounded-t-3xl">
+                <Text className="text-lg text-center font-bold mb-5">
+                    23 trabajos realizados | 22 feedbacks
+                </Text>
+                <Text className="text-base text-gray-600 mb-5 mx-5">
+                    Soy Carolina Díaz, historiadora y estudiante de Diseño UX en
+                    Barcelona. Trabajo como freelancer, optimizando mi flujo de
+                    trabajo con herramientas digitales. Me apasiona el diseño,
+                    la tecnología y el aprendizaje continuo. Disfruto de paseos
+                    por la ciudad con mi gato, Luna.
+                </Text>
+                <Text className="text-xl font-bold mb-2 mx-5">
+                    Trabajos en curso
+                </Text>
+                <View className="mb-5 px-5">
+                    <View className="bg-gray-400 w-full h-24 rounded-lg" />
+                </View>
+                <Text className="text-xl font-bold mb-2 mx-5">
+                    Trabajos Anteriores
+                </Text>
+                <View className="flex-row flex-wrap justify-between mb-2 px-5 gap-1">
+                    <View className="bg-gray-400 w-[48%] h-24 rounded-lg mb-2" />
+                    <View className="bg-gray-400 w-[48%] h-24 rounded-lg mb-2" />
+                    <View className="bg-gray-400 w-[48%] h-24 rounded-lg mb-2" />
+                    <View className="bg-gray-400 w-[48%] h-24 rounded-lg mb-2" />
+                </View>
+            </View>
+        </ScrollView>
+    );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  topBackground: {
-    height: "25%",
-    backgroundColor: "#FFFFFF",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 0,
-  },
-  bottomBackground: {
-    minHeight: "100%",
-    backgroundColor: "#E6E6E6",
-    paddingTop: 90,
-    marginBottom: 200,
-    borderTopLeftRadius: 35,
-    borderTopRightRadius: 35,
-  },
-  imageWrapper: {
-    position: "absolute",
-    top: "25%",
-    left: "50%",
-    transform: [{ translateX: -75 }, { translateY: -75 }],
-    zIndex: 1,
-    overflow: "hidden",
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-  },
-  profileImage: {
-    width: 300,
-    height: 300,
-    transform: [{ scale: 1 }],
-    position: "absolute",
-    top: "-7%",
-    left: "-50%",
-  },
-  editButton: {
-    position: 'absolute',
-    top: '31.3%',
-    left: '53.7%',
-    transform: [{ translateX: 30 }, { translateY: -15 }],
-    backgroundColor: '#FFFFFF',
-    width: 36,
-    height: 36,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 2,
-    borderWidth: 1,
-    borderColor: '#E6E6E6',
-  },
-  name: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    zIndex: 1,
-  },
-  stats: {
-    fontSize: 16,
-    textAlign: "center",
-    marginBottom: 20,
-    fontWeight: "bold",
-  },
-  description: {
-    fontSize: 14,
-    marginBottom: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    marginHorizontal: 20,
-    color: "#666666",
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-    marginLeft: 20,
-  },
-  currentWorks: {
-    marginBottom: 20,
-    paddingHorizontal: 20,
-  },
-  currentWorksItem: {
-    backgroundColor: "#B3B3B3",
-    width: "100%",
-    height: 100,
-    borderRadius: 10,
-  },
-  previousWorks: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    marginBottom: 20,
-    paddingHorizontal: 20,
-  },
-  workItem: {
-    backgroundColor: "#B3B3B3",
-    width: "48%",
-    height: 100,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  scrollViewContent: {
-    paddingTop: 0,
-  },
-});
 
 export default PerfilTabScreen;
