@@ -25,7 +25,7 @@ const PerfilTabScreen = () => {
         >
             <View className="h-[13%] bg-white justify-top items-center relative z-0 mt-3">
                 <Text className="text-2xl font-bold text-center">
-                    Carolina Díaz
+                    {currentUser?.name}
                 </Text>
             </View>
 
@@ -43,11 +43,12 @@ const PerfilTabScreen = () => {
                 </TouchableOpacity>
             </View>
 
-            <View className="min-h-full bg-gray-200 pt-24 mb-24 rounded-t-3xl">
+            <View className="min-h-full bg-gray-100 pt-24 mb-24 rounded-t-3xl">
                 <Text className="text-lg text-center font-bold mb-5">
                     23 trabajos realizados | 22 feedbacks
                 </Text>
-                <Text className="text-base text-gray-600 mb-5 mx-5">
+                <Text className="text-base text-[#666666] mb-5 mx-5">
+                    {/* TODO Aqui ira la descripccion del usuario. */}
                     Soy Carolina Díaz, historiadora y estudiante de Diseño UX en
                     Barcelona. Trabajo como freelancer, optimizando mi flujo de
                     trabajo con herramientas digitales. Me apasiona el diseño,
@@ -58,16 +59,16 @@ const PerfilTabScreen = () => {
                     Trabajos en curso
                 </Text>
                 <View className="mb-5 px-5">
-                    <View className="bg-gray-400 w-full h-24 rounded-lg" />
+                    <View className="bg-gray-300 w-full h-24 rounded-lg" />
                 </View>
                 <Text className="text-xl font-bold mb-2 mx-5">
                     Trabajos Anteriores
                 </Text>
                 <View className="flex-row flex-wrap justify-between mb-2 px-5 gap-1">
-                    <View className="bg-gray-400 w-[48%] h-24 rounded-lg mb-2" />
-                    <View className="bg-gray-400 w-[48%] h-24 rounded-lg mb-2" />
-                    <View className="bg-gray-400 w-[48%] h-24 rounded-lg mb-2" />
-                    <View className="bg-gray-400 w-[48%] h-24 rounded-lg mb-2" />
+                    <View className="bg-gray-300 w-[48%] h-24 rounded-lg mb-2" />
+                    <View className="bg-gray-300 w-[48%] h-24 rounded-lg mb-2" />
+                    <View className="bg-gray-300 w-[48%] h-24 rounded-lg mb-2" />
+                    <View className="bg-gray-300 w-[48%] h-24 rounded-lg mb-2" />
                 </View>
             </View>
         </ScrollView>

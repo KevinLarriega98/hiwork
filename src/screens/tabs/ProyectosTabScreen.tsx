@@ -1,5 +1,12 @@
-import { View, Text, FlatList } from "react-native";
-import React, { useEffect } from "react";
+import {
+    View,
+    Text,
+    FlatList,
+    ActivityIndicator,
+    StyleSheet,
+    RefreshControl,
+} from "react-native";
+import React, { useEffect, useState, useCallback } from "react";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import BookMarkSVG from "../../components/Projects/svg/BookMarkSVG";
 import InfoSVG from "../../components/Projects/svg/InfoSVG";
@@ -7,16 +14,45 @@ import BellComponent from "../../components/Projects/BellComponent";
 import useProjectStore from "../../context/useProjectStore";
 
 const ProyectosTabScreen = () => {
-    const { projects, fetchProjects } = useProjectStore((state) => ({
-        projects: state.projects,
+    const { fetchProjects } = useProjectStore((state) => ({
         fetchProjects: state.fetchProjects,
     }));
 
-    useEffect(() => {
-        fetchProjects();
-    }, []);
+    const [localProjects, setLocalProjects] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
 
-    const renderItem = ({ item, index }: { item: any; index: number }) => {
+    useEffect(() => {
+        const loadProjects = async () => {
+            setLoading(true);
+            try {
+                const fetchedProjects = await fetchProjects();
+                setLocalProjects(fetchedProjects || []);
+            } catch (error) {
+                console.error("Error fetching projects:", error);
+                setLocalProjects([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadProjects();
+    }, [fetchProjects]);
+
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        try {
+            const fetchedProjects = await fetchProjects();
+            setLocalProjects(fetchedProjects || []);
+        } catch (error) {
+            console.error("Error refreshing projects:", error);
+            setLocalProjects([]);
+        } finally {
+            setRefreshing(false);
+        }
+    }, [fetchProjects]);
+
+    const renderItem = ({ item }: { item: any }) => {
         return (
             <View className="bg-[#d9d9d9] p-4 rounded-lg mb-4 w-[48%]">
                 <View className="flex flex-row justify-between items-center mb-2">
@@ -64,19 +100,47 @@ const ProyectosTabScreen = () => {
                     Aquí tienes algunos proyectos que creemos que te podrían
                     interesar...
                 </Text>
-                <FlatList
-                    data={projects}
-                    renderItem={renderItem}
-                    keyExtractor={(item) => item.id}
-                    numColumns={2}
-                    columnWrapperStyle={{
-                        justifyContent: "space-between",
-                    }}
-                />
+                {loading ? (
+                    <View className="flex-1 items-center justify-center">
+                        <ActivityIndicator size="large" color="#000" />
+                        <Text className="text-gray-600 text-center text-base mt-2">
+                            Cargando proyectos...
+                        </Text>
+                    </View>
+                ) : (
+                    <FlatList
+                        data={localProjects}
+                        renderItem={renderItem}
+                        keyExtractor={(item) => item.id}
+                        numColumns={2}
+                        columnWrapperStyle={{
+                            justifyContent: "space-between",
+                        }}
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefresh}
+                            />
+                        }
+                    />
+                )}
             </View>
-            {/* <Text>{JSON.stringify(user)}</Text> */}
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+    loaderContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "white",
+    },
+    loaderText: {
+        marginTop: 10,
+        fontSize: 16,
+        color: "#000",
+    },
+});
 
 export default ProyectosTabScreen;
