@@ -5,6 +5,7 @@ import {
     StyleSheet,
     TextInput,
     TouchableWithoutFeedback,
+    TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -16,8 +17,18 @@ import {
     locationItemsData,
     volunteerItemsData,
 } from "../../data/dropdownData";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { ProjectState } from "../../types/project";
+import { RootStackParamList } from "../../routes/LoginStackNavigation";
+
+type ProjectDetailScreenNavigationProp = NavigationProp<
+    RootStackParamList,
+    "Project"
+>;
 
 const BusquedaTabScreen = () => {
+    const navigation = useNavigation<ProjectDetailScreenNavigationProp>();
+
     const [volunteerItems, setVolunteerItems] = useState(volunteerItemsData);
     const [formatItems, setFormatItems] = useState(formatItemsData);
     const [locationItems, setLocationItems] = useState(locationItemsData);
@@ -70,29 +81,47 @@ const BusquedaTabScreen = () => {
         );
     });
 
+    const handleProjectPress = (project: ProjectState) => {
+        console.log(project);
+        navigation.navigate("Project", { project });
+    };
+
     const renderItem = ({ item }: { item: any }) => {
         return (
-            <View className={`bg-[#d9d9d9] p-4 rounded-lg mb-4 flex-1 mx-1 `}>
-                <Text className="text-xl font-bold mb-1">{item.title}</Text>
+            <TouchableOpacity
+                className={`bg-[#E6E6E6] p-4 rounded-lg mb-4 flex-1 mx-1 `}
+                onPress={() => handleProjectPress(item)}
+            >
+                <Text className="text-lg  mb-1">{item.title}</Text>
 
                 <View className="flex flex-row gap-1 items-center mb-1">
                     <MaterialCommunityIcons
-                        name="set-none"
+                        name="checkbox-blank-circle"
                         color={"black"}
-                        size={26}
+                        size={18}
                     />
-                    <Text className="text-gray-500">{item.ongName}</Text>
+                    <Text className="text-black text-base">{item.ongName}</Text>
                 </View>
                 <View className="flex flex-row items-start mb-1 w-full">
+                    <MaterialCommunityIcons
+                        name="square-rounded"
+                        color={"#7f7f7f"}
+                        size={18}
+                    />
                     <Text className="text-gray-500 mr-2">
-                        ⏹️ {item.objectiveTimeline}
+                        {item.objectiveTimeline}
                     </Text>
+                    <MaterialCommunityIcons
+                        name="square-rounded"
+                        color={"#7f7f7f"}
+                        size={18}
+                    />
                     <Text className="text-gray-500">
-                        ⏹️ {item.remote ? "Remote" : "Local"}
+                        {item.remote ? "Remote" : "Local"}
                     </Text>
                 </View>
                 <Text className="text-gray-500">{item.description}</Text>
-            </View>
+            </TouchableOpacity>
         );
     };
 
@@ -238,7 +267,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         padding: 2,
-        borderRadius: 20,
+        borderRadius: 22,
         marginBottom: 16,
     },
     searchInput: {

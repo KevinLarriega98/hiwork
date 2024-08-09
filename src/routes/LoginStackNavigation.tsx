@@ -8,6 +8,8 @@ import { TabsBottomNavigation } from "./TabsBottomNavigation";
 import RegisterUserScreens from "../screens/signIn-LogIn/RegisterUserScreens";
 import RegisterTypeUser from "../screens/signIn-LogIn/RegisterTypeUser";
 import useAuthStore from "../context/useAuthStore";
+import { ProjectState } from "../types/project";
+import Project from "../screens/project/Project";
 
 export type RootStackParamList = {
     Home: undefined;
@@ -16,6 +18,7 @@ export type RootStackParamList = {
     RegisterUserScreens: { profileType: "Voluntario" | "ONG" };
     RegisterTypeUser: undefined;
     TabsBottom: undefined;
+    Project: { project: ProjectState };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -62,6 +65,15 @@ const LoginStackNavigation = () => {
                 name="RegisterUserScreens"
                 component={withSafeArea(RegisterUserScreens)}
             />
+            <Stack.Screen
+                name="Project"
+                component={Project}
+                options={({ route }) => ({
+                    title: route.params?.project?.title || "Project Details",
+                    headerShown: true,
+                })}
+            />
+
             {isAuthenticated && (
                 <Stack.Screen
                     name="TabsBottom"

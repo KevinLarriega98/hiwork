@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import useAuthStore from "../../context/useAuthStore";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../../routes/LoginStackNavigation";
@@ -18,6 +18,12 @@ const PerfilTabScreen = () => {
         navigation.navigate("Home");
     };
 
+    const logOutFunction = async () => {
+        await logOut(navigateToHome);
+    };
+
+    useEffect(() => {});
+
     return (
         <ScrollView
             contentContainerStyle={{ paddingTop: 0 }}
@@ -34,6 +40,18 @@ const PerfilTabScreen = () => {
                     source={profileImage}
                     className="w-40 h-40 rounded-full border-4 border-white"
                 />
+
+                <TouchableOpacity
+                    className="absolute top-[75%] left-[28%]  bg-white w-9 h-9 rounded-full justify-center items-center z-20 border border-gray-200"
+                    onPress={() => logOutFunction()}
+                >
+                    <MaterialCommunityIcons
+                        name="logout"
+                        size={20}
+                        color="#666666"
+                    />
+                </TouchableOpacity>
+
                 <TouchableOpacity className="absolute top-[75%] left-[63%]  bg-white w-9 h-9 rounded-full justify-center items-center z-20 border border-gray-200">
                     <MaterialCommunityIcons
                         name="pencil"
@@ -47,6 +65,7 @@ const PerfilTabScreen = () => {
                 <Text className="text-lg text-center font-bold mb-5">
                     23 trabajos realizados | 22 feedbacks
                 </Text>
+
                 <Text className="text-base text-[#666666] mb-5 mx-5">
                     {/* TODO Aqui ira la descripccion del usuario. */}
                     Soy Carolina Díaz, historiadora y estudiante de Diseño UX en
@@ -64,6 +83,7 @@ const PerfilTabScreen = () => {
                 <Text className="text-xl font-bold mb-2 mx-5">
                     Trabajos Anteriores
                 </Text>
+                {/* TODO Aqui ira una flatList con los trabajos anteriores. */}
                 <View className="flex-row flex-wrap justify-between mb-2 px-5 gap-1">
                     <View className="bg-gray-300 w-[48%] h-24 rounded-lg mb-2" />
                     <View className="bg-gray-300 w-[48%] h-24 rounded-lg mb-2" />

@@ -1,11 +1,13 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface ProjectState {
     projects: any[];
-    ong: string;
+    ongName: string;
     title: string;
     description: string;
     objectiveTimeline: string;
-    createdAt: string;
-    updatedAt: string | null;
+    createdAt: Timestamp | null;
+    updatedAt: Timestamp | null;
     remote: boolean;
 }
 
@@ -15,8 +17,8 @@ export interface ProjectActions {
     setTitle: (title: string) => void;
     setDescription: (description: string) => void;
     setObjectiveTimeline: (objectiveTimeline: string) => void;
-    setCreatedAt: (createdAt: string) => void;
-    setUpdatedAt: (updatedAt: string) => void;
+    setCreatedAt: (createdAt: Timestamp | null) => void;
+    setUpdatedAt: (updatedAt: Timestamp | null) => void;
     setRemote: (remote: boolean) => void;
     createProject: (
         ongID: string,

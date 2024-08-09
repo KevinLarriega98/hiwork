@@ -54,33 +54,48 @@ const ProyectosTabScreen = () => {
 
     const renderItem = ({ item }: { item: any }) => {
         return (
-            <View className="bg-[#d9d9d9] p-4 rounded-lg mb-4 w-[48%]">
+            <View className="bg-[#e6e6e6] p-4 rounded-2xl mb-4 w-[48%]">
                 <View className="flex flex-row justify-between items-center mb-2">
-                    <View className="px-2 py-1 bg-[#747474] rounded-full justify-center items-center">
-                        <Text className="text-[#d9d9d9] text-xs font-normal leading-none">
+                    <View className="px-2 py-1 bg-[#7f7f7f] rounded-full justify-center items-center">
+                        <Text className="text-[#e6e6e6] text-xs font-normal leading-none">
                             Design ux/ui
                         </Text>
                     </View>
                     <BookMarkSVG />
                 </View>
-                <Text className="text-xl font-bold mb-1">{item.title}</Text>
+                <Text className="text-xl font-medium mb-1 text-black">
+                    {item.title}
+                </Text>
                 <View className="flex flex-row gap-1 items-center mb-2">
                     <MaterialCommunityIcons
-                        name="set-none"
+                        name="checkbox-blank-circle"
                         color={"black"}
-                        size={26}
+                        size={18}
                     />
                     <Text className="text-gray-500">{item.ongName}</Text>
                 </View>
                 <View className="flex flex-col items-start mb-1">
-                    <Text className="text-gray-500 mr-2">
-                        {item.objectiveTimeline}
-                    </Text>
-                    <Text className="text-gray-500">
-                        {item.remote ? "Remote" : "Local"}
-                    </Text>
+                    <View className="flex flex-row items-center mb-1">
+                        <MaterialCommunityIcons
+                            name="square-rounded"
+                            color={"#7f7f7f"}
+                            size={18}
+                        />
+                        <Text className="text-gray-500 mr-2">
+                            {item.objectiveTimeline}
+                        </Text>
+                    </View>
+                    <View className="flex flex-row items-center mb-1">
+                        <MaterialCommunityIcons
+                            name="square-rounded"
+                            color={"#7f7f7f"}
+                            size={18}
+                        />
+                        <Text className="text-gray-500">
+                            {item.remote ? "Remote" : "Local"}
+                        </Text>
+                    </View>
                 </View>
-                <Text className="text-gray-500">{item.description}</Text>
             </View>
         );
     };
@@ -90,6 +105,7 @@ const ProyectosTabScreen = () => {
             <BellComponent />
             <View className="px-4 flex-1">
                 <Text className="text-xl font-bold mb-4">Hola, hiDoer!</Text>
+                {/* TODO quitar el hardcode y hacer la lógica de mirar si tienes algún proyecto activo o no */}
                 <View className="bg-gray-200 p-4 rounded-lg mb-4 flex flex-row items-center justify-evenly">
                     <InfoSVG />
                     <Text className="text-gray-600 text-center text-base">
@@ -128,19 +144,5 @@ const ProyectosTabScreen = () => {
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    loaderContainer: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "white",
-    },
-    loaderText: {
-        marginTop: 10,
-        fontSize: 16,
-        color: "#000",
-    },
-});
 
 export default ProyectosTabScreen;

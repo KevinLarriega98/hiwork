@@ -13,7 +13,6 @@ import withSafeArea from "../util/withSafeArea";
 const Tab = createMaterialBottomTabNavigator();
 
 export const TabsBottomNavigation = () => {
-    const insets = useSafeAreaInsets();
     return (
         <Tab.Navigator>
             <Tab.Screen
