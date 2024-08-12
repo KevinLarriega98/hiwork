@@ -5,6 +5,7 @@ import {
     ActivityIndicator,
     StyleSheet,
     RefreshControl,
+    TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState, useCallback } from "react";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -12,8 +13,20 @@ import BookMarkSVG from "../../components/Projects/svg/BookMarkSVG";
 import InfoSVG from "../../components/Projects/svg/InfoSVG";
 import BellComponent from "../../components/Projects/BellComponent";
 import useProjectStore from "../../context/useProjectStore";
+import loader from "../../util/loader";
+import { ProjectState } from "../../types/project";
+
+import { RootStackParamList } from "../../routes/LoginStackNavigation";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+
+type ProjectDetailScreenNavigationProp = NavigationProp<
+    RootStackParamList,
+    "Project"
+>;
 
 const ProyectosTabScreen = () => {
+    const navigation = useNavigation<ProjectDetailScreenNavigationProp>();
+
     const { fetchProjects } = useProjectStore((state) => ({
         fetchProjects: state.fetchProjects,
     }));
@@ -52,9 +65,17 @@ const ProyectosTabScreen = () => {
         }
     }, [fetchProjects]);
 
+    const handleProjectPress = (project: ProjectState) => {
+        console.log(project);
+        navigation.navigate("Project", { project });
+    };
+
     const renderItem = ({ item }: { item: any }) => {
         return (
-            <View className="bg-[#e6e6e6] p-4 rounded-2xl mb-4 w-[48%]">
+            <TouchableOpacity
+                className="bg-[#e6e6e6] p-4 rounded-2xl mb-4 w-[48%]"
+                onPress={() => handleProjectPress(item)}
+            >
                 <View className="flex flex-row justify-between items-center mb-2">
                     <View className="px-2 py-1 bg-[#7f7f7f] rounded-full justify-center items-center">
                         <Text className="text-[#e6e6e6] text-xs font-normal leading-none">
@@ -66,14 +87,17 @@ const ProyectosTabScreen = () => {
                 <Text className="text-xl font-medium mb-1 text-black">
                     {item.title}
                 </Text>
-                <View className="flex flex-row gap-1 items-center mb-2">
+                <TouchableOpacity
+                    className="flex flex-row gap-1 items-center mb-2 z-30"
+                    onPress={() => console.log("pinga")}
+                >
                     <MaterialCommunityIcons
                         name="checkbox-blank-circle"
                         color={"black"}
                         size={18}
                     />
                     <Text className="text-gray-500">{item.ongName}</Text>
-                </View>
+                </TouchableOpacity>
                 <View className="flex flex-col items-start mb-1">
                     <View className="flex flex-row items-center mb-1">
                         <MaterialCommunityIcons
@@ -96,7 +120,7 @@ const ProyectosTabScreen = () => {
                         </Text>
                     </View>
                 </View>
-            </View>
+            </TouchableOpacity>
         );
     };
 
@@ -117,12 +141,7 @@ const ProyectosTabScreen = () => {
                     interesar...
                 </Text>
                 {loading ? (
-                    <View className="flex-1 items-center justify-center">
-                        <ActivityIndicator size="large" color="#000" />
-                        <Text className="text-gray-600 text-center text-base mt-2">
-                            Cargando proyectos...
-                        </Text>
-                    </View>
+                    loader("Cargando proyectos...")
                 ) : (
                     <FlatList
                         data={localProjects}
