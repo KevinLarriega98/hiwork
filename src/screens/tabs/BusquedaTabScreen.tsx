@@ -82,7 +82,6 @@ const BusquedaTabScreen = () => {
     });
 
     const handleProjectPress = (project: ProjectState) => {
-        console.log(project);
         navigation.navigate("Project", { project });
     };
 

@@ -54,6 +54,7 @@ export const register = async (
 
     const docRef = doc(db, profileType + "s", user.uid);
     await setDoc(docRef, {
+        id: user.uid,
         email: email,
         profileType: profileType,
         name: name,

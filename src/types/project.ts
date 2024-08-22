@@ -1,6 +1,8 @@
 import { Timestamp } from "firebase/firestore";
 
 export interface ProjectState {
+    id: string;
+    ongID: string;
     projects: any[];
     ongName: string;
     title: string;

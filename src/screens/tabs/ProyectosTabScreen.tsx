@@ -66,7 +66,6 @@ const ProyectosTabScreen = () => {
     }, [fetchProjects]);
 
     const handleProjectPress = (project: ProjectState) => {
-        console.log(project);
         navigation.navigate("Project", { project });
     };
 
@@ -88,7 +87,9 @@ const ProyectosTabScreen = () => {
                     {item.title}
                 </Text>
                 <TouchableOpacity
-                    className="flex flex-row gap-1 items-center mb-2 z-30"
+                    //FIXME de momento esta disabled que nose que hacer con el pero algo voy a hacer en el futuro
+                    disabled
+                    className="flex flex-row gap-1 items-center mb-2 z-30 "
                     onPress={() => console.log("pinga")}
                 >
                     <MaterialCommunityIcons

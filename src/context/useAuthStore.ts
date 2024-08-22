@@ -39,7 +39,7 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
                     user: { ...user },
                     isAuthenticated: !!user,
                     userType: userData.profileType,
-                    currentUser: userData,
+                    currentUser: { ...userData, uid: user.uid },
                 });
             }
             return user;
@@ -73,7 +73,7 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
                     user: { ...user },
                     isAuthenticated: !!user,
                     userType: userData.profileType,
-                    currentUser: userData,
+                    currentUser: { ...userData, uid: user.uid },
                 });
             }
             return user;
