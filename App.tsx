@@ -15,7 +15,7 @@ const App = () => {
     return (
         
             <NavigationContainer>
-                <View style={{ flex: 1 }}>
+                <View style={{ flex: 1, backgroundColor: "white" }}>
                     <LoginStackNavigation />
                 </View>
             </NavigationContainer>

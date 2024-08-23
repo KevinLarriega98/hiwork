@@ -6,16 +6,16 @@ import { db } from "../service/api/firebase";
 
 const useProjectStore = create<ProjectActions & ProjectState>((set) => ({
     projects: [],
-    ong: "",
+    ongName: "",
     title: "",
     description: "",
     objectiveTimeline: "",
-    createdAt: "",
+    createdAt: null,
     updatedAt: null,
     remote: false,
 
     setProjects: (projects) => set({ projects }),
-    setOng: (ong) => set({ ong }),
+    setOng: (ongName) => set({ ongName }),
     setTitle: (title) => set({ title }),
     setDescription: (description) => set({ description }),
     setObjectiveTimeline: (objectiveTimeline) => set({ objectiveTimeline }),

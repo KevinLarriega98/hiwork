@@ -1,152 +1,219 @@
-import { View, Text, FlatList, StyleSheet, TextInput } from "react-native";
-import React, { useState } from "react";
+import {
+    View,
+    Text,
+    FlatList,
+    StyleSheet,
+    TextInput,
+    TouchableWithoutFeedback,
+    TouchableOpacity,
+} from "react-native";
+import React, { useEffect, useState } from "react";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import DropDownPicker from "react-native-dropdown-picker";
 import BellComponent from "../../components/Projects/BellComponent";
+import useProjectStore from "../../context/useProjectStore";
+import {
+    formatItemsData,
+    locationItemsData,
+    volunteerItemsData,
+} from "../../data/dropdownData";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { ProjectState } from "../../types/project";
+import { RootStackParamList } from "../../routes/LoginStackNavigation";
 
-const data = [
-    {
-        id: "1",
-        title: "JOB 1",
-        org: "ONG HELDSN",
-        duration: "2-4 weeks",
-        type: "Virtual",
-    },
-    {
-        id: "2",
-        title: "JOB 2",
-        org: "ONG HELDSN",
-        duration: "2-4 weeks",
-        type: "Virtual",
-    },
-    {
-        id: "3",
-        title: "JOB 3",
-        org: "ONG HELDSN",
-        duration: "2-4 weeks",
-        type: "Virtual",
-    },
-    // Puedes agregar más elementos aquí
-];
+type ProjectDetailScreenNavigationProp = NavigationProp<
+    RootStackParamList,
+    "Project"
+>;
 
 const BusquedaTabScreen = () => {
-    const [volunteerItems, setVolunteerItems] = useState([
-        { label: "Design UX/UI", value: "designuxui" },
-        { label: "Marketing", value: "marketing" },
-        { label: "Programación", value: "programacion" },
-    ]);
+    const navigation = useNavigation<ProjectDetailScreenNavigationProp>();
+
+    const [volunteerItems, setVolunteerItems] = useState(volunteerItemsData);
+    const [formatItems, setFormatItems] = useState(formatItemsData);
+    const [locationItems, setLocationItems] = useState(locationItemsData);
+
     const [volunteerOpen, setVolunteerOpen] = useState(false);
     const [volunteerValue, setVolunteerValue] = useState(
         volunteerItems[0].value
     );
 
-    const [formatItems, setFormatItems] = useState([
-        { label: "Presencial", value: "presencial" },
-        { label: "Híbrido", value: "hibrido" },
-        { label: "Remoto", value: "remoto" },
-    ]);
     const [formatOpen, setFormatOpen] = useState(false);
     const [formatValue, setFormatValue] = useState(formatItems[0].value);
 
-    const [locationItems, setLocationItems] = useState([
-        { label: "Barcelona", value: "barcelona" },
-        { label: "Madrid", value: "madrid" },
-    ]);
     const [locationOpen, setLocationOpen] = useState(false);
     const [locationValue, setLocationValue] = useState(locationItems[0].value);
 
-    const renderItem = ({ item, index }: { item: any; index: number }) => {
+    const [searchText, setSearchText] = useState("");
+
+    const { projects, fetchProjects } = useProjectStore((state) => ({
+        projects: state.projects,
+        fetchProjects: state.fetchProjects,
+    }));
+
+    useEffect(() => {
+        fetchProjects();
+    }, [fetchProjects]);
+
+    const closeDropdowns = () => {
+        setVolunteerOpen(false);
+        setFormatOpen(false);
+        setLocationOpen(false);
+    };
+
+    const filteredProjects = projects.filter((project) => {
+        const matchesVolunteer =
+            volunteerValue === "all" ||
+            project.volunteerType === volunteerValue;
+        const matchesFormat =
+            formatValue === "all" || project.format === formatValue;
+        const matchesLocation =
+            locationValue === "all" || project.location === locationValue;
+        const matchesSearchText = project.title
+            .toLowerCase()
+            .includes(searchText.toLowerCase());
+
         return (
-            <View className={`bg-[#d9d9d9] p-4 rounded-lg mb-4 flex-1 mx-1`}>
-                {/* TODO: Esto seria el tipo de proyecto */}
-                <Text className="text-xl font-bold mb-1">{item.title}</Text>
+            matchesVolunteer &&
+            matchesFormat &&
+            matchesLocation &&
+            matchesSearchText
+        );
+    });
 
-                <View className="flex flex-row gap-1 items-center mb-2">
+    const handleProjectPress = (project: ProjectState) => {
+        navigation.navigate("Project", { project });
+    };
+
+    const renderItem = ({ item }: { item: any }) => {
+        return (
+            <TouchableOpacity
+                className={`bg-[#E6E6E6] p-4 rounded-lg mb-4 flex-1 mx-1 `}
+                onPress={() => handleProjectPress(item)}
+            >
+                <Text className="text-lg  mb-1">{item.title}</Text>
+
+                <View className="flex flex-row gap-1 items-center mb-1">
                     <MaterialCommunityIcons
-                        name="set-none"
+                        name="checkbox-blank-circle"
                         color={"black"}
-                        size={26}
+                        size={18}
                     />
-                    <Text className="text-gray-500">{item.org}</Text>
+                    <Text className="text-black text-base">{item.ongName}</Text>
                 </View>
-                <View className="flex flex-row items-left mb-2">
-                    <Text className="text-gray-500 mr-2">{item.duration}</Text>
-                    <Text className="text-gray-500">{item.type}</Text>
+                <View className="flex flex-row items-start mb-1 w-full">
+                    <MaterialCommunityIcons
+                        name="square-rounded"
+                        color={"#7f7f7f"}
+                        size={18}
+                    />
+                    <Text className="text-gray-500 mr-2">
+                        {item.objectiveTimeline}
+                    </Text>
+                    <MaterialCommunityIcons
+                        name="square-rounded"
+                        color={"#7f7f7f"}
+                        size={18}
+                    />
+                    <Text className="text-gray-500">
+                        {item.remote ? "Remote" : "Local"}
+                    </Text>
                 </View>
-
-                <Text className="text-gray-500">
-                    Lorem Ipsum is simply dummy text.
-                </Text>
-            </View>
+                <Text className="text-gray-500">{item.description}</Text>
+            </TouchableOpacity>
         );
     };
 
     return (
-        <View className="flex-1 bg-white">
-            <BellComponent />
-            <View className=" p-4 ">
-                <View style={styles.searchContainer}>
-                    <TextInput style={styles.searchInput} />
-                    <MaterialCommunityIcons
-                        name="magnify"
-                        size={24}
-                        style={styles.searchIcon}
+        <TouchableWithoutFeedback onPress={closeDropdowns}>
+            <View
+                className="flex-1 bg-white"
+                onStartShouldSetResponder={() => true}
+            >
+                <BellComponent />
+                <View className="p-4 ">
+                    <View style={styles.searchContainer}>
+                        <TextInput
+                            style={styles.searchInput}
+                            placeholder="Buscar..."
+                            value={searchText}
+                            onChangeText={setSearchText}
+                        />
+                        <MaterialCommunityIcons
+                            name="magnify"
+                            size={24}
+                            style={styles.searchIcon}
+                        />
+                    </View>
+
+                    <View className="items-center">
+                        <View style={styles.column}>
+                            <Text style={styles.firstText}>
+                                Quiero ver voluntarios de
+                            </Text>
+                            <DropDownPicker
+                                open={volunteerOpen}
+                                value={volunteerValue}
+                                items={volunteerItems}
+                                setOpen={setVolunteerOpen}
+                                setValue={setVolunteerValue}
+                                setItems={setVolunteerItems}
+                                theme="DARK"
+                                style={styles.firstSelectPicker}
+                                containerStyle={
+                                    styles.firstSelectPickerInnerContainer
+                                }
+                                textStyle={styles.dropdownText}
+                                dropDownContainerStyle={
+                                    styles.dropdownContainer
+                                }
+                            />
+                        </View>
+                        <View style={styles.column}>
+                            <Text style={styles.text}>en formato</Text>
+                            <DropDownPicker
+                                open={formatOpen}
+                                value={formatValue}
+                                items={formatItems}
+                                setOpen={setFormatOpen}
+                                setValue={setFormatValue}
+                                setItems={setFormatItems}
+                                theme="DARK"
+                                style={styles.picker}
+                                containerStyle={styles.pickerInnerContainer}
+                                textStyle={styles.dropdownText}
+                                dropDownContainerStyle={
+                                    styles.dropdownContainer
+                                }
+                            />
+                            <Text className="ml-1" style={styles.text}>
+                                en
+                            </Text>
+                            <DropDownPicker
+                                open={locationOpen}
+                                value={locationValue}
+                                items={locationItems}
+                                setOpen={setLocationOpen}
+                                setValue={setLocationValue}
+                                setItems={setLocationItems}
+                                theme="DARK"
+                                style={styles.picker}
+                                containerStyle={styles.pickerInnerContainer}
+                                textStyle={styles.dropdownText}
+                                dropDownContainerStyle={
+                                    styles.dropdownContainer
+                                }
+                            />
+                        </View>
+                    </View>
+                    <FlatList
+                        data={filteredProjects}
+                        renderItem={renderItem}
+                        keyExtractor={(item) => item.id}
                     />
                 </View>
-                <View style={styles.column}>
-                    <Text style={styles.firstText}>
-                        Quiero ver voluntarios de
-                    </Text>
-                    <DropDownPicker
-                        open={volunteerOpen}
-                        value={volunteerValue}
-                        items={volunteerItems}
-                        setOpen={setVolunteerOpen}
-                        setValue={setVolunteerValue}
-                        setItems={setVolunteerItems}
-                        theme="DARK"
-                        style={styles.firstSelectPicker}
-                        containerStyle={styles.firstSelectPickerInnerContainer}
-                        textStyle={styles.dropdownText}
-                    />
-                </View>
-                <View style={styles.column}>
-                    <Text style={styles.text}>en formato</Text>
-                    <DropDownPicker
-                        open={formatOpen}
-                        value={formatValue}
-                        items={formatItems}
-                        setOpen={setFormatOpen}
-                        setValue={setFormatValue}
-                        setItems={setFormatItems}
-                        theme="DARK"
-                        style={styles.picker}
-                        containerStyle={styles.pickerInnerContainer}
-                        textStyle={styles.dropdownText}
-                    />
-                    <Text className="ml-1" style={styles.text}>
-                        en
-                    </Text>
-                    <DropDownPicker
-                        open={locationOpen}
-                        value={locationValue}
-                        items={locationItems}
-                        setOpen={setLocationOpen}
-                        setValue={setLocationValue}
-                        setItems={setLocationItems}
-                        theme="DARK"
-                        style={styles.picker}
-                        containerStyle={styles.pickerInnerContainer}
-                        textStyle={styles.dropdownText}
-                    />
-                </View>
-                <FlatList
-                    data={data}
-                    renderItem={renderItem}
-                    keyExtractor={(item) => item.id}
-                />
             </View>
-        </View>
+        </TouchableWithoutFeedback>
     );
 };
 
@@ -175,6 +242,10 @@ const styles = StyleSheet.create({
         zIndex: 1,
         marginTop: 7,
     },
+    dropdownContainer: {
+        position: "absolute",
+        zIndex: 1,
+    },
     dropdownText: {
         fontSize: 12,
     },
@@ -195,7 +266,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         padding: 2,
-        borderRadius: 20,
+        borderRadius: 22,
         marginBottom: 16,
     },
     searchInput: {
@@ -208,18 +279,6 @@ const styles = StyleSheet.create({
     searchIcon: {
         right: 12,
         position: "absolute",
-    },
-    headerContainer: {
-        backgroundColor: "lightgray",
-        height: 40,
-        alignItems: "flex-start",
-        justifyContent: "center",
-        borderRadius: 20,
-        marginBottom: 30,
-        left: 300,
-    },
-    headerContent: {
-        paddingHorizontal: 16,
     },
 });
 
