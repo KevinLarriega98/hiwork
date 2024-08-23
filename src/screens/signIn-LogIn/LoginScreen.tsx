@@ -28,6 +28,8 @@ const LoginScreen: React.FC = () => {
         }, 3000);
     };
 
+
+    
     return (
         <View className="flex-1 bg-white justify-between px-6 py-11">
             <View className=" justify-center items-center">
