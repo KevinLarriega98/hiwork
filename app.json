@@ -21,13 +21,13 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.juanjose02.HiWork"
+      "package": "com.juanjose02.HiWork",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "react-native-fbsdk-next"
-    ]
+    "plugins": ["@react-native-google-signin/google-signin"]
+
   }
 }

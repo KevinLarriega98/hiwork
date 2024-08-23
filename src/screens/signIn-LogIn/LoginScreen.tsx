@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { RootStackParamList } from "../../routes/LoginStackNavigation";
 import { FontAwesome } from "@expo/vector-icons";
 import useAuthStore from "../../context/useAuthStore";
+import { GoogleSignin, User } from "@react-native-google-signin/google-signin";
 
 type LoginScreenNavigationProp = NavigationProp<RootStackParamList, "Login">;
 
@@ -13,9 +14,17 @@ const LoginScreen: React.FC = () => {
 
     const [user, setUser] = useState({ email: "", password: "" });
     const [error, setError] = useState("");
+    const [dataUser, setDataUser] = useState<string | null>(null)
 
-    const handleLogin = async () => {
-        const savedUser = await login(user.email, user.password);
+    useEffect(() => {
+        GoogleSignin.configure({
+            webClientId: '645110135985-c3lnku3vs01djj28130p3chl8gv4kpft.apps.googleusercontent.com'
+        })
+    },[])
+
+
+    const handleLogin = async (idToken?:string | null) => {
+        const savedUser = await login(user.email, user.password, idToken);
         if (savedUser) {
             navigation.navigate("TabsBottom");
         } else {
@@ -28,14 +37,28 @@ const LoginScreen: React.FC = () => {
         }, 3000);
     };
 
+     
 
-    
+    // AÑADIR ESTAS LINEAS EN UN NUEVO DOCUMENTO
+         const signIn = async () => {
+            try {
+                await GoogleSignin.hasPlayServices()
+                const {idToken} = await GoogleSignin.signIn()
+                setDataUser(idToken)
+                handleLogin(idToken)
+            } catch (e) {
+                setError(e as string)
+            }
+        }
+
+        
     return (
         <View className="flex-1 bg-white justify-between px-6 py-11">
             <View className=" justify-center items-center">
                 <Text className="text-2xl font-bold mb-4">Inicia sesión</Text>
                 <Text className="text-base text-gray-600 text-center">
                     ¡Bienvenido de vuelta, te hemos extrañado!
+                    
                 </Text>
             </View>
 
@@ -45,6 +68,7 @@ const LoginScreen: React.FC = () => {
                     placeholder="Correo electrónico"
                     keyboardType="email-address"
                     autoCapitalize="none"
+                    //onChangeText captura el evento del texto, es mas eficiente
                     onChange={(e) =>
                         setUser({ ...user, email: e.nativeEvent.text })
                     }
@@ -55,6 +79,7 @@ const LoginScreen: React.FC = () => {
                     placeholder="Contraseña"
                     secureTextEntry
                     autoCapitalize="none"
+                    //onChangeText captura el evento del texto, es mas eficiente
                     onChange={(e) =>
                         setUser({ ...user, password: e.nativeEvent.text })
                     }
@@ -89,7 +114,10 @@ const LoginScreen: React.FC = () => {
             <View className="justify-center items-center">
                 <Text className="text-gray-600 mb-4">O continuar con</Text>
                 <View className="flex-row justify-center space-x-4">
-                    <TouchableOpacity className="bg-gray-200 p-3 rounded-[10px]">
+                    <TouchableOpacity 
+                        className="bg-gray-200 p-3 rounded-[10px]"
+                        onPress={signIn}
+                    >
                         <FontAwesome name="google" size={24} color="black" />
                     </TouchableOpacity>
                     <TouchableOpacity className="bg-gray-200 p-3 rounded-[10px]">
@@ -98,6 +126,7 @@ const LoginScreen: React.FC = () => {
                     <TouchableOpacity className="bg-gray-200 p-3 rounded-[10px]">
                         <FontAwesome name="apple" size={24} color="black" />
                     </TouchableOpacity>
+                    
                 </View>
             </View>
         </View>

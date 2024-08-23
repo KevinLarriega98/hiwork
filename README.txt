@@ -28,3 +28,10 @@ Comand: npx start run:ios
 --CurrentUser información de la db del usuario logged auth store--
 -- User es el auth de firebase --
 -- UserType es el tipo de usuario (Voluntario o ONG) --
+
+
+### LOGIN WITH GOOGLE
+- se añade al boton de login con google el inicio de sesion con google
+- queda pendiente crear un perfil de usuario en la base de datos
+- queda pendiente asignar el tipo de usuario
+- se debe mostrar los datos del usuario guardados en firestore no en auth 
