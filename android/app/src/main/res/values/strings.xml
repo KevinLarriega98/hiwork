@@ -1,5 +1,7 @@
 <resources>
   <string name="app_name">HiWork</string>
+  <string name="facebook_app_id">540851738296210</string>
+  <string name="facebook_client_token">a6b6b1caff5a2708a8d1ff29e7acff03</string>
   <string name="expo_splash_screen_resize_mode" translatable="false">contain</string>
   <string name="expo_splash_screen_status_bar_translucent" translatable="false">false</string>
 </resources>
