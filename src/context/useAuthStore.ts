@@ -9,8 +9,10 @@ import {
 } from "../service/api/authService";
 import { AuthState, AuthActions } from "../types/auth";
 import { UserActions, UserState } from "../types/profile";
+import auth from '@react-native-firebase/auth';
+import { User } from "firebase/auth";
 
-const useAuthStore = create<AuthState & AuthActions>((set) => ({
+const useAuthStore = create<AuthState & AuthActions>()((set) => ({
     user: null,
     token: null,
     isAuthenticated: false,
@@ -28,10 +30,30 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
         set({ user: null, token: null, isAuthenticated: false });
     },
 
-    login: async (email: string, password: string) => {
+    login: async (email, password, idToken) => {
+        
+        if (idToken) {
+            try {
+                const googleCredential = auth.GoogleAuthProvider.credential(idToken)
+                const userAuth = auth().signInWithCredential(googleCredential)
+                set({
+                    user: { ...userAuth },
+                    isAuthenticated: !!userAuth,
+                });
+                return userAuth as unknown as User
+            } catch (error) {
+                console.error(error);
+                return null
+            }
+            
+        }
+        
         try {
             const user = await login(email, password);
+            console.log("esta es la login con password and email",user) 
+                       
             if (user) {
+                console.log("esta se envia a firebase ya logeado",user)
                 const userData = await getUserDataFromFirestore(user);
 
                 console.log(userData);

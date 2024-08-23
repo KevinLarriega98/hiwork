@@ -8,6 +8,7 @@ import {
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, db } from "./firebase";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 export const getUserDataFromFirestore = async (user: User) => {
     const collections = ["Voluntarios", "ONGs"];
@@ -22,14 +23,20 @@ export const getUserDataFromFirestore = async (user: User) => {
     throw new Error("No data found for the user.");
 };
 
-export const login = async (email: string, password: string): Promise<User> => {
-    const userCredential = await signInWithEmailAndPassword(
+export const login = async (email: string, password: string): Promise<User | null > => {
+    
+    try {
+        const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
         password
     );
-
     return userCredential.user;
+    } catch (error) {
+        return null
+    }
+
+    
 };
 
 export const register = async (
@@ -66,6 +73,8 @@ export const register = async (
 };
 
 export const logout = async (): Promise<void> => {
+    GoogleSignin.revokeAccess()
+    GoogleSignin.signOut()
     await signOut(auth);
 };
 

@@ -14,7 +14,7 @@ export interface AuthActions {
     setUser: (user: UserActions | null) => void;
     setToken: (token: string | null) => void;
     logout: (navigateToHome: () => void) => Promise<void>;
-    login: (email: string, password: string) => Promise<User | null>;
+    login: (email: string, password: string, idToken?: string | null) => Promise<User | null>;
     register: (
         email: string,
         password: string,
