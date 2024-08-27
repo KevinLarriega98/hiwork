@@ -27,6 +27,9 @@ import {
 } from "../../util/loginStepsAndUtils";
 import useUserStore from "../../context/useRegisterStore";
 import useAuthStore from "../../context/useAuthStore";
+import { useAuthState } from "../../context/globalAuthState";
+import { registerProvider } from "../../service/api/authService";
+import auth from "@react-native-firebase/auth";
 
 type TabsBottomScreenNavigationProp = NavigationProp<
     RootStackParamList,
@@ -42,13 +45,18 @@ const RegistrationApp: React.FC = () => {
     const route = useRoute<RegistrationAppRouteProp>();
     const { profileType } = route.params;
     const navigation = useNavigation<TabsBottomScreenNavigationProp>();
+    const { isRegister } = useAuthState()
 
     const { width } = useWindowDimensions();
     const scrollX = useRef(new Animated.Value(0)).current;
     const flatListRef = useRef<FlatList<any>>(null);
     const [activeIndex, setActiveIndex] = useState(0);
     const register = useAuthStore((state) => state.register);
-    const [formData, setFormData] = useState<{ [key: string]: string }>({});
+    //cambio de estado para acceder al tabsbottom
+    const {setIsAuthenticated, isAuthenticated} = useAuthStore();
+    //-----------------------------------------------
+    const userName = auth().currentUser?.displayName
+    const [formData, setFormData] = useState<any>(() => userName && {["1"]: userName});
     const [selectedOptions, setSelectedOptions] = useState<{
         [key: string]: string;
     }>({});
@@ -57,6 +65,8 @@ const RegistrationApp: React.FC = () => {
     const { setName, setDiscipline, setTypeOfProjects, clearSensitiveData } =
         useUserStore();
 
+    
+    
     const REGISTRATION_STEPS =
         profileType === "Voluntario"
             ? StepItem.REGISTRATION_STEPS_VOLUNTARIO
@@ -77,26 +87,52 @@ const RegistrationApp: React.FC = () => {
     };
 
     const handleRegister = async () => {
+        
         try {
-            const {
-                email,
-                password,
-                profileType: type,
-                name,
-                discipline,
-                typeOfProjects,
-            } = useUserStore.getState();
+            if (isRegister) {
+                const {
+                    profileType: type,
+                    discipline,
+                    typeOfProjects,
 
-            const user = await register(
-                email,
-                password,
-                type,
-                name,
-                discipline,
-                typeOfProjects
-            );
+                } = useUserStore.getState();
+                const {nameProvider, emailProvider} = useAuthState.getState()
 
-            console.log("Registered successfully", user);
+                console.log("linea 90 doc. registerUserScreen.tsx 111111111",isRegister)
+                const user = await register(
+                    emailProvider as string,
+                    "confidencial",
+                    profileType,
+                    nameProvider as string,
+                    discipline,
+                    typeOfProjects,
+                    true,
+                );
+                console.log("Registered successfully by provider", user);
+
+            }else {
+                const {
+                    email,
+                    password,
+                    profileType: type,
+                    name,
+                    discipline,
+                    typeOfProjects,
+
+                } = useUserStore.getState();
+
+                const user = await register(
+                    email,
+                    password,
+                    type,
+                    name,
+                    discipline,
+                    typeOfProjects
+                );
+                console.log("Registered successfully", user);
+            }
+            
+
 
             clearSensitiveData();
 

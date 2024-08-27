@@ -16,6 +16,7 @@ const PerfilTabScreen = () => {
     const navigateToHome = () => {
         navigation.navigate("Home");
     };
+    console.log(user)
 
     return (
         <ScrollView className="flex-1 bg-white">

@@ -7,6 +7,7 @@ import {
     User,
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
+import Auth from '@react-native-firebase/auth'
 import { auth, db } from "./firebase";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
@@ -18,7 +19,7 @@ export const getUserDataFromFirestore = async (user: User) => {
 
         if (docSnap.exists()) {
             return docSnap.data();
-        }
+        }else return null
     }
     throw new Error("No data found for the user.");
 };
@@ -69,6 +70,32 @@ export const register = async (
     });
 
     return user;
+};
+
+export const registerProvider = async (
+    email: string,
+    profileType: string,
+    name: string,
+    discipline: string,
+    typeOfProjects: string
+): Promise<User> => {
+   
+
+    const user = Auth().currentUser;
+
+
+    if (user) {
+            const docRef = doc(db, profileType + "s", user.uid);
+            await setDoc(docRef, {
+            email: email,
+            profileType: profileType,
+            name: name,
+            discipline: discipline,
+            typeOfProjects: typeOfProjects,
+        });
+
+    }
+    return user as unknown as User;
 };
 
 export const logout = async (): Promise<void> => {

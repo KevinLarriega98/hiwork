@@ -3,6 +3,7 @@ import { Pressable, Text, View } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { RootStackParamList } from "../../routes/LoginStackNavigation";
 import useUserStore from "../../context/useRegisterStore";
+import { useAuthState } from "../../context/globalAuthState";
 
 type RegisterTypeUserScreenNavigationProp = NavigationProp<
     RootStackParamList,
@@ -13,11 +14,19 @@ const RegisterTypeUser = () => {
     const navigation = useNavigation<RegisterTypeUserScreenNavigationProp>();
 
     const { setProfileType } = useUserStore();
+    const { isRegister, setProfileTypeGoogle } = useAuthState() 
 
     const handleTypeUser = (type: "Voluntario" | "ONG") => {
-        type === "Voluntario"
+        
+        if (isRegister) {
+            type === "Voluntario"
+            ? setProfileTypeGoogle("Voluntario")
+            : setProfileTypeGoogle("ONG");
+        } else {
+            type === "Voluntario"
             ? setProfileType("Voluntario")
             : setProfileType("ONG");
+        }
 
         navigation.navigate("RegisterUserScreens", {
             profileType: type,

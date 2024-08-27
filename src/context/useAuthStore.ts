@@ -6,6 +6,7 @@ import {
     logout,
     initializeAuth,
     getUserDataFromFirestore,
+    registerProvider,
 } from "../service/api/authService";
 import { AuthState, AuthActions } from "../types/auth";
 import { UserActions, UserState } from "../types/profile";
@@ -17,12 +18,14 @@ const useAuthStore = create<AuthState & AuthActions>()((set) => ({
     token: null,
     isAuthenticated: false,
     userType: null as "Voluntario" | "ONG" | null,
+    registerRequired: false,
     currentUser: null,
     setUser: (user: UserActions | null) =>
         set({ user, isAuthenticated: !!user }),
     setToken: (token: string | null) => set({ token }),
     setUserType: (userType: "Voluntario" | "ONG" | null) => set({ userType }),
     setCurrentUser: (currentUser: UserState | null) => set({ currentUser }),
+    setIsAuthenticated: (value: boolean) => set({isAuthenticated: value}),
 
     logout: async (navigateToHome: () => void) => {
         await logout();
@@ -30,19 +33,20 @@ const useAuthStore = create<AuthState & AuthActions>()((set) => ({
         set({ user: null, token: null, isAuthenticated: false });
     },
 
-    login: async (email, password, idToken) => {
+    login: async (email, password, isProvider) => {
         
-        if (idToken) {
+        if (isProvider) {
             try {
-                const googleCredential = auth.GoogleAuthProvider.credential(idToken)
-                const userAuth = auth().signInWithCredential(googleCredential)
+                const userAuth = auth().currentUser
+                const userData = await getUserDataFromFirestore(userAuth as unknown as User);
                 set({
                     user: { ...userAuth },
                     isAuthenticated: !!userAuth,
+                    userType: userData.profileType,
+                    currentUser: userData,
                 });
-                return userAuth as unknown as User
+                return userAuth
             } catch (error) {
-                console.error(error);
                 return null
             }
             
@@ -50,13 +54,12 @@ const useAuthStore = create<AuthState & AuthActions>()((set) => ({
         
         try {
             const user = await login(email, password);
-            console.log("esta es la login con password and email",user) 
                        
             if (user) {
                 console.log("esta se envia a firebase ya logeado",user)
                 const userData = await getUserDataFromFirestore(user);
 
-                console.log(userData);
+               
                 set({
                     user: { ...user },
                     isAuthenticated: !!user,
@@ -76,29 +79,56 @@ const useAuthStore = create<AuthState & AuthActions>()((set) => ({
         profileType: string,
         name: string,
         discipline: string,
-        typeOfProjects: string
+        typeOfProjects: string,
+        isProvider?: boolean,
     ) => {
         try {
-            const user = await register(
-                email,
-                password,
-                profileType,
-                name,
-                discipline,
-                typeOfProjects
-            );
-            if (user) {
-                const userData = await getUserDataFromFirestore(user);
+            if (isProvider) {
 
-                console.log(userData);
-                set({
-                    user: { ...user },
-                    isAuthenticated: !!user,
-                    userType: userData.profileType,
-                    currentUser: userData,
-                });
+                const user = await registerProvider(
+                    email,
+                    profileType,
+                    name,
+                    discipline,
+                    typeOfProjects
+                );
+                
+                if (user) {
+                    const userData = await getUserDataFromFirestore(user);
+
+                    console.log(userData);
+                    set({
+                        user: { ...user },
+                        isAuthenticated: !!user,
+                        userType: userData.profileType,
+                        currentUser: userData,
+                    });
+                }
+                return user;
+                
+            } else {
+                const user = await register(
+                    email,
+                    password,
+                    profileType,
+                    name,
+                    discipline,
+                    typeOfProjects
+                );
+                
+                if (user) {
+                    const userData = await getUserDataFromFirestore(user);
+
+                    console.log(userData);
+                    set({
+                        user: { ...user },
+                        isAuthenticated: !!user,
+                        userType: userData.profileType,
+                        currentUser: userData,
+                    });
+                }
+                return user; 
             }
-            return user;
         } catch (error) {
             console.error(error);
             return null;

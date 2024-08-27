@@ -5,11 +5,26 @@ import { RootStackParamList } from "../../routes/LoginStackNavigation";
 import { FontAwesome } from "@expo/vector-icons";
 import useAuthStore from "../../context/useAuthStore";
 import { GoogleSignin, User } from "@react-native-google-signin/google-signin";
+import { LoginManager, AccessToken } from "react-native-fbsdk-next";
+//import { auth } from "../../service/api/firebase";
+import auth, { type FirebaseAuthTypes } from "@react-native-firebase/auth";
+import { withProvider } from "../../service/api/auth/authProviders";
+import { logout } from "../../service/api/authService";
+import { useAuthState } from "../../context/globalAuthState";
 
 type LoginScreenNavigationProp = NavigationProp<RootStackParamList, "Login">;
 
 const LoginScreen: React.FC = () => {
     const login = useAuthStore((state) => state.login);
+    //cambio de estado para acceder al tabsbottom
+    const setIsAuthenticated = useAuthStore((state) => state.setIsAuthenticated);
+    //-----------------------------------------------
+    const {setIsRegister, isRegister, setIdToken} = useAuthState((state) => ({
+            setIsRegister: state.setIsRegister, 
+            isRegister: state.isRegister,
+            setIdToken: state.setIdToken,
+        }))
+
     const navigation = useNavigation<LoginScreenNavigationProp>();
 
     const [user, setUser] = useState({ email: "", password: "" });
@@ -23,8 +38,8 @@ const LoginScreen: React.FC = () => {
     },[])
 
 
-    const handleLogin = async (idToken?:string | null) => {
-        const savedUser = await login(user.email, user.password, idToken);
+    const handleLogin = async (isProvider?: boolean) => {
+        const savedUser = await login(user.email, user.password, isProvider);
         if (savedUser) {
             navigation.navigate("TabsBottom");
         } else {
@@ -37,19 +52,55 @@ const LoginScreen: React.FC = () => {
         }, 3000);
     };
 
-     
-
     // AÑADIR ESTAS LINEAS EN UN NUEVO DOCUMENTO
+
+
+        const registrationControl = (needRegister: any) => {
+            if (!needRegister) {
+                    setIsRegister(false)
+                    handleLogin(true)
+                    navigation.navigate("TabsBottom")
+                } else {
+                    setIsRegister(true)
+                    navigation.navigate("RegisterTypeUser")
+                }
+        }
+
          const signIn = async () => {
             try {
                 await GoogleSignin.hasPlayServices()
                 const {idToken} = await GoogleSignin.signIn()
-                setDataUser(idToken)
-                handleLogin(idToken)
+                setIdToken(idToken)
+                const googleCredential = auth.GoogleAuthProvider.credential(idToken)
+                const userAuth = await auth().signInWithCredential(googleCredential)
+                
+                
+                const needRegister = await withProvider(idToken)
+                registrationControl(needRegister)
             } catch (e) {
                 setError(e as string)
             }
         }
+
+        const onFacebookButtonPress = async () => {
+            const result = await LoginManager.logInWithPermissions(['public_profile']);
+
+            if (result.isCancelled) {
+                throw 'User cancelled the login process';
+            }
+
+            const data = await AccessToken.getCurrentAccessToken();
+
+            if (!data) {
+                throw 'Something went wrong obtaining access token';
+            }
+            auth.FacebookAuthProvider.credential(data.accessToken);
+            const needRegister = await withProvider(data.accessToken)
+            console.log(needRegister)
+            registrationControl(needRegister)
+        }
+
+        // NOTA CON MAS DE UNA FORMA DE LOGEARSE ES IMPORTANTE MANEJAR EL ERROR QUE PUEDE ARROJAR SI EL USUARIO CON EL MISMO CORREO INTENTA LOGEARSE POR LOS DIFERENTES PROVIDERS este error lanza el codigo ***14*** 
 
         
     return (
@@ -120,10 +171,14 @@ const LoginScreen: React.FC = () => {
                     >
                         <FontAwesome name="google" size={24} color="black" />
                     </TouchableOpacity>
-                    <TouchableOpacity className="bg-gray-200 p-3 rounded-[10px]">
+                    <TouchableOpacity className="bg-gray-200 p-3 rounded-[10px]"
+                        onPress={onFacebookButtonPress}
+                    >
                         <FontAwesome name="facebook" size={24} color="black" />
                     </TouchableOpacity>
-                    <TouchableOpacity className="bg-gray-200 p-3 rounded-[10px]">
+                    <TouchableOpacity className="bg-gray-200 p-3 rounded-[10px]"
+                        onPress={logout}
+                    >
                         <FontAwesome name="apple" size={24} color="black" />
                     </TouchableOpacity>
                     
