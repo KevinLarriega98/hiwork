@@ -2,8 +2,6 @@ import {
     View,
     Text,
     FlatList,
-    ActivityIndicator,
-    StyleSheet,
     RefreshControl,
     TouchableOpacity,
 } from "react-native";
@@ -69,7 +67,41 @@ const ProyectosTabScreen = () => {
         navigation.navigate("Project", { project });
     };
 
+    const calculateWeeksRange = (datesArray: string[]) => {
+        if (Array.isArray(datesArray) && datesArray.length > 0) {
+            try {
+                const dates = datesArray.map((date) => new Date(date));
+
+                const validDates = dates.filter(
+                    (date) => !isNaN(date.getTime())
+                );
+
+                if (validDates.length > 0) {
+                    const firstDate = validDates[0];
+                    const lastDate = validDates[validDates.length - 1];
+
+                    // Calcular la diferencia en semanas
+                    const timeDiff = lastDate.getTime() - firstDate.getTime();
+                    const diffWeeks = Math.ceil(
+                        timeDiff / (1000 * 60 * 60 * 24 * 7)
+                    );
+
+                    const minWeeks = 1;
+                    const maxWeeks = Math.max(minWeeks, diffWeeks);
+                    return `${minWeeks}-${maxWeeks} weeks`;
+                }
+            } catch (error) {
+                console.error("Error calculating weeks range:", error);
+            }
+        }
+        return "No valid dates";
+    };
+
     const renderItem = ({ item }: { item: any }) => {
+        const weeksRange = item.objectiveTimeline
+            ? calculateWeeksRange(item.objectiveTimeline)
+            : "No dates available";
+
         return (
             <TouchableOpacity
                 className="bg-[#e6e6e6] p-4 rounded-2xl mb-4 w-[48%]"
@@ -106,9 +138,7 @@ const ProyectosTabScreen = () => {
                             color={"#7f7f7f"}
                             size={18}
                         />
-                        <Text className="text-gray-500 mr-2">
-                            {item.objectiveTimeline}
-                        </Text>
+                        <Text className="text-gray-500 mr-2">{weeksRange}</Text>
                     </View>
                     <View className="flex flex-row items-center mb-1">
                         <MaterialCommunityIcons

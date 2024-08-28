@@ -9,7 +9,7 @@ const useProjectStore = create<ProjectActions & ProjectState>((set) => ({
     ongName: "",
     title: "",
     description: "",
-    objectiveTimeline: "",
+    objectiveTimeline: [],
     createdAt: null,
     updatedAt: null,
     remote: false,
@@ -28,7 +28,7 @@ const useProjectStore = create<ProjectActions & ProjectState>((set) => ({
         ongName: string,
         title: string,
         description: string,
-        objectiveTimeline: string,
+        objectiveTimeline: string[],
         remote: boolean
     ) => {
         try {

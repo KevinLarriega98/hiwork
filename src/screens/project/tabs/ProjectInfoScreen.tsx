@@ -1,5 +1,3 @@
-// screens/project/tabs/ProjectInfoScreen.tsx
-
 import React, { useEffect, useState } from "react";
 import {
     View,
@@ -7,7 +5,6 @@ import {
     FlatList,
     ActivityIndicator,
     Alert,
-    Button,
     Pressable,
 } from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
@@ -29,7 +26,11 @@ const ProjectInfoScreen = () => {
     const updatedAtDate = project.updatedAt ? project.updatedAt.toDate() : null;
 
     useEffect(() => {
-        if (userType === "ONG" && currentUser?.uid === project.ongID) {
+        if (
+            userType === "ONG" &&
+            currentUser?.uid === project.ongID &&
+            project.id
+        ) {
             try {
                 return getApplications(project.id, (apps) => {
                     setApplications(apps);

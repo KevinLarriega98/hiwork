@@ -15,7 +15,7 @@ export const createProject = async (
     ongName: string,
     title: string,
     description: string,
-    objectiveTimeline: string,
+    objectiveTimeline: string[],
     remote: boolean
 ): Promise<any> => {
     const project = {

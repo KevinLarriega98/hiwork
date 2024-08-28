@@ -48,7 +48,9 @@ const ProjectTabsNavigation = ({ project }: { project: ProjectState }) => {
             </Tab.Navigator>
 
             {userType === "Voluntario" && (
-                <ApplyToProjectButton projectID={project.id} />
+                <ApplyToProjectButton
+                    projectID={project.id ? project.id : ""}
+                />
             )}
         </View>
     );
