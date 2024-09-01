@@ -15,13 +15,14 @@ export const withProvider = async (idToken: string | null) => {
   if (idToken != null) {
    
     const userAuth = auth()?.currentUser as unknown as User
-    console.log(userAuth)
+    console.log(" line 18 doc authProvider", userAuth)
     const userData = await getUserDataFromFirestore(userAuth);
-    console.log('sdsdasd',userData)
+    console.log(" line 20 doc authProvider",userData)
     setNameProvider(userAuth.displayName)
     setEmailProvider(userAuth.email)
-    if (userData != null) {
+    if (userData) {
       //navigation.navigate("TabsBottom")
+      setIsRegister(false)
       console.log("se ejecuta")
       return false
     } else {

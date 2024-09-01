@@ -57,7 +57,7 @@ const LoginStackNavigation = () => {
             <Stack.Screen
                 name="RegisterTypeUser"
                 component={withSafeArea(RegisterTypeUser)}
-            />
+            />  
             <Stack.Screen
                 name="RegisterUserScreens"
                 component={withSafeArea(RegisterUserScreens)}

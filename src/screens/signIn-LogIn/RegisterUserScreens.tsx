@@ -91,18 +91,17 @@ const RegistrationApp: React.FC = () => {
         try {
             if (isRegister) {
                 const {
-                    profileType: type,
                     discipline,
                     typeOfProjects,
 
                 } = useUserStore.getState();
-                const {nameProvider, emailProvider} = useAuthState.getState()
+                const {nameProvider, emailProvider, profileTypeGoogle} = useAuthState.getState()
 
                 console.log("linea 90 doc. registerUserScreen.tsx 111111111",isRegister)
                 const user = await register(
                     emailProvider as string,
                     "confidencial",
-                    profileType,
+                    profileTypeGoogle,
                     nameProvider as string,
                     discipline,
                     typeOfProjects,

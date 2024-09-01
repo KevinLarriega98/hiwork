@@ -66,15 +66,13 @@ const LoginScreen: React.FC = () => {
                 }
         }
 
-         const signIn = async () => {
+         const onGoogleButtonPress = async () => {
             try {
                 await GoogleSignin.hasPlayServices()
                 const {idToken} = await GoogleSignin.signIn()
                 setIdToken(idToken)
                 const googleCredential = auth.GoogleAuthProvider.credential(idToken)
-                const userAuth = await auth().signInWithCredential(googleCredential)
-                
-                
+                await auth().signInWithCredential(googleCredential)
                 const needRegister = await withProvider(idToken)
                 registrationControl(needRegister)
             } catch (e) {
@@ -167,7 +165,7 @@ const LoginScreen: React.FC = () => {
                 <View className="flex-row justify-center space-x-4">
                     <TouchableOpacity 
                         className="bg-gray-200 p-3 rounded-[10px]"
-                        onPress={signIn}
+                        onPress={onGoogleButtonPress}
                     >
                         <FontAwesome name="google" size={24} color="black" />
                     </TouchableOpacity>

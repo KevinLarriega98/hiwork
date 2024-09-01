@@ -16,10 +16,10 @@ export const getUserDataFromFirestore = async (user: User) => {
     for (const collectionName of collections) {
         const docRef = doc(db, collectionName, user.uid);
         const docSnap = await getDoc(docRef);
-
+        
         if (docSnap.exists()) {
             return docSnap.data();
-        }else return null
+        }
     }
     throw new Error("No data found for the user.");
 };

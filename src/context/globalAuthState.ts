@@ -3,7 +3,7 @@ import { create } from "zustand"
 type Store = {
   idToken: string | null;
   isRegister: boolean;
-  profileTypeGoogle: String;
+  profileTypeGoogle: string;
   emailProvider: string | null,
   nameProvider: string | null,
   setIsRegister: (value: boolean) => void;
