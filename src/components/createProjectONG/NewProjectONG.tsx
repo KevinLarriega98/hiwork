@@ -19,7 +19,7 @@ const NewProjectONG = () => {
 
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
-    const [objectiveTimeline, setObjectiveTimeline] = useState<string[]>([]); // Cambiado a `string[]`
+    const [objectiveTimeline, setObjectiveTimeline] = useState<string[]>([]);
     const [remote, setRemote] = useState(false);
 
     const [markedDates, setMarkedDates] = useState<MarkedDatesType>({});
