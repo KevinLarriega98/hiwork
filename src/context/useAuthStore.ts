@@ -65,6 +65,7 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
                 discipline,
                 typeOfProjects
             );
+
             if (user) {
                 const userData = await getUserDataFromFirestore(user);
 
@@ -75,11 +76,17 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
                     userType: userData.profileType,
                     currentUser: { ...userData, uid: user.uid },
                 });
+
+                return user;
             }
-            return user;
-        } catch (error) {
-            console.error(error);
             return null;
+        } catch (error) {
+            set({
+                isAuthenticated: false,
+                user: null,
+            });
+
+            throw error;
         }
     },
 

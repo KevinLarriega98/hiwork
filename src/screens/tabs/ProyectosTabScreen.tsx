@@ -16,6 +16,8 @@ import { ProjectState } from "../../types/project";
 
 import { RootStackParamList } from "../../routes/LoginStackNavigation";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { saveProjectUser } from "../../service/api/projectService";
+import useAuthStore from "../../context/useAuthStore";
 
 type ProjectDetailScreenNavigationProp = NavigationProp<
     RootStackParamList,
@@ -24,6 +26,8 @@ type ProjectDetailScreenNavigationProp = NavigationProp<
 
 const ProyectosTabScreen = () => {
     const navigation = useNavigation<ProjectDetailScreenNavigationProp>();
+
+    const { user, currentUser } = useAuthStore();
 
     const { fetchProjects } = useProjectStore((state) => ({
         fetchProjects: state.fetchProjects,
@@ -113,24 +117,29 @@ const ProyectosTabScreen = () => {
                             Design ux/ui
                         </Text>
                     </View>
-                    <BookMarkSVG />
+                    <TouchableOpacity
+                        //FIXME de momento esta disabled que nose que hacer con el pero algo voy a hacer en el futuro
+
+                        className="flex flex-row gap-1 items-center mb-2 z-30 "
+                        onPress={() =>
+                            saveProjectUser(item.id, currentUser?.uid)
+                        }
+                    >
+                        <BookMarkSVG />
+                    </TouchableOpacity>
                 </View>
                 <Text className="text-xl font-medium mb-1 text-black">
                     {item.title}
                 </Text>
-                <TouchableOpacity
-                    //FIXME de momento esta disabled que nose que hacer con el pero algo voy a hacer en el futuro
-                    disabled
-                    className="flex flex-row gap-1 items-center mb-2 z-30 "
-                    onPress={() => console.log("pinga")}
-                >
+
+                <View>
                     <MaterialCommunityIcons
                         name="checkbox-blank-circle"
                         color={"black"}
                         size={18}
                     />
                     <Text className="text-gray-500">{item.ongName}</Text>
-                </TouchableOpacity>
+                </View>
                 <View className="flex flex-col items-start mb-1">
                     <View className="flex flex-row items-center mb-1">
                         <MaterialCommunityIcons

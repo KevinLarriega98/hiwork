@@ -96,11 +96,14 @@ const RegistrationApp: React.FC = () => {
                 typeOfProjects
             );
 
-            console.log("Registered successfully", user);
+            if (user) {
+                console.log("Registered successfully", user);
+                clearSensitiveData();
 
-            clearSensitiveData();
-
-            navigation.navigate("TabsBottom");
+                navigation.navigate("TabsBottom");
+            } else {
+                throw new Error("Unknown error occurred during registration.");
+            }
         } catch (error) {
             if (error instanceof Error) {
                 setError(error.message);
@@ -121,6 +124,7 @@ const RegistrationApp: React.FC = () => {
             <Text className="text-center text-black text-sm font-normal">
                 ¡Queremos saber de ti!
             </Text>
+
             <FlatList
                 data={REGISTRATION_STEPS}
                 keyExtractor={keyExtractor}
@@ -160,6 +164,11 @@ const RegistrationApp: React.FC = () => {
                     setActiveIndex(index);
                 }}
             />
+            {error && (
+                <Text className="text-red-500 text-xl text-center">
+                    {error}
+                </Text>
+            )}
             <View className="items-center mb-7">
                 <ExpandingDot
                     data={REGISTRATION_STEPS}

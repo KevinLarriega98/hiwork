@@ -7,6 +7,9 @@ import {
     query,
     where,
     onSnapshot,
+    setDoc,
+    arrayUnion,
+    updateDoc,
 } from "firebase/firestore";
 import { db } from "./firebase";
 
@@ -113,5 +116,31 @@ export const getApplications = (
     } catch (error) {
         console.error("Error al escuchar las aplicaciones:", error);
         throw new Error("No se pudo escuchar las aplicaciones.");
+    }
+};
+
+export const saveProjectUser = async (
+    projectID: string,
+    userID: string
+): Promise<string> => {
+    try {
+        const savedProjectsColRef = collection(
+            doc(db, "Voluntarios", userID),
+            "savedProjects"
+        );
+
+        const docRef = await addDoc(savedProjectsColRef, {
+            projectID: projectID,
+        });
+        console.log(
+            "Proyecto guardado exitosamente en la subcolección 'savedProjects' del perfil del voluntario."
+        );
+        return docRef.id;
+    } catch (error) {
+        console.error(
+            "Error al guardar proyecto en la subcolección 'savedProjects'",
+            error
+        );
+        throw new Error("No se pudo guardar el proyecto en la subcolección.");
     }
 };
