@@ -21,6 +21,7 @@ export const getUserDataFromFirestore = async (user: User) => {
             return docSnap.data();
         }
     }
+    return null
     throw new Error("No data found for the user.");
 };
 
@@ -101,6 +102,7 @@ export const registerProvider = async (
 export const logout = async (): Promise<void> => {
     GoogleSignin.revokeAccess()
     GoogleSignin.signOut()
+    Auth().signOut()
     await signOut(auth);
 };
 

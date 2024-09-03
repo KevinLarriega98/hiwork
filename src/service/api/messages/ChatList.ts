@@ -4,7 +4,8 @@ import { getArrayFromCollection } from "../../../util/getArrayFromCollectionFire
 
 
 export const getAllConversation = (collectioName: string, docName: string) => {
-  const colRef = collection(db, collectioName, docName, "chat")
+  console.log(collectioName)
+  const colRef = collection(db, collectioName + "s", docName, "chat")
   const res = getDocs(colRef)
   return getArrayFromCollection(res)
 }

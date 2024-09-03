@@ -3,9 +3,11 @@ import React, { useEffect, useState } from "react";
 import useAuthStore from "../../context/useAuthStore";
 import useProjectStore from "../../context/useProjectStore";
 import BellComponent from "../../components/Projects/BellComponent";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "../../routes/LoginStackNavigation";
 
 const HomeTabScreen = () => {
-    const { user, userType } = useAuthStore();
+    const { user, userType} = useAuthStore();
 
     const { createProject } = useProjectStore((state) => ({
         createProject: state.createProject,

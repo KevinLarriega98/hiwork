@@ -12,6 +12,7 @@ import { AuthState, AuthActions } from "../types/auth";
 import { UserActions, UserState } from "../types/profile";
 import auth from '@react-native-firebase/auth';
 import { User } from "firebase/auth";
+import { setChatData } from "../util/setChatData";
 
 const useAuthStore = create<AuthState & AuthActions>()((set) => ({
     user: null,
@@ -37,15 +38,16 @@ const useAuthStore = create<AuthState & AuthActions>()((set) => ({
         
         if (isProvider) {
             try {
-                const userAuth = auth().currentUser
-                const userData = await getUserDataFromFirestore(userAuth as unknown as User);
+                const userAuthGoogle = auth().currentUser
+                const userData = await getUserDataFromFirestore(userAuthGoogle as unknown as User);
                 set({
-                    user: { ...userAuth },
-                    isAuthenticated: !!userAuth,
+                    user: { ...userAuthGoogle },
+                    isAuthenticated: !!userAuthGoogle,
                     userType: userData?.profileType,
                     currentUser: userData,
                 });
-                return userAuth
+                setChatData(userAuthGoogle?.uid, userData?.profileType)
+                return userAuthGoogle
             } catch (error) {
                 return null
             }
@@ -66,7 +68,9 @@ const useAuthStore = create<AuthState & AuthActions>()((set) => ({
                     userType: userData?.profileType,
                     currentUser: userData,
                 });
+                setChatData(user.uid, userData?.profileType)
             }
+            
             return user;
         } catch (error) {
             console.error(error);
@@ -96,7 +100,7 @@ const useAuthStore = create<AuthState & AuthActions>()((set) => ({
                 if (user) {
                     const userData = await getUserDataFromFirestore(user);
 
-                    console.log(userData);
+                    console.log("line 99 doc useAuthStore",userData);
                     set({
                         user: { ...user },
                         isAuthenticated: !!user,
@@ -119,11 +123,10 @@ const useAuthStore = create<AuthState & AuthActions>()((set) => ({
                 if (user) {
                     const userData = await getUserDataFromFirestore(user);
 
-                    console.log(userData);
                     set({
                         user: { ...user },
                         isAuthenticated: !!user,
-                        userType: userData.profileType,
+                        userType: userData?.profileType,
                         currentUser: userData,
                     });
                 }

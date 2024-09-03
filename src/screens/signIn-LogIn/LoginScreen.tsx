@@ -29,7 +29,6 @@ const LoginScreen: React.FC = () => {
 
     const [user, setUser] = useState({ email: "", password: "" });
     const [error, setError] = useState("");
-    const [dataUser, setDataUser] = useState<string | null>(null)
 
     useEffect(() => {
         GoogleSignin.configure({
@@ -76,8 +75,13 @@ const LoginScreen: React.FC = () => {
                 const needRegister = await withProvider(idToken)
                 registrationControl(needRegister)
             } catch (e) {
-                setError(e as string)
+                setError("No se ha podido iniciar sesion")
+                console.log("line 79 doc loginScreen",e)
+                setTimeout(() => {
+                    setError("");
+                }, 3000);
             }
+
         }
 
         const onFacebookButtonPress = async () => {
@@ -94,7 +98,6 @@ const LoginScreen: React.FC = () => {
             }
             auth.FacebookAuthProvider.credential(data.accessToken);
             const needRegister = await withProvider(data.accessToken)
-            console.log(needRegister)
             registrationControl(needRegister)
         }
 
