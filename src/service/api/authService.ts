@@ -1,4 +1,5 @@
 import {
+    sendPasswordResetEmail,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     signOut,
@@ -76,4 +77,14 @@ export const logout = async (): Promise<void> => {
 
 export const initializeAuth = (callback: (user: User | null) => void): void => {
     onAuthStateChanged(auth, callback);
+};
+
+export const sendPasswordResetEmailAuth = async (
+    email: string
+): Promise<void> => {
+    try {
+        await sendPasswordResetEmail(auth, email);
+    } catch (error) {
+        console.log(error);
+    }
 };

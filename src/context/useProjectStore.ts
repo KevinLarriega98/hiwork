@@ -28,7 +28,13 @@ const useProjectStore = create<ProjectActions & ProjectState>((set) => ({
         ongName: string,
         title: string,
         description: string,
-        objectiveTimeline: string[],
+        objectiveTimeline: {
+            date: string;
+            name: string;
+            data: string;
+            height: number;
+            day: string;
+        }[],
         remote: boolean
     ) => {
         try {

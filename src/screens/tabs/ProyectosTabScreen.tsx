@@ -71,11 +71,23 @@ const ProyectosTabScreen = () => {
         navigation.navigate("Project", { project });
     };
 
-    const calculateWeeksRange = (datesArray: string[]) => {
+    const calculateWeeksRange = (
+        datesArray: {
+            date: string; // Cadena en formato 'YYYY-MM-DD'
+            name: string;
+            data: string;
+            height: number;
+            day: string;
+        }[]
+    ) => {
         if (Array.isArray(datesArray) && datesArray.length > 0) {
             try {
-                const dates = datesArray.map((date) => new Date(date));
+                // Convertir las cadenas de fecha a objetos Date
+                const dates = datesArray.map(
+                    (dateObj) => new Date(dateObj.date)
+                );
 
+                // Filtrar fechas válidas
                 const validDates = dates.filter(
                     (date) => !isNaN(date.getTime())
                 );
@@ -120,7 +132,7 @@ const ProyectosTabScreen = () => {
                     <TouchableOpacity
                         //FIXME de momento esta disabled que nose que hacer con el pero algo voy a hacer en el futuro
 
-                        className="flex flex-row gap-1 items-center mb-2 z-30 "
+                        className="flex flex-row gap-1 items-center mb-2 z-30"
                         onPress={() =>
                             saveProjectUser(item.id, currentUser?.uid)
                         }
@@ -132,7 +144,7 @@ const ProyectosTabScreen = () => {
                     {item.title}
                 </Text>
 
-                <View>
+                <View className="flex flex-row gap-1 mb-1">
                     <MaterialCommunityIcons
                         name="checkbox-blank-circle"
                         color={"black"}

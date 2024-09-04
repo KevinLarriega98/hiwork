@@ -7,18 +7,18 @@ import {
     query,
     where,
     onSnapshot,
-    setDoc,
-    arrayUnion,
     updateDoc,
+    getDoc,
 } from "firebase/firestore";
 import { db } from "./firebase";
+import { CalendarEvent } from "../../types/project";
 
 export const createProject = async (
     ongID: string,
     ongName: string,
     title: string,
     description: string,
-    objectiveTimeline: string[],
+    objectiveTimeline: {}[],
     remote: boolean
 ): Promise<any> => {
     const project = {
@@ -142,5 +142,48 @@ export const saveProjectUser = async (
             error
         );
         throw new Error("No se pudo guardar el proyecto en la subcolección.");
+    }
+};
+
+export const updateProjectObjectiveTimeline = async (
+    projectID: string,
+    newObjectiveTimeline: CalendarEvent
+): Promise<void> => {
+    try {
+        const docRef = doc(db, "projects", projectID);
+
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+            throw new Error("El documento no existe");
+        }
+
+        const projectData = docSnap.data();
+        const currentTimeline: CalendarEvent[] =
+            projectData?.objectiveTimeline || [];
+
+        console.log("currentTimeline", currentTimeline);
+
+        const objectiveTimeline = currentTimeline.map((event) =>
+            event.date === newObjectiveTimeline.date
+                ? newObjectiveTimeline
+                : event
+        );
+
+        await updateDoc(docRef, {
+            objectiveTimeline,
+        });
+
+        console.log(
+            "Proyecto actualizado exitosamente en la subcolección 'objectiveTimeline'."
+        );
+    } catch (error) {
+        console.error(
+            "Error al actualizar el proyecto en la subcolección 'objectiveTimeline'",
+            error
+        );
+        throw new Error(
+            "No se pudo actualizar el proyecto en la subcolección."
+        );
     }
 };

@@ -98,9 +98,8 @@ const RegistrationApp: React.FC = () => {
 
             if (user) {
                 console.log("Registered successfully", user);
-                clearSensitiveData();
-
                 navigation.navigate("TabsBottom");
+                clearSensitiveData();
             } else {
                 throw new Error("Unknown error occurred during registration.");
             }

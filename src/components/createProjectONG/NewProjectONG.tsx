@@ -30,6 +30,16 @@ const NewProjectONG = () => {
         createProject: state.createProject,
     }));
 
+    const convertToObject = (array: string[]) => {
+        return array.map((date) => ({
+            date: date,
+            name: "Evento",
+            data: "lorem ipsum dolor sit amet",
+            height: 0,
+            day: "",
+        }));
+    };
+
     const handleCreateProject = async () => {
         if (!title || !description || objectiveTimeline.length === 0) {
             Alert.alert(
@@ -39,17 +49,19 @@ const NewProjectONG = () => {
             return;
         }
 
+        let objectiveTimelineObjects = convertToObject(objectiveTimeline);
+
         try {
             await createProject(
                 user?.uid || "",
                 currentUser?.name || "",
                 title,
                 description,
-                objectiveTimeline,
+                objectiveTimelineObjects,
                 remote
             );
 
-            Alert.alert("Success", "Project created successfully.");
+            Alert.alert("Success", "Proyecto creado exitosamente");
             resetForm();
         } catch (error) {
             Alert.alert("Error", "Failed to create project.");
