@@ -56,9 +56,7 @@ const BusquedaTabScreen = () => {
 
         const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
 
-        console.log(diffInDays);
         const diffInWeeks = diffInDays / 7;
-        console.log(diffInWeeks);
 
         if (diffInWeeks < 1) return "Less than 1 week";
         else if (diffInWeeks < 2) return "1-2 weeks";
