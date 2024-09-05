@@ -214,3 +214,22 @@ export const getObjectiveTimelineProjects = (
         throw new Error("No se pudo escuchar las aplicaciones.");
     }
 };
+
+export const getProjects = (setProjects: (projects: any[]) => void) => {
+    try {
+        const projectsColRef = collection(db, "projects");
+
+        const unsubscribe = onSnapshot(projectsColRef, (querySnapshot) => {
+            const projects = querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+            setProjects(projects);
+        });
+
+        return unsubscribe;
+    } catch (error) {
+        console.error("Error al escuchar los proyectos:", error);
+        throw new Error("No se pudo escuchar los proyectos.");
+    }
+};

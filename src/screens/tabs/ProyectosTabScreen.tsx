@@ -5,18 +5,16 @@ import {
     RefreshControl,
     TouchableOpacity,
 } from "react-native";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import BookMarkSVG from "../../components/Projects/svg/BookMarkSVG";
 import InfoSVG from "../../components/Projects/svg/InfoSVG";
 import BellComponent from "../../components/Projects/BellComponent";
-import useProjectStore from "../../context/useProjectStore";
+import { getProjects, saveProjectUser } from "../../service/api/projectService";
 import loader from "../../util/loader";
 import { ProjectState } from "../../types/project";
-
 import { RootStackParamList } from "../../routes/LoginStackNavigation";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { saveProjectUser } from "../../service/api/projectService";
 import useAuthStore from "../../context/useAuthStore";
 
 type ProjectDetailScreenNavigationProp = NavigationProp<
@@ -26,46 +24,54 @@ type ProjectDetailScreenNavigationProp = NavigationProp<
 
 const ProyectosTabScreen = () => {
     const navigation = useNavigation<ProjectDetailScreenNavigationProp>();
-
-    const { user, currentUser } = useAuthStore();
-
-    const { fetchProjects } = useProjectStore((state) => ({
-        fetchProjects: state.fetchProjects,
-    }));
+    const { currentUser } = useAuthStore();
 
     const [localProjects, setLocalProjects] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
 
+    // Use a ref to store the unsubscribe function
+    const unsubscribeRef = useRef<() => void | undefined>();
+
     useEffect(() => {
-        const loadProjects = async () => {
-            setLoading(true);
-            try {
-                const fetchedProjects = await fetchProjects();
-                setLocalProjects(fetchedProjects || []);
-            } catch (error) {
-                console.error("Error fetching projects:", error);
-                setLocalProjects([]);
-            } finally {
-                setLoading(false);
+        console.log("333333333333333333");
+    }, []);
+    useEffect(() => {
+        // TODO porqué este código se ejecuta cada vez que cambiamos de screen? debería ejecutarse sólo la primera vez que llegamos a este screen
+        setLoading(true);
+
+        const unsubscribe = getProjects((projects) => {
+            console.log(11111111111);
+            setLocalProjects(projects);
+            setLoading(false);
+        });
+
+        unsubscribeRef.current = unsubscribe;
+
+        return () => {
+            if (unsubscribeRef.current) {
+                unsubscribeRef.current();
             }
         };
-
-        loadProjects();
-    }, [fetchProjects]);
+    }, []);
 
     const onRefresh = useCallback(async () => {
         setRefreshing(true);
         try {
-            const fetchedProjects = await fetchProjects();
-            setLocalProjects(fetchedProjects || []);
+            if (unsubscribeRef.current) {
+                unsubscribeRef.current();
+            }
+            const unsubscribe = getProjects((projects) => {
+                setLocalProjects(projects);
+                setRefreshing(false);
+            });
+
+            unsubscribeRef.current = unsubscribe;
         } catch (error) {
             console.error("Error refreshing projects:", error);
-            setLocalProjects([]);
-        } finally {
             setRefreshing(false);
         }
-    }, [fetchProjects]);
+    }, []);
 
     const handleProjectPress = (project: ProjectState) => {
         navigation.navigate("Project", { project });
@@ -73,7 +79,7 @@ const ProyectosTabScreen = () => {
 
     const calculateWeeksRange = (
         datesArray: {
-            date: string; // Cadena en formato 'YYYY-MM-DD'
+            date: string;
             name: string;
             data: string;
             height: number;
@@ -82,12 +88,11 @@ const ProyectosTabScreen = () => {
     ) => {
         if (Array.isArray(datesArray) && datesArray.length > 0) {
             try {
-                // Convertir las cadenas de fecha a objetos Date
                 const dates = datesArray.map(
                     (dateObj) => new Date(dateObj.date)
                 );
 
-                // Filtrar fechas válidas
+                // Filter valid dates
                 const validDates = dates.filter(
                     (date) => !isNaN(date.getTime())
                 );
@@ -96,7 +101,7 @@ const ProyectosTabScreen = () => {
                     const firstDate = validDates[0];
                     const lastDate = validDates[validDates.length - 1];
 
-                    // Calcular la diferencia en semanas
+                    // Calculate the difference in weeks
                     const timeDiff = lastDate.getTime() - firstDate.getTime();
                     const diffWeeks = Math.ceil(
                         timeDiff / (1000 * 60 * 60 * 24 * 7)

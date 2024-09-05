@@ -73,13 +73,10 @@ const LoginStackNavigation = () => {
                     headerShown: true,
                 })}
             />
-
-            {isAuthenticated && (
-                <Stack.Screen
-                    name="TabsBottom"
-                    component={TabsBottomNavigation}
-                />
-            )}
+            <Stack.Screen name="TabsBottom" component={TabsBottomNavigation} />
+            {/* {isAuthenticated && (
+                
+            )} */}
         </Stack.Navigator>
     );
 };

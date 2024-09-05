@@ -4,7 +4,7 @@ import React from "react";
 const ChatTabScreen = () => {
     return (
         <View>
-            <Text>Chat</Text>
+            <Text>{"wqqwe"}</Text>
         </View>
     );
 };

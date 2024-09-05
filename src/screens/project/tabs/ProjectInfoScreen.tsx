@@ -58,6 +58,7 @@ const ProjectInfoScreen = () => {
             try {
                 return getApplications(project.id, (apps) => {
                     setApplications(apps);
+                    console.log("qwqeeeeeeeee");
                 });
             } catch (error) {
                 Alert.alert("Error", "No se pudieron cargar las aplicaciones.");
