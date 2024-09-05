@@ -51,6 +51,19 @@ const BusquedaTabScreen = () => {
         fetchProjects: state.fetchProjects,
     }));
 
+    const calculateWeeksDifference = (startDate: Date, endDate: Date) => {
+        const diffInMs = startDate.getTime() - endDate.getTime();
+
+        const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+        const diffInWeeks = diffInDays / 7;
+
+        if (diffInWeeks < 1) return "Less than 1 week";
+        else if (diffInWeeks < 2) return "1-2 weeks";
+        else if (diffInWeeks < 3) return "2-3 weeks";
+        else return `${Math.floor(diffInWeeks)}+ weeks`;
+    };
+
     useEffect(() => {
         fetchProjects();
     }, [fetchProjects]);
@@ -86,6 +99,10 @@ const BusquedaTabScreen = () => {
     };
 
     const renderItem = ({ item }: { item: any }) => {
+        const firstDate = new Date(item.objectiveTimeline[0].date);
+        const lastDate = new Date(
+            item.objectiveTimeline[item.objectiveTimeline.length - 1].date
+        );
         return (
             <TouchableOpacity
                 className={`bg-[#E6E6E6] p-4 rounded-lg mb-4 flex-1 mx-1 `}
@@ -108,7 +125,7 @@ const BusquedaTabScreen = () => {
                         size={18}
                     />
                     <Text className="text-gray-500 mr-2">
-                        {item.objectiveTimeline}
+                        {calculateWeeksDifference(firstDate, lastDate)}
                     </Text>
                     <MaterialCommunityIcons
                         name="square-rounded"

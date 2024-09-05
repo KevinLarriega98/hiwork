@@ -4,6 +4,7 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { RootStackParamList } from "../../routes/LoginStackNavigation";
 import { FontAwesome } from "@expo/vector-icons";
 import useAuthStore from "../../context/useAuthStore";
+import { sendPasswordResetEmailAuth } from "../../service/api/authService";
 
 type LoginScreenNavigationProp = NavigationProp<RootStackParamList, "Login">;
 
@@ -26,6 +27,19 @@ const LoginScreen: React.FC = () => {
         setTimeout(() => {
             setError("");
         }, 3000);
+    };
+
+    const handleResetPassword = async () => {
+        try {
+            const email = user.email;
+            sendPasswordResetEmailAuth(email);
+            Alert.alert(
+                "Email enviado",
+                "Se ha enviado un email para resetear la contraseña"
+            );
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     return (
@@ -58,7 +72,10 @@ const LoginScreen: React.FC = () => {
                     }
                 />
 
-                <TouchableOpacity className="w-full mb-8">
+                <TouchableOpacity
+                    className="w-full mb-8"
+                    onPress={() => handleResetPassword()}
+                >
                     <Text className="text-sm text-[#000]">
                         ¿Olvidaste tu contraseña?
                     </Text>

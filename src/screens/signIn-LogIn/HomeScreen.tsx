@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { RootStackParamList } from "../../routes/LoginStackNavigation";
+import { logout } from "../../service/api/authService";
 
 type HomeScreenNavigationProp = NavigationProp<RootStackParamList, "Home">;
 

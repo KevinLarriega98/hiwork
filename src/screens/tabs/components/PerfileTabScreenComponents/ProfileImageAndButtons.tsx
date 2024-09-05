@@ -13,6 +13,7 @@ const ProfileImageAndButtons = () => {
     const navigation = useNavigation<HomeScreenNavigationProp>();
 
     const navigateToHome = () => {
+        console.log("go home");
         navigation.navigate("Home");
     };
 

@@ -22,7 +22,7 @@ export interface AuthActions {
         name: string,
         discipline: string,
         typeOfProjects: string
-    ) => Promise<User | null>;
+    ) => Promise<User | null | Error>;
     initializeAuth: () => void;
     setUserType: (userType: "Voluntario" | "ONG" | null) => void;
     setCurrentUser: (currentUser: UserState | null) => void;

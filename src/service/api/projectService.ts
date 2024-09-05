@@ -7,15 +7,18 @@ import {
     query,
     where,
     onSnapshot,
+    updateDoc,
+    getDoc,
 } from "firebase/firestore";
 import { db } from "./firebase";
+import { CalendarEvent } from "../../types/project";
 
 export const createProject = async (
     ongID: string,
     ongName: string,
     title: string,
     description: string,
-    objectiveTimeline: string,
+    objectiveTimeline: {}[],
     remote: boolean
 ): Promise<any> => {
     const project = {
@@ -107,6 +110,102 @@ export const getApplications = (
                 ...doc.data(),
             }));
             callback(applications);
+        });
+
+        return unsubscribe;
+    } catch (error) {
+        console.error("Error al escuchar las aplicaciones:", error);
+        throw new Error("No se pudo escuchar las aplicaciones.");
+    }
+};
+
+export const saveProjectUser = async (
+    projectID: string,
+    userID: string
+): Promise<string> => {
+    try {
+        const savedProjectsColRef = collection(
+            doc(db, "Voluntarios", userID),
+            "savedProjects"
+        );
+
+        const docRef = await addDoc(savedProjectsColRef, {
+            projectID: projectID,
+        });
+        console.log(
+            "Proyecto guardado exitosamente en la subcolección 'savedProjects' del perfil del voluntario."
+        );
+        return docRef.id;
+    } catch (error) {
+        console.error(
+            "Error al guardar proyecto en la subcolección 'savedProjects'",
+            error
+        );
+        throw new Error("No se pudo guardar el proyecto en la subcolección.");
+    }
+};
+
+export const updateProjectObjectiveTimeline = async (
+    projectID: string,
+    newObjectiveTimeline: CalendarEvent
+): Promise<void> => {
+    try {
+        const docRef = doc(db, "projects", projectID);
+
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+            throw new Error("El documento no existe");
+        }
+
+        const projectData = docSnap.data();
+        const currentTimeline: CalendarEvent[] =
+            projectData?.objectiveTimeline || [];
+
+        const updatedTimeline = currentTimeline.map((event) =>
+            event.date === newObjectiveTimeline.date
+                ? newObjectiveTimeline
+                : event
+        );
+
+        await updateDoc(docRef, {
+            objectiveTimeline: updatedTimeline,
+            updatedAt: serverTimestamp(),
+        });
+
+        console.log(
+            "Proyecto actualizado exitosamente en la subcolección 'objectiveTimeline'."
+        );
+    } catch (error) {
+        console.error(
+            "Error al actualizar el proyecto en la subcolección 'objectiveTimeline'",
+            error
+        );
+        throw new Error(
+            "No se pudo actualizar el proyecto en la subcolección."
+        );
+    }
+};
+
+export const getObjectiveTimelineProjects = (
+    projectID: string,
+    callback: (projects: any[]) => void
+) => {
+    try {
+        const projectDocRef = doc(db, "projects", projectID);
+
+        const unsubscribe = onSnapshot(projectDocRef, (docSnapshot) => {
+            if (docSnapshot.exists()) {
+                const projectData = docSnapshot.data();
+
+                const objectiveTimeline = projectData.objectiveTimeline || [];
+
+                console.log("Objective Timeline:", objectiveTimeline);
+                callback(objectiveTimeline);
+            } else {
+                console.log("No such document!");
+                callback([]);
+            }
         });
 
         return unsubscribe;

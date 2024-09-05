@@ -1,4 +1,5 @@
 import {
+    sendPasswordResetEmail,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     signOut,
@@ -39,30 +40,35 @@ export const register = async (
     name: string,
     discipline: string,
     typeOfProjects: string
-): Promise<User> => {
-    const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-    );
+): Promise<User | null> => {
+    try {
+        const userCredential = await createUserWithEmailAndPassword(
+            auth,
+            email,
+            password
+        );
 
-    const user = userCredential.user;
+        const user = userCredential.user;
 
-    await updateProfile(user, {
-        displayName: name,
-    });
+        await updateProfile(user, {
+            displayName: name,
+        });
 
-    const docRef = doc(db, profileType + "s", user.uid);
-    await setDoc(docRef, {
-        id: user.uid,
-        email: email,
-        profileType: profileType,
-        name: name,
-        discipline: discipline,
-        typeOfProjects: typeOfProjects,
-    });
+        const docRef = doc(db, profileType + "s", user.uid);
+        await setDoc(docRef, {
+            id: user.uid,
+            email: email,
+            profileType: profileType,
+            name: name,
+            discipline: discipline,
+            typeOfProjects: typeOfProjects,
+        });
 
-    return user;
+        return user;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
 };
 
 export const logout = async (): Promise<void> => {
@@ -71,4 +77,14 @@ export const logout = async (): Promise<void> => {
 
 export const initializeAuth = (callback: (user: User | null) => void): void => {
     onAuthStateChanged(auth, callback);
+};
+
+export const sendPasswordResetEmailAuth = async (
+    email: string
+): Promise<void> => {
+    try {
+        await sendPasswordResetEmail(auth, email);
+    } catch (error) {
+        console.log(error);
+    }
 };

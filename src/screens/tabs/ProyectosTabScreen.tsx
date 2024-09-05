@@ -2,8 +2,6 @@ import {
     View,
     Text,
     FlatList,
-    ActivityIndicator,
-    StyleSheet,
     RefreshControl,
     TouchableOpacity,
 } from "react-native";
@@ -18,6 +16,8 @@ import { ProjectState } from "../../types/project";
 
 import { RootStackParamList } from "../../routes/LoginStackNavigation";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { saveProjectUser } from "../../service/api/projectService";
+import useAuthStore from "../../context/useAuthStore";
 
 type ProjectDetailScreenNavigationProp = NavigationProp<
     RootStackParamList,
@@ -26,6 +26,8 @@ type ProjectDetailScreenNavigationProp = NavigationProp<
 
 const ProyectosTabScreen = () => {
     const navigation = useNavigation<ProjectDetailScreenNavigationProp>();
+
+    const { user, currentUser } = useAuthStore();
 
     const { fetchProjects } = useProjectStore((state) => ({
         fetchProjects: state.fetchProjects,
@@ -69,7 +71,53 @@ const ProyectosTabScreen = () => {
         navigation.navigate("Project", { project });
     };
 
+    const calculateWeeksRange = (
+        datesArray: {
+            date: string; // Cadena en formato 'YYYY-MM-DD'
+            name: string;
+            data: string;
+            height: number;
+            day: string;
+        }[]
+    ) => {
+        if (Array.isArray(datesArray) && datesArray.length > 0) {
+            try {
+                // Convertir las cadenas de fecha a objetos Date
+                const dates = datesArray.map(
+                    (dateObj) => new Date(dateObj.date)
+                );
+
+                // Filtrar fechas válidas
+                const validDates = dates.filter(
+                    (date) => !isNaN(date.getTime())
+                );
+
+                if (validDates.length > 0) {
+                    const firstDate = validDates[0];
+                    const lastDate = validDates[validDates.length - 1];
+
+                    // Calcular la diferencia en semanas
+                    const timeDiff = lastDate.getTime() - firstDate.getTime();
+                    const diffWeeks = Math.ceil(
+                        timeDiff / (1000 * 60 * 60 * 24 * 7)
+                    );
+
+                    const minWeeks = 1;
+                    const maxWeeks = Math.max(minWeeks, diffWeeks);
+                    return `${minWeeks}-${maxWeeks} weeks`;
+                }
+            } catch (error) {
+                console.error("Error calculating weeks range:", error);
+            }
+        }
+        return "No valid dates";
+    };
+
     const renderItem = ({ item }: { item: any }) => {
+        const weeksRange = item.objectiveTimeline
+            ? calculateWeeksRange(item.objectiveTimeline)
+            : "No dates available";
+
         return (
             <TouchableOpacity
                 className="bg-[#e6e6e6] p-4 rounded-2xl mb-4 w-[48%]"
@@ -81,24 +129,29 @@ const ProyectosTabScreen = () => {
                             Design ux/ui
                         </Text>
                     </View>
-                    <BookMarkSVG />
+                    <TouchableOpacity
+                        //FIXME de momento esta disabled que nose que hacer con el pero algo voy a hacer en el futuro
+
+                        className="flex flex-row gap-1 items-center mb-2 z-30"
+                        onPress={() =>
+                            saveProjectUser(item.id, currentUser?.uid)
+                        }
+                    >
+                        <BookMarkSVG />
+                    </TouchableOpacity>
                 </View>
                 <Text className="text-xl font-medium mb-1 text-black">
                     {item.title}
                 </Text>
-                <TouchableOpacity
-                    //FIXME de momento esta disabled que nose que hacer con el pero algo voy a hacer en el futuro
-                    disabled
-                    className="flex flex-row gap-1 items-center mb-2 z-30 "
-                    onPress={() => console.log("pinga")}
-                >
+
+                <View className="flex flex-row gap-1 mb-1">
                     <MaterialCommunityIcons
                         name="checkbox-blank-circle"
                         color={"black"}
                         size={18}
                     />
                     <Text className="text-gray-500">{item.ongName}</Text>
-                </TouchableOpacity>
+                </View>
                 <View className="flex flex-col items-start mb-1">
                     <View className="flex flex-row items-center mb-1">
                         <MaterialCommunityIcons
@@ -106,9 +159,7 @@ const ProyectosTabScreen = () => {
                             color={"#7f7f7f"}
                             size={18}
                         />
-                        <Text className="text-gray-500 mr-2">
-                            {item.objectiveTimeline}
-                        </Text>
+                        <Text className="text-gray-500 mr-2">{weeksRange}</Text>
                     </View>
                     <View className="flex flex-row items-center mb-1">
                         <MaterialCommunityIcons

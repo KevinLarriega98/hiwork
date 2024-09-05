@@ -1,5 +1,3 @@
-// screens/project/tabs/ProjectInfoScreen.tsx
-
 import React, { useEffect, useState } from "react";
 import {
     View,
@@ -7,7 +5,6 @@ import {
     FlatList,
     ActivityIndicator,
     Alert,
-    Button,
     Pressable,
 } from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
@@ -28,8 +25,36 @@ const ProjectInfoScreen = () => {
     const createdAtDate = project.createdAt ? project.createdAt.toDate() : null;
     const updatedAtDate = project.updatedAt ? project.updatedAt.toDate() : null;
 
+    console.log(project.updatedAt?.toDate());
+
+    let updatedAtFormatted = "";
+
+    if (project.updatedAt) {
+        const formattedDate = project.updatedAt
+            .toDate()
+            .toLocaleDateString("es-ES", {
+                day: "numeric",
+                month: "numeric",
+                year: "numeric",
+            });
+
+        const formattedTime = project.updatedAt
+            .toDate()
+            .toLocaleTimeString("es-ES", {
+                hour: "numeric",
+                minute: "numeric",
+                hour12: false,
+            });
+
+        updatedAtFormatted = `${formattedDate} - ${formattedTime}`;
+    }
+
     useEffect(() => {
-        if (userType === "ONG" && currentUser?.uid === project.ongID) {
+        if (
+            userType === "ONG" &&
+            currentUser?.uid === project.ongID &&
+            project.id
+        ) {
             try {
                 return getApplications(project.id, (apps) => {
                     setApplications(apps);
@@ -42,7 +67,13 @@ const ProjectInfoScreen = () => {
         } else {
             setLoading(false);
         }
-    }, [project.id, userType, currentUser?.uid, project.ongID]);
+    }, [
+        project.id,
+        userType,
+        currentUser?.uid,
+        project.ongID,
+        project.objectiveTimeline,
+    ]);
 
     return (
         <View className="flex-1 px-6 bg-white mt-6 justify-between">
@@ -69,7 +100,7 @@ const ProjectInfoScreen = () => {
                 </Text>
                 <Text className="text-[#666] text-base">
                     Updated At:{" "}
-                    {updatedAtDate ? updatedAtDate.toLocaleDateString() : "N/A"}
+                    {updatedAtFormatted ? updatedAtFormatted : "N/A"}
                 </Text>
             </View>
 
