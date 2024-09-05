@@ -162,16 +162,15 @@ export const updateProjectObjectiveTimeline = async (
         const currentTimeline: CalendarEvent[] =
             projectData?.objectiveTimeline || [];
 
-        console.log("currentTimeline", currentTimeline);
-
-        const objectiveTimeline = currentTimeline.map((event) =>
+        const updatedTimeline = currentTimeline.map((event) =>
             event.date === newObjectiveTimeline.date
                 ? newObjectiveTimeline
                 : event
         );
 
         await updateDoc(docRef, {
-            objectiveTimeline,
+            objectiveTimeline: updatedTimeline,
+            updatedAt: serverTimestamp(),
         });
 
         console.log(
@@ -185,5 +184,33 @@ export const updateProjectObjectiveTimeline = async (
         throw new Error(
             "No se pudo actualizar el proyecto en la subcolección."
         );
+    }
+};
+
+export const getObjectiveTimelineProjects = (
+    projectID: string,
+    callback: (projects: any[]) => void
+) => {
+    try {
+        const projectDocRef = doc(db, "projects", projectID);
+
+        const unsubscribe = onSnapshot(projectDocRef, (docSnapshot) => {
+            if (docSnapshot.exists()) {
+                const projectData = docSnapshot.data();
+
+                const objectiveTimeline = projectData.objectiveTimeline || [];
+
+                console.log("Objective Timeline:", objectiveTimeline);
+                callback(objectiveTimeline);
+            } else {
+                console.log("No such document!");
+                callback([]);
+            }
+        });
+
+        return unsubscribe;
+    } catch (error) {
+        console.error("Error al escuchar las aplicaciones:", error);
+        throw new Error("No se pudo escuchar las aplicaciones.");
     }
 };

@@ -6,14 +6,18 @@ import {
     Alert,
     Pressable,
     TextInput,
+    ActivityIndicator,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Agenda } from "react-native-calendars";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { RootStackParamList } from "../../../routes/LoginStackNavigation";
 import useAuthStore from "../../../context/useAuthStore";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { updateProjectObjectiveTimeline } from "../../../service/api/projectService";
+import {
+    getObjectiveTimelineProjects,
+    updateProjectObjectiveTimeline,
+} from "../../../service/api/projectService";
 import { CalendarEvent } from "../../../types/project";
 
 type ProjectScreenRouteProp = RouteProp<RootStackParamList, "Project">;
@@ -32,24 +36,58 @@ const CalendarScreen: React.FC = () => {
     });
 
     const [eventData, setEventData] = useState<CalendarEvent | null>(null);
-
     const [modalVisible, setModalVisible] = useState(false);
 
     const [newData, setNewData] = useState<CalendarEvent>({
-        name: eventData?.name || "",
-        data: eventData?.data || "",
-        date: eventData?.date || "",
+        name: "",
+        data: "",
+        date: "",
         height: 0,
         day: "",
     });
 
-    const dates: {
-        date: string;
-        name: string;
-        data: string;
-        height: number;
-        day: string;
-    }[] = project.objectiveTimeline;
+    const [projects, setProjects] = useState<CalendarEvent[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+
+    useEffect(() => {
+        let isMounted = true;
+
+        const fetchProjects = async () => {
+            if (project.id) {
+                try {
+                    const unsubscribe = getObjectiveTimelineProjects(
+                        project.id,
+                        (projects) => {
+                            if (isMounted) setProjects(projects);
+                        }
+                    );
+
+                    return unsubscribe;
+                } catch (error) {
+                    if (isMounted) {
+                        Alert.alert(
+                            "Error",
+                            "No se pudieron cargar los proyectos."
+                        );
+                    }
+                } finally {
+                    if (isMounted) setLoading(false);
+                }
+            } else {
+                setLoading(false);
+            }
+        };
+
+        fetchProjects().then((unsubscribe) => {
+            return () => {
+                if (unsubscribe) unsubscribe();
+            };
+        });
+
+        return () => {
+            isMounted = false;
+        };
+    }, [project.id]);
 
     const convertToAgendaItems = (
         events: CalendarEvent[]
@@ -66,42 +104,65 @@ const CalendarScreen: React.FC = () => {
         return groupedEvents;
     };
 
-    const agendaItems = convertToAgendaItems(dates);
+    const agendaItems = useMemo(
+        () => convertToAgendaItems(projects),
+        [projects]
+    );
 
-    const firstDate: Date = new Date(dates[0].date);
+    const firstDate: Date = new Date(
+        project.objectiveTimeline[0]?.date || new Date()
+    );
 
     const handleDayPress = (day: any) => {
         const selectedDate = day.dateString;
         setClickedDate({ day: day, clicked: true });
 
         const eventsForDate = agendaItems[selectedDate] || [];
-        if (eventsForDate.length > 0) {
-            setEventData(eventsForDate[0]);
-        } else {
-            setEventData({
-                date: selectedDate,
+        const eventData =
+            eventsForDate.length > 0
+                ? eventsForDate[0]
+                : {
+                      date: selectedDate,
+                      name: "",
+                      data: "",
+                      height: 0,
+                      day: "",
+                  };
+
+        setEventData(eventData);
+        setNewData(eventData);
+    };
+
+    const handleOpenModal = () => {
+        setModalVisible(true);
+    };
+
+    const handleSaveEvent = async () => {
+        if (newData && project?.id) {
+            const updatedData = {
+                ...newData,
+                date: clickedDate.day?.dateString || newData.date,
+            };
+            await updateProjectObjectiveTimeline(project.id, updatedData);
+            console.log("Saving event data:", updatedData);
+            setModalVisible(false);
+            setNewData({
                 name: "",
                 data: "",
+                date: "",
                 height: 0,
                 day: "",
             });
         }
-
-        setModalVisible(true);
     };
 
-    // mirar de hacerlo onSnapshot para que al guardar se actualice
-    const handleSaveEvent = async () => {
-        if (newData && project?.id) {
-            const dateString = clickedDate.day?.dateString || newData.date;
-            await updateProjectObjectiveTimeline(project.id, {
-                ...newData,
-                date: dateString,
-            });
-            console.log("Saving event data:", newData);
-            setModalVisible(false);
-        }
-    };
+    if (loading) {
+        return (
+            <View className="flex-1 justify-center items-center">
+                <ActivityIndicator size="large" color="#808080" />
+            </View>
+        );
+    }
 
     return (
         <View className="flex-1 bg-white px-6">
@@ -134,7 +195,7 @@ const CalendarScreen: React.FC = () => {
             >
                 <View className="flex-1 items-center relative">
                     <View className="w-[75%] h-[70%] bg-white justify-center items-center rounded-lg absolute top-1/4 shadow-md">
-                        <View className=" absolute top-0 right-0 p-2 rounded-full z-20">
+                        <View className="absolute top-0 right-0 p-2 rounded-full z-20">
                             <Pressable
                                 onPress={() => setModalVisible(!modalVisible)}
                             >
@@ -151,7 +212,7 @@ const CalendarScreen: React.FC = () => {
                             <Text>{eventData?.date}</Text>
                             <TextInput
                                 className="border p-2 mb-4 w-full"
-                                placeholder={eventData?.name}
+                                placeholder="Event Name"
                                 value={newData.name}
                                 onChange={(e) =>
                                     setNewData({
@@ -159,10 +220,10 @@ const CalendarScreen: React.FC = () => {
                                         name: e.nativeEvent.text,
                                     })
                                 }
-                            ></TextInput>
+                            />
                             <TextInput
                                 className="border p-2 mb-4 w-full"
-                                placeholder={eventData?.data}
+                                placeholder="Event Data"
                                 value={newData.data}
                                 onChange={(e) =>
                                     setNewData({
@@ -170,10 +231,10 @@ const CalendarScreen: React.FC = () => {
                                         data: e.nativeEvent.text,
                                     })
                                 }
-                            ></TextInput>
+                            />
                             <TouchableOpacity
                                 className="bg-primary items-center mr-2 rounded-xl py-2 px-3"
-                                onPress={() => handleSaveEvent()}
+                                onPress={handleSaveEvent}
                             >
                                 <Text className="text-white">Save Data</Text>
                             </TouchableOpacity>
@@ -183,16 +244,19 @@ const CalendarScreen: React.FC = () => {
             </Modal>
 
             <TouchableOpacity
-                className={`absolute bottom-5 right-5  rounded-full px-5 bg-gray-700 py-4 justify-center items-center elevation-5  ${
-                    clickedDate.clicked ? " opacity-100" : " opacity-0"
-                } ${user?.uid === project.ongID ? "" : " opacity-0"}`}
+                className={`absolute bottom-5 right-5 rounded-full px-5 bg-gray-700 py-4 justify-center items-center elevation-5 
+                ${
+                    clickedDate.clicked && user?.uid === project.ongID
+                        ? "opacity-100"
+                        : "opacity-0"
+                }`}
                 onPress={() => {
                     if (clickedDate.day) {
-                        handleDayPress(clickedDate.day);
+                        handleOpenModal();
                     }
                 }}
             >
-                <Text className=" text-white text-base font-bold">
+                <Text className="text-white text-base font-bold">
                     Añadir evento
                 </Text>
             </TouchableOpacity>

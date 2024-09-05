@@ -34,7 +34,6 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
             if (user) {
                 const userData = await getUserDataFromFirestore(user);
 
-                console.log(userData);
                 set({
                     user: { ...user },
                     isAuthenticated: !!user,
@@ -69,7 +68,6 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
             if (user) {
                 const userData = await getUserDataFromFirestore(user);
 
-                console.log(userData);
                 set({
                     user: { ...user },
                     isAuthenticated: !!user,
