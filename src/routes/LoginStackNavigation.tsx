@@ -11,6 +11,13 @@ import useAuthStore from "../context/useAuthStore";
 import { ProjectState } from "../types/project";
 import Project from "../screens/project/Project";
 
+// Apply withSafeArea outside of the function
+const SafeHomeScreen = withSafeArea(HomeScreen);
+const SafeLoginScreen = withSafeArea(LoginScreen);
+const SafeRegisterScreen = withSafeArea(RegisterScreen);
+const SafeRegisterTypeUser = withSafeArea(RegisterTypeUser);
+const SafeRegisterUserScreens = withSafeArea(RegisterUserScreens);
+
 export type RootStackParamList = {
     Home: undefined;
     Login: undefined;
@@ -51,19 +58,16 @@ const LoginStackNavigation = () => {
                 headerShown: false,
             }}
         >
-            <Stack.Screen name="Home" component={withSafeArea(HomeScreen)} />
-            <Stack.Screen name="Login" component={withSafeArea(LoginScreen)} />
-            <Stack.Screen
-                name="Register"
-                component={withSafeArea(RegisterScreen)}
-            />
+            <Stack.Screen name="Home" component={SafeHomeScreen} />
+            <Stack.Screen name="Login" component={SafeLoginScreen} />
+            <Stack.Screen name="Register" component={SafeRegisterScreen} />
             <Stack.Screen
                 name="RegisterTypeUser"
-                component={withSafeArea(RegisterTypeUser)}
+                component={SafeRegisterTypeUser}
             />
             <Stack.Screen
                 name="RegisterUserScreens"
-                component={withSafeArea(RegisterUserScreens)}
+                component={SafeRegisterUserScreens}
             />
             <Stack.Screen
                 name="Project"
@@ -73,10 +77,12 @@ const LoginStackNavigation = () => {
                     headerShown: true,
                 })}
             />
-            <Stack.Screen name="TabsBottom" component={TabsBottomNavigation} />
-            {/* {isAuthenticated && (
-                
-            )} */}
+            {isAuthenticated && (
+                <Stack.Screen
+                    name="TabsBottom"
+                    component={TabsBottomNavigation}
+                />
+            )}
         </Stack.Navigator>
     );
 };
