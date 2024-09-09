@@ -30,14 +30,12 @@ const ProyectosTabScreen = () => {
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
 
-    // Use a ref to store the unsubscribe function
     const unsubscribeRef = useRef<() => void | undefined>();
 
     useEffect(() => {
         console.log("333333333333333333");
     }, []);
     useEffect(() => {
-        // TODO porqué este código se ejecuta cada vez que cambiamos de screen? debería ejecutarse sólo la primera vez que llegamos a este screen
         setLoading(true);
 
         const unsubscribe = getProjects((projects) => {

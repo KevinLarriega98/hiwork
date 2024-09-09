@@ -25,8 +25,6 @@ const ProjectInfoScreen = () => {
     const createdAtDate = project.createdAt ? project.createdAt.toDate() : null;
     const updatedAtDate = project.updatedAt ? project.updatedAt.toDate() : null;
 
-    console.log(project.updatedAt?.toDate());
-
     let updatedAtFormatted = "";
 
     if (project.updatedAt) {

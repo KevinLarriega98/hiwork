@@ -7,10 +7,12 @@ import BusquedaTabScreen from "../screens/tabs/BusquedaTabScreen";
 import ProyectosTabScreen from "../screens/tabs/ProyectosTabScreen";
 import ChatTabScreen from "../screens/tabs/ChatTabScreen";
 import PerfilTabScreen from "../screens/tabs/PerfilTabScreen";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import withSafeArea from "../util/withSafeArea";
+import { createStackNavigator } from "@react-navigation/stack";
+import { ProjectScreenNavigation } from "./ProjectScreenNavigation";
 
 const Tab = createMaterialBottomTabNavigator();
+const Stack = createStackNavigator();
 
 export const TabsBottomNavigation = () => {
     return (
@@ -45,7 +47,7 @@ export const TabsBottomNavigation = () => {
             />
             <Tab.Screen
                 name="Mis Proyectos"
-                component={withSafeArea(ProyectosTabScreen)}
+                component={withSafeArea(ProjectScreenNavigation)}
                 options={{
                     tabBarLabel: "Proyectos",
                     tabBarIcon: ({ color }) => (

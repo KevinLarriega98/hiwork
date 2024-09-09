@@ -4,12 +4,10 @@ import HomeScreen from "../screens/signIn-LogIn/HomeScreen";
 import LoginScreen from "../screens/signIn-LogIn/LoginScreen";
 import RegisterScreen from "../screens/signIn-LogIn/RegisterScreen";
 import withSafeArea from "../util/withSafeArea";
-import { TabsBottomNavigation } from "./TabsBottomNavigation";
 import RegisterUserScreens from "../screens/signIn-LogIn/RegisterUserScreens";
 import RegisterTypeUser from "../screens/signIn-LogIn/RegisterTypeUser";
 import useAuthStore from "../context/useAuthStore";
 import { ProjectState } from "../types/project";
-import Project from "../screens/project/Project";
 
 // Apply withSafeArea outside of the function
 const SafeHomeScreen = withSafeArea(HomeScreen);
@@ -69,20 +67,6 @@ const LoginStackNavigation = () => {
                 name="RegisterUserScreens"
                 component={SafeRegisterUserScreens}
             />
-            <Stack.Screen
-                name="Project"
-                component={Project}
-                options={({ route }) => ({
-                    title: route.params?.project?.title || "Project Details",
-                    headerShown: true,
-                })}
-            />
-            {isAuthenticated && (
-                <Stack.Screen
-                    name="TabsBottom"
-                    component={TabsBottomNavigation}
-                />
-            )}
         </Stack.Navigator>
     );
 };
