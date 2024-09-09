@@ -10,10 +10,11 @@ import { TabsBottomNavigation } from "./src/routes/TabsBottomNavigation";
 const App = () => {
     const { initializeAuth, currentUser } = useAuthStore();
 
-
     useEffect(() => {
         initializeAuth();
     }, [initializeAuth]);
+
+    console.log(currentUser);
 
     return (
         <SafeAreaProvider>
