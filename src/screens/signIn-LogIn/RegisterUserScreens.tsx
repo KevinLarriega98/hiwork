@@ -1,3 +1,4 @@
+// RegisterUserScreens.tsx
 import React, { useState, useRef, useCallback } from "react";
 import {
     View,
@@ -7,6 +8,7 @@ import {
     useWindowDimensions,
     StyleSheet,
     TouchableOpacity,
+    TextInput,
 } from "react-native";
 import { ExpandingDot } from "react-native-animated-pagination-dots";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -27,6 +29,7 @@ import {
 } from "../../util/loginStepsAndUtils";
 import useUserStore from "../../context/useRegisterStore";
 import useAuthStore from "../../context/useAuthStore";
+import * as ImagePicker from "expo-image-picker";
 
 type TabsBottomScreenNavigationProp = NavigationProp<
     RootStackParamList,
@@ -47,7 +50,7 @@ const RegistrationApp: React.FC = () => {
     const scrollX = useRef(new Animated.Value(0)).current;
     const flatListRef = useRef<FlatList<any>>(null);
     const [activeIndex, setActiveIndex] = useState(0);
-    const register = useAuthStore((state) => state.register);
+    const [image, setImage] = useState<string | null>(null);
     const [formData, setFormData] = useState<{ [key: string]: string }>({});
     const [selectedOptions, setSelectedOptions] = useState<{
         [key: string]: string;
@@ -56,6 +59,22 @@ const RegistrationApp: React.FC = () => {
 
     const { setName, setDiscipline, setTypeOfProjects, clearSensitiveData } =
         useUserStore();
+    const register = useAuthStore((state) => state.register);
+
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        // console.log(result.assets[0].uri);
+
+        if (!result.canceled) {
+            setImage(result.assets[0].uri);
+        }
+    };
 
     const REGISTRATION_STEPS =
         profileType === "Voluntario"
@@ -152,7 +171,9 @@ const RegistrationApp: React.FC = () => {
                         formData,
                         selectedOptions,
                         setFormData,
-                        setSelectedOptions
+                        setSelectedOptions,
+                        pickImage,
+                        image
                     )
                 }
                 ref={flatListRef}

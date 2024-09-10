@@ -7,10 +7,13 @@ import {
 } from "react-native";
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import BookMarkSVG from "../../components/Projects/svg/BookMarkSVG";
 import InfoSVG from "../../components/Projects/svg/InfoSVG";
 import BellComponent from "../../components/Projects/BellComponent";
-import { getProjects, saveProjectUser } from "../../service/api/projectService";
+import {
+    getProjects,
+    getSavedProjects,
+    saveProjectUser,
+} from "../../service/api/projectService";
 import loader from "../../util/loader";
 import { ProjectState } from "../../types/project";
 import { RootStackParamList } from "../../routes/LoginStackNavigation";
@@ -32,9 +35,38 @@ const ProyectosTabScreen = () => {
 
     const unsubscribeRef = useRef<() => void | undefined>();
 
+    const [savedProjects, setSavedProjects] = useState<string[]>([]);
+
     useEffect(() => {
-        console.log("333333333333333333");
-    }, []);
+        setLoading(true);
+
+        const fetchSavedProjects = async () => {
+            try {
+                const unsubscribe = await getSavedProjects(
+                    currentUser?.uid,
+                    (savedProjects) => {
+                        console.log(22222222);
+                        setSavedProjects(savedProjects);
+                        setLoading(false);
+                    }
+                );
+
+                unsubscribeRef.current = unsubscribe;
+            } catch (error) {
+                console.error("Error fetching saved projects:", error);
+                setLoading(false);
+            }
+        };
+
+        fetchSavedProjects();
+
+        return () => {
+            if (unsubscribeRef.current) {
+                unsubscribeRef.current();
+            }
+        };
+    }, [currentUser?.uid]);
+
     useEffect(() => {
         setLoading(true);
 
@@ -90,7 +122,6 @@ const ProyectosTabScreen = () => {
                     (dateObj) => new Date(dateObj.date)
                 );
 
-                // Filter valid dates
                 const validDates = dates.filter(
                     (date) => !isNaN(date.getTime())
                 );
@@ -99,7 +130,6 @@ const ProyectosTabScreen = () => {
                     const firstDate = validDates[0];
                     const lastDate = validDates[validDates.length - 1];
 
-                    // Calculate the difference in weeks
                     const timeDiff = lastDate.getTime() - firstDate.getTime();
                     const diffWeeks = Math.ceil(
                         timeDiff / (1000 * 60 * 60 * 24 * 7)
@@ -134,13 +164,28 @@ const ProyectosTabScreen = () => {
                     </View>
                     <TouchableOpacity
                         //FIXME de momento esta disabled que nose que hacer con el pero algo voy a hacer en el futuro
-
                         className="flex flex-row gap-1 items-center mb-2 z-30"
                         onPress={() =>
-                            saveProjectUser(item.id, currentUser?.uid)
+                            saveProjectUser(
+                                item.id,
+                                currentUser?.uid,
+                                savedProjects
+                            )
                         }
                     >
-                        <BookMarkSVG />
+                        {savedProjects.includes(item.id) ? (
+                            <MaterialCommunityIcons
+                                name="bookmark"
+                                color={"black"}
+                                size={24}
+                            />
+                        ) : (
+                            <MaterialCommunityIcons
+                                name="bookmark-outline"
+                                color={"black"}
+                                size={24}
+                            />
+                        )}
                     </TouchableOpacity>
                 </View>
                 <Text className="text-xl font-medium mb-1 text-black">

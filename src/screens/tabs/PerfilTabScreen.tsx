@@ -1,10 +1,23 @@
-import { View, Text, ScrollView } from "react-native";
-import React from "react";
+import {
+    View,
+    Text,
+    ScrollView,
+    Modal,
+    Pressable,
+    TextInput,
+    TouchableOpacity,
+} from "react-native";
+import React, { useState } from "react";
 import useAuthStore from "../../context/useAuthStore";
 import ProfileImageAndButtons from "./components/PerfileTabScreenComponents/ProfileImageAndButtons";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const PerfilTabScreen = () => {
     const { user, currentUser } = useAuthStore();
+
+    const [modalVisible, setModalVisible] = useState(false);
+
+    console.log(modalVisible);
 
     return (
         <ScrollView className="flex-1">
@@ -14,7 +27,45 @@ const PerfilTabScreen = () => {
                 </Text>
             </View>
 
-            <ProfileImageAndButtons />
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(!modalVisible);
+                }}
+            >
+                <View className="flex-1 items-center top-16">
+                    <View className="w-[75%] h-[50%] bg-white justify-center items-center rounded-lg shadow-md">
+                        <View className="absolute top-0 right-0 p-2 rounded-full z-20">
+                            <Pressable
+                                onPress={() => setModalVisible(!modalVisible)}
+                            >
+                                <MaterialCommunityIcons
+                                    name="close"
+                                    color={"#000000"}
+                                    size={18}
+                                />
+                            </Pressable>
+                        </View>
+                        <Text className="text-xl font-bold mb-4">
+                            Editar nombre
+                        </Text>
+                        <TextInput
+                            placeholder={currentUser?.name}
+                            className="border p-2 mb-4 w-[75%] rounded-lg"
+                        />
+                        <TouchableOpacity className="bg-primary items-center mr-2 rounded-xl py-2 px-3">
+                            <Text className="text-white">Save Data</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+
+            <ProfileImageAndButtons
+                setModalVisible={setModalVisible}
+                modalVisible={modalVisible}
+            />
 
             <View className="min-h-full bg-gray-100 pt-24 mb-24 rounded-t-3xl">
                 <Text className="text-lg text-center font-bold mb-5">

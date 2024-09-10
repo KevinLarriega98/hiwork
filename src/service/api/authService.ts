@@ -72,7 +72,12 @@ export const register = async (
 };
 
 export const logout = async (): Promise<void> => {
-    await signOut(auth);
+    try {
+        await signOut(auth);
+        console.log("Usuario deslogueado:", auth.currentUser);
+    } catch (error) {
+        console.error("Error al hacer logout:", error);
+    }
 };
 
 export const initializeAuth = (callback: (user: User | null) => void): void => {
@@ -88,3 +93,20 @@ export const sendPasswordResetEmailAuth = async (
         console.log(error);
     }
 };
+
+// export const updateUserProfile = async (
+//     userID: string,
+//     name: string,
+//     discipline: string,
+//     typeOfProjects: string
+// ): Promise<void> => {
+//     try {
+//         await updateProfile(user, {
+//             displayName: name,
+//             discipline: discipline,
+//             typeOfProjects: typeOfProjects,
+//         });
+//     } catch (error) {
+//         console.log(error);
+//     }
+// };

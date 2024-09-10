@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Text, TouchableOpacity, Alert } from "react-native";
+import {
+    Text,
+    TouchableOpacity,
+    Alert,
+    ActivityIndicator,
+    View,
+} from "react-native";
 import useAuthStore from "../../../context/useAuthStore";
 import {
     applyToProject,
@@ -8,17 +14,20 @@ import {
 
 const ApplyToProjectButton = ({ projectID }: { projectID: string }) => {
     const { currentUser, user } = useAuthStore();
-    const [hasApplied, setHasApplied] = useState<boolean>(false);
+    const [hasApplied, setHasApplied] = useState<boolean | null>(null); // Mejor usar null inicialmente
     const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         const checkApplicationStatus = async () => {
+            setLoading(true);
             if (user?.uid) {
                 try {
                     const applied = await checkIfApplied(projectID, user.uid);
                     setHasApplied(applied);
                 } catch (error) {
                     console.error("Error al verificar la aplicación:", error);
+                } finally {
+                    setLoading(false);
                 }
             }
         };
@@ -56,6 +65,15 @@ const ApplyToProjectButton = ({ projectID }: { projectID: string }) => {
         }
     };
 
+    if (loading || hasApplied === null) {
+        // Mostrar un spinner mientras se verifica si ya ha aplicado o si está cargando
+        return (
+            <View className="absolute bottom-5 right-5 rounded-full px-5 bg-gray-700 py-4 justify-center items-center elevation-5 opacity-50">
+                <ActivityIndicator size="small" color="white" />
+            </View>
+        );
+    }
+
     return (
         <TouchableOpacity
             className={`absolute bottom-5 right-5  rounded-full px-5 bg-gray-700 py-4 justify-center items-center elevation-5 ${
@@ -64,7 +82,7 @@ const ApplyToProjectButton = ({ projectID }: { projectID: string }) => {
             onPress={handleApply}
             disabled={loading || hasApplied}
         >
-            <Text className=" text-white text-base font-bold">
+            <Text className="text-white text-base font-bold">
                 {hasApplied ? "Ya Aplicado" : "Aplicar"}
             </Text>
         </TouchableOpacity>

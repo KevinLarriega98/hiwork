@@ -9,6 +9,8 @@ import {
     onSnapshot,
     updateDoc,
     getDoc,
+    deleteDoc,
+    setDoc,
 } from "firebase/firestore";
 import { db } from "./firebase";
 import { CalendarEvent } from "../../types/project";
@@ -119,32 +121,6 @@ export const getApplications = (
     }
 };
 
-export const saveProjectUser = async (
-    projectID: string,
-    userID: string
-): Promise<string> => {
-    try {
-        const savedProjectsColRef = collection(
-            doc(db, "Voluntarios", userID),
-            "savedProjects"
-        );
-
-        const docRef = await addDoc(savedProjectsColRef, {
-            projectID: projectID,
-        });
-        console.log(
-            "Proyecto guardado exitosamente en la subcolección 'savedProjects' del perfil del voluntario."
-        );
-        return docRef.id;
-    } catch (error) {
-        console.error(
-            "Error al guardar proyecto en la subcolección 'savedProjects'",
-            error
-        );
-        throw new Error("No se pudo guardar el proyecto en la subcolección.");
-    }
-};
-
 export const updateProjectObjectiveTimeline = async (
     projectID: string,
     newObjectiveTimeline: CalendarEvent
@@ -231,5 +207,56 @@ export const getProjects = (setProjects: (projects: any[]) => void) => {
     } catch (error) {
         console.error("Error al escuchar los proyectos:", error);
         throw new Error("No se pudo escuchar los proyectos.");
+    }
+};
+
+export const getSavedProjects = async (
+    userID: string,
+    setSavedProjects: (savedProjects: string[]) => void
+) => {
+    try {
+        const savedProjectsColRef = collection(
+            doc(db, "Voluntarios", userID),
+            "savedProjects"
+        );
+
+        const unsubscribe = onSnapshot(savedProjectsColRef, (querySnapshot) => {
+            const savedProjects = querySnapshot.docs.map((doc) => {
+                const data = doc.data();
+                return data.projectID;
+            });
+            setSavedProjects(savedProjects);
+        });
+
+        return unsubscribe;
+    } catch (error) {
+        console.error("Error al escuchar las aplicaciones:", error);
+        throw new Error("No se pudo escuchar las aplicaciones.");
+    }
+};
+
+export const saveProjectUser = async (
+    projectID: string,
+    userID: string,
+    savedProjects: string[]
+) => {
+    try {
+        const projectDocRef = doc(
+            db,
+            "Voluntarios",
+            userID,
+            "savedProjects",
+            projectID
+        );
+
+        if (savedProjects.includes(projectID)) {
+            await deleteDoc(projectDocRef);
+            console.log("Proyecto desguardado.");
+        } else {
+            await setDoc(projectDocRef, { projectID });
+            console.log("Proyecto guardado.");
+        }
+    } catch (error) {
+        console.error("Error al guardar/desguardar el proyecto:", error);
     }
 };

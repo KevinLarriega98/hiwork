@@ -1,6 +1,6 @@
 import "react-native-gesture-handler";
 import React, { useEffect } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import LoginStackNavigation from "./src/routes/LoginStackNavigation";
@@ -14,7 +14,7 @@ const App = () => {
         initializeAuth();
     }, [initializeAuth]);
 
-    console.log(currentUser);
+    console.log(" currentUser", currentUser);
 
     return (
         <SafeAreaProvider>

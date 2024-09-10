@@ -8,17 +8,11 @@ import { RootStackParamList } from "../../../../routes/LoginStackNavigation";
 
 type HomeScreenNavigationProp = NavigationProp<RootStackParamList, "Home">;
 
-const ProfileImageAndButtons = () => {
-    const logOut = useAuthStore((state) => state.logout);
-    const navigation = useNavigation<HomeScreenNavigationProp>();
-
-    const navigateToHome = () => {
-        console.log("go home");
-        navigation.navigate("Home");
-    };
+const ProfileImageAndButtons = ({ modalVisible, setModalVisible }: any) => {
+    const { logout } = useAuthStore();
 
     const logOutFunction = async () => {
-        await logOut(navigateToHome);
+        await logout();
     };
 
     return (
@@ -40,7 +34,10 @@ const ProfileImageAndButtons = () => {
                     />
                 </TouchableOpacity>
 
-                <TouchableOpacity className="bg-white w-9 h-9 rounded-full justify-center items-center border border-gray-200">
+                <TouchableOpacity
+                    className="bg-white w-9 h-9 rounded-full justify-center items-center border border-gray-200"
+                    onPress={() => setModalVisible(!modalVisible)}
+                >
                     <MaterialCommunityIcons
                         name="pencil"
                         size={20}

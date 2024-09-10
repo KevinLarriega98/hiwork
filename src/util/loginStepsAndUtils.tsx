@@ -1,11 +1,14 @@
+// loginStepsAndUtils.ts
 import React from "react";
 import {
     View,
     Text,
     TextInput,
     TouchableOpacity,
+    Image,
     FlatList,
 } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 
 export const REGISTRATION_STEPS_VOLUNTARIO = [
     {
@@ -28,6 +31,11 @@ export const REGISTRATION_STEPS_VOLUNTARIO = [
     },
     {
         key: "4",
+        message: "Escoge un avatar",
+        type: "image",
+    },
+    {
+        key: "5",
         message: "Ya está tu perfil creado.\n¡A buscar proyectos!",
         type: "message",
     },
@@ -70,7 +78,9 @@ export const renderItem = (
     formData: { [key: string]: string },
     selectedOptions: { [key: string]: string },
     setFormData: (data: { [key: string]: string }) => void,
-    setSelectedOptions: (data: { [key: string]: string }) => void
+    setSelectedOptions: (data: { [key: string]: string }) => void,
+    pickImage: () => void,
+    image: string | null
 ) => {
     return (
         <View
@@ -80,6 +90,24 @@ export const renderItem = (
             <Text className="text-lg font-bold mb-4 text-center">
                 {item.question || item.message}
             </Text>
+            {item.type === "image" && (
+                <>
+                    <TouchableOpacity
+                        onPress={pickImage}
+                        className="border border-gray-700 py-2 px-4 rounded mb-3"
+                    >
+                        <Text>Pick an image from camera roll</Text>
+                    </TouchableOpacity>
+                    {image && (
+                        <View className=" border border-gray-700 rounded-lg p-1 ">
+                            <Image
+                                source={{ uri: image }}
+                                className=" w-[200px] h-[200px] "
+                            />
+                        </View>
+                    )}
+                </>
+            )}
             {item.type === "input" && (
                 <TextInput
                     className="w-full p-2 border border-gray-300 rounded"

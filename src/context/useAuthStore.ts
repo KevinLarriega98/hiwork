@@ -22,10 +22,19 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
     setUserType: (userType: "Voluntario" | "ONG" | null) => set({ userType }),
     setCurrentUser: (currentUser: UserState | null) => set({ currentUser }),
 
-    logout: async (navigateToHome: () => void) => {
-        await logout();
-        navigateToHome();
-        set({ user: null, token: null, isAuthenticated: false });
+    logout: async () => {
+        try {
+            await logout();
+            set({
+                user: null,
+                token: null,
+                isAuthenticated: false,
+                currentUser: null,
+            });
+            console.log("Sesión cerrada con éxito.");
+        } catch (error) {
+            console.log("Error cerrando sesión:", error);
+        }
     },
 
     login: async (email: string, password: string) => {

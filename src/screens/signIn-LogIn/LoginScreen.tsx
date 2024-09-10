@@ -17,9 +17,7 @@ const LoginScreen: React.FC = () => {
 
     const handleLogin = async () => {
         const savedUser = await login(user.email, user.password);
-        if (savedUser) {
-            navigation.navigate("TabsBottom");
-        } else {
+        if (!savedUser) {
             setError("Usuario o contraseña incorrectos");
             Alert.alert("Error", "Usuario o contraseña incorrectos");
         }

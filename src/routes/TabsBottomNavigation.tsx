@@ -47,7 +47,7 @@ export const TabsBottomNavigation = () => {
             />
             <Tab.Screen
                 name="Mis Proyectos"
-                component={withSafeArea(ProjectScreenNavigation)}
+                component={ProjectScreenNavigation}
                 options={{
                     tabBarLabel: "Proyectos",
                     tabBarIcon: ({ color }) => (
