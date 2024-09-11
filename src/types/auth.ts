@@ -21,7 +21,8 @@ export interface AuthActions {
         profileType: string,
         name: string,
         discipline: string,
-        typeOfProjects: string
+        typeOfProjects: string,
+        downloadURL: string
     ) => Promise<User | null | Error>;
     initializeAuth: () => void;
     setUserType: (userType: "Voluntario" | "ONG" | null) => void;

@@ -3,13 +3,9 @@ import React from "react";
 import profileImage from "../../../../assets/profile-image.jpg";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import useAuthStore from "../../../../context/useAuthStore";
-import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { RootStackParamList } from "../../../../routes/LoginStackNavigation";
-
-type HomeScreenNavigationProp = NavigationProp<RootStackParamList, "Home">;
 
 const ProfileImageAndButtons = ({ modalVisible, setModalVisible }: any) => {
-    const { logout } = useAuthStore();
+    const { logout, currentUser } = useAuthStore();
 
     const logOutFunction = async () => {
         await logout();
@@ -18,7 +14,9 @@ const ProfileImageAndButtons = ({ modalVisible, setModalVisible }: any) => {
     return (
         <View className="absolute inset-x-0 top-[6%] flex items-center z-20 w-full">
             <Image
-                source={profileImage}
+                source={{
+                    uri: currentUser?.image ? currentUser?.image : profileImage,
+                }}
                 className="w-40 h-40 rounded-full border-4 border-white"
             />
 

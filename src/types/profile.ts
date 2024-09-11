@@ -14,6 +14,7 @@ export interface UserState {
         discipline: string;
         typeOfProjects: string;
     } | null;
+    image: string | null;
 }
 
 export interface UserActions {

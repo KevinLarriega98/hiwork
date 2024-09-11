@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    Alert,
+    ActivityIndicator,
+} from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { RootStackParamList } from "../../routes/LoginStackNavigation";
 import { FontAwesome } from "@expo/vector-icons";
@@ -15,12 +22,16 @@ const LoginScreen: React.FC = () => {
     const [user, setUser] = useState({ email: "", password: "" });
     const [error, setError] = useState("");
 
+    const [loading, setLoading] = useState(false);
+
     const handleLogin = async () => {
+        setLoading(true);
         const savedUser = await login(user.email, user.password);
         if (!savedUser) {
             setError("Usuario o contraseña incorrectos");
             Alert.alert("Error", "Usuario o contraseña incorrectos");
         }
+        setLoading(false);
 
         setTimeout(() => {
             setError("");
@@ -98,6 +109,14 @@ const LoginScreen: React.FC = () => {
                     </Text>
                 </TouchableOpacity>
             </View>
+
+            {loading && (
+                <ActivityIndicator
+                    size="large"
+                    color="#666"
+                    className=" absolute top-[40%] left-1/2"
+                />
+            )}
 
             <View className="justify-center items-center">
                 <Text className="text-gray-600 mb-4">O continuar con</Text>

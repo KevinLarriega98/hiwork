@@ -27,6 +27,8 @@ const PerfilTabScreen = () => {
                 </Text>
             </View>
 
+            {/* MODAL */}
+
             <Modal
                 animationType="fade"
                 transparent={true}

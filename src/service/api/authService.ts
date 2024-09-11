@@ -9,6 +9,12 @@ import {
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, db } from "./firebase";
+import {
+    getStorage,
+    ref,
+    uploadBytesResumable,
+    getDownloadURL,
+} from "firebase/storage";
 
 export const getUserDataFromFirestore = async (user: User) => {
     const collections = ["Voluntarios", "ONGs"];
@@ -39,7 +45,8 @@ export const register = async (
     profileType: string,
     name: string,
     discipline: string,
-    typeOfProjects: string
+    typeOfProjects: string,
+    downloadURL: string
 ): Promise<User | null> => {
     try {
         const userCredential = await createUserWithEmailAndPassword(
@@ -62,6 +69,7 @@ export const register = async (
             name: name,
             discipline: discipline,
             typeOfProjects: typeOfProjects,
+            image: downloadURL,
         });
 
         return user;
@@ -94,11 +102,47 @@ export const sendPasswordResetEmailAuth = async (
     }
 };
 
+export const uploadImage = async (
+    uri: string,
+    fileName: string,
+    onProgress?: (progress: any) => void
+) => {
+    const fetchResponse = await fetch(uri);
+
+    console.log(fetchResponse);
+
+    const blob = await fetchResponse.blob();
+
+    console.log(blob);
+
+    const imageRef = ref(getStorage(), `images/${fileName}`);
+    const uploadTask = uploadBytesResumable(imageRef, blob);
+
+    return new Promise((resolve, reject) => {
+        uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+                const progress =
+                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                onProgress && onProgress(progress);
+            },
+            (error) => {},
+            async () => {
+                const downloadURL = await getDownloadURL(
+                    uploadTask.snapshot.ref
+                );
+                resolve({
+                    downloadURL,
+                    metadata: uploadTask.snapshot.metadata,
+                });
+            }
+        );
+    });
+};
+
 // export const updateUserProfile = async (
 //     userID: string,
 //     name: string,
-//     discipline: string,
-//     typeOfProjects: string
 // ): Promise<void> => {
 //     try {
 //         await updateProfile(user, {

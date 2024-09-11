@@ -8,7 +8,7 @@ import {
     Image,
     FlatList,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker";
+import { AnimatedCircularProgress } from "react-native-circular-progress";
 
 export const REGISTRATION_STEPS_VOLUNTARIO = [
     {
@@ -80,7 +80,8 @@ export const renderItem = (
     setFormData: (data: { [key: string]: string }) => void,
     setSelectedOptions: (data: { [key: string]: string }) => void,
     pickImage: () => void,
-    image: string | null
+    image: string | null,
+    progress: number
 ) => {
     return (
         <View
@@ -90,13 +91,22 @@ export const renderItem = (
             <Text className="text-lg font-bold mb-4 text-center">
                 {item.question || item.message}
             </Text>
+
+            {item.type === "message" && (
+                <AnimatedCircularProgress
+                    size={200}
+                    width={4}
+                    fill={20}
+                />
+            )}
+
             {item.type === "image" && (
                 <>
                     <TouchableOpacity
                         onPress={pickImage}
                         className="border border-gray-700 py-2 px-4 rounded mb-3"
                     >
-                        <Text>Pick an image from camera roll</Text>
+                        <Text>Escoge un avatar de tu galería</Text>
                     </TouchableOpacity>
                     {image && (
                         <View className=" border border-gray-700 rounded-lg p-1 ">

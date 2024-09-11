@@ -8,7 +8,7 @@ import {
     useWindowDimensions,
     StyleSheet,
     TouchableOpacity,
-    TextInput,
+    Alert,
 } from "react-native";
 import { ExpandingDot } from "react-native-animated-pagination-dots";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -30,6 +30,7 @@ import {
 import useUserStore from "../../context/useRegisterStore";
 import useAuthStore from "../../context/useAuthStore";
 import * as ImagePicker from "expo-image-picker";
+import { uploadImage } from "../../service/api/authService";
 
 type TabsBottomScreenNavigationProp = NavigationProp<
     RootStackParamList,
@@ -57,22 +58,26 @@ const RegistrationApp: React.FC = () => {
     }>({});
     const [error, setError] = useState<string>("");
 
+    const [progress, setProgress] = useState(0);
+
     const { setName, setDiscipline, setTypeOfProjects, clearSensitiveData } =
         useUserStore();
     const register = useAuthStore((state) => state.register);
 
     const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
+        try {
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.All,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
 
-        // console.log(result.assets[0].uri);
-
-        if (!result.canceled) {
-            setImage(result.assets[0].uri);
+            if (!result.canceled) {
+                setImage(result.assets[0].uri);
+            }
+        } catch (error: any) {
+            Alert.alert("Error", error.message);
         }
     };
 
@@ -106,13 +111,20 @@ const RegistrationApp: React.FC = () => {
                 typeOfProjects,
             } = useUserStore.getState();
 
+            const uploadedImageData: any = await uploadImage(
+                image ? image : "",
+                email,
+                (progress: any) => setProgress(progress)
+            );
+
             const user = await register(
                 email,
                 password,
                 type,
                 name,
                 discipline,
-                typeOfProjects
+                typeOfProjects,
+                uploadedImageData.downloadURL
             );
 
             if (user) {
@@ -173,7 +185,8 @@ const RegistrationApp: React.FC = () => {
                         setFormData,
                         setSelectedOptions,
                         pickImage,
-                        image
+                        image,
+                        progress
                     )
                 }
                 ref={flatListRef}
