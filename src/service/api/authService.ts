@@ -7,7 +7,7 @@ import {
     updateProfile,
     User,
 } from "firebase/auth";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "./firebase";
 import {
     getStorage,
@@ -46,7 +46,8 @@ export const register = async (
     name: string,
     discipline: string,
     typeOfProjects: string,
-    downloadURL: string
+    downloadURL: string,
+    description: string
 ): Promise<User | null> => {
     try {
         const userCredential = await createUserWithEmailAndPassword(
@@ -70,6 +71,7 @@ export const register = async (
             discipline: discipline,
             typeOfProjects: typeOfProjects,
             image: downloadURL,
+            description: description,
         });
 
         return user;
@@ -140,17 +142,26 @@ export const uploadImage = async (
     });
 };
 
-// export const updateUserProfile = async (
-//     userID: string,
-//     name: string,
-// ): Promise<void> => {
-//     try {
-//         await updateProfile(user, {
-//             displayName: name,
-//             discipline: discipline,
-//             typeOfProjects: typeOfProjects,
-//         });
-//     } catch (error) {
-//         console.log(error);
-//     }
-// };
+export const updateUserNameAndDescription = async (
+    userID: string,
+    userType: "Voluntario" | "ONG",
+    name: string,
+    description: string
+): Promise<void> => {
+    try {
+        const user = auth.currentUser;
+
+        console.log(user?.providerData);
+
+        const userDocRef = doc(db, userType + "s", userID);
+
+        const prueba = await updateDoc(userDocRef, {
+            name: name,
+            description: description,
+        });
+
+        return prueba;
+    } catch (error) {
+        console.log(error);
+    }
+};

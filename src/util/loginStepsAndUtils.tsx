@@ -31,11 +31,16 @@ export const REGISTRATION_STEPS_VOLUNTARIO = [
     },
     {
         key: "4",
+        message: "Danos un poco de información sobre ti",
+        type: "input",
+    },
+    {
+        key: "5",
         message: "Escoge un avatar",
         type: "image",
     },
     {
-        key: "5",
+        key: "6",
         message: "Ya está tu perfil creado.\n¡A buscar proyectos!",
         type: "message",
     },
@@ -62,6 +67,16 @@ export const REGISTRATION_STEPS_ONG = [
     },
     {
         key: "4",
+        message: "Danos un poco de información sobre ti",
+        type: "input",
+    },
+    {
+        key: "5",
+        message: "Escoge un avatar",
+        type: "image",
+    },
+    {
+        key: "6",
         message: "Ya está tu perfil creado.\n¡A buscar proyectos!",
         type: "message",
     },
@@ -92,11 +107,17 @@ export const renderItem = (
                 {item.question || item.message}
             </Text>
 
+            {item.type === "description" && (
+                <Text className="text-base text-gray-600 text-center">
+                    {item.message}
+                </Text>
+            )}
+
             {item.type === "message" && (
                 <AnimatedCircularProgress
                     size={200}
                     width={4}
-                    fill={20}
+                    fill={progress}
                 />
             )}
 
@@ -120,14 +141,20 @@ export const renderItem = (
             )}
             {item.type === "input" && (
                 <TextInput
-                    className="w-full p-2 border border-gray-300 rounded"
+                    className={`w-full p-2 border border-gray-300 rounded ${
+                        item.key === "4" ? "h-32" : "h-12"
+                    }`}
                     placeholder={item.placeholder}
                     value={formData[item.key] || ""}
                     onChangeText={(text) =>
                         setFormData({ ...formData, [item.key]: text })
                     }
+                    multiline={item.key === "4"}
+                    numberOfLines={item.key === "4" ? 5 : 1}
+                    textAlignVertical={item.key === "4" ? "top" : "center"}
                 />
             )}
+
             {item.type === "options" &&
                 item.options.map((option: string, index: React.Key) => (
                     <TouchableOpacity
@@ -151,13 +178,18 @@ export const isNextDisabled = (
     activeIndex: number,
     REGISTRATION_STEPS: any[],
     formData: { [key: string]: string },
-    selectedOptions: { [key: string]: string }
+    selectedOptions: { [key: string]: string },
+    image: string | null
 ) => {
     const step = REGISTRATION_STEPS[activeIndex];
     if (step.type === "input" && !formData[step.key]) {
         return true;
     }
     if (step.type === "options" && !selectedOptions[step.key]) {
+        return true;
+    }
+
+    if (step.type === "image" && !image) {
         return true;
     }
     return false;

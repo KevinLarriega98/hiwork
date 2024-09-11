@@ -63,7 +63,8 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
         name: string,
         discipline: string,
         typeOfProjects: string,
-        downloadURL: string
+        downloadURL: string,
+        description: string
     ) => {
         try {
             const user = await register(
@@ -73,7 +74,8 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
                 name,
                 discipline,
                 typeOfProjects,
-                downloadURL
+                downloadURL,
+                description
             );
 
             if (user) {

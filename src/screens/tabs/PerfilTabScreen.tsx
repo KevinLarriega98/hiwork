@@ -11,13 +11,12 @@ import React, { useState } from "react";
 import useAuthStore from "../../context/useAuthStore";
 import ProfileImageAndButtons from "./components/PerfileTabScreenComponents/ProfileImageAndButtons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import ModalInterior from "./components/PerfileTabScreenComponents/ModalInterior";
 
 const PerfilTabScreen = () => {
-    const { user, currentUser } = useAuthStore();
+    const { currentUser } = useAuthStore();
 
     const [modalVisible, setModalVisible] = useState(false);
-
-    console.log(modalVisible);
 
     return (
         <ScrollView className="flex-1">
@@ -37,31 +36,10 @@ const PerfilTabScreen = () => {
                     setModalVisible(!modalVisible);
                 }}
             >
-                <View className="flex-1 items-center top-16">
-                    <View className="w-[75%] h-[50%] bg-white justify-center items-center rounded-lg shadow-md">
-                        <View className="absolute top-0 right-0 p-2 rounded-full z-20">
-                            <Pressable
-                                onPress={() => setModalVisible(!modalVisible)}
-                            >
-                                <MaterialCommunityIcons
-                                    name="close"
-                                    color={"#000000"}
-                                    size={18}
-                                />
-                            </Pressable>
-                        </View>
-                        <Text className="text-xl font-bold mb-4">
-                            Editar nombre
-                        </Text>
-                        <TextInput
-                            placeholder={currentUser?.name}
-                            className="border p-2 mb-4 w-[75%] rounded-lg"
-                        />
-                        <TouchableOpacity className="bg-primary items-center mr-2 rounded-xl py-2 px-3">
-                            <Text className="text-white">Save Data</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                <ModalInterior
+                    setModalVisible={setModalVisible}
+                    modalVisible={modalVisible}
+                />
             </Modal>
 
             <ProfileImageAndButtons
@@ -76,11 +54,7 @@ const PerfilTabScreen = () => {
 
                 <Text className="text-base text-[#666666] mb-5 mx-5">
                     {/* TODO Aquí ira la descripción del usuario. */}
-                    Soy Carolina Díaz, historiadora y estudiante de Diseño UX en
-                    Barcelona. Trabajo como freelancer, optimizando mi flujo de
-                    trabajo con herramientas digitales. Me apasiona el diseño,
-                    la tecnología y el aprendizaje continuo. Disfruto de paseos
-                    por la ciudad con mi gato, Luna.
+                    {currentUser?.description}
                 </Text>
                 <Text className="text-xl font-bold mb-2 mx-5">
                     Trabajos en curso

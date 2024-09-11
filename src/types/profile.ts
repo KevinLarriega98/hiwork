@@ -15,6 +15,7 @@ export interface UserState {
         typeOfProjects: string;
     } | null;
     image: string | null;
+    description: string;
 }
 
 export interface UserActions {
@@ -25,6 +26,7 @@ export interface UserActions {
     setDiscipline: (discipline: string) => void;
     setTypeOfProjects: (typeOfProjects: string) => void;
     clearSensitiveData: () => void;
+    setDescription: (description: string) => void;
 }
 
 export interface RegisterState {
@@ -34,4 +36,5 @@ export interface RegisterState {
     name: string;
     discipline: string;
     typeOfProjects: string;
+    description: string;
 }

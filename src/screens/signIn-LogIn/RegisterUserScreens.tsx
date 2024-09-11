@@ -60,8 +60,14 @@ const RegistrationApp: React.FC = () => {
 
     const [progress, setProgress] = useState(0);
 
-    const { setName, setDiscipline, setTypeOfProjects, clearSensitiveData } =
-        useUserStore();
+    const {
+        setName,
+        setDiscipline,
+        setTypeOfProjects,
+        clearSensitiveData,
+        setDescription,
+        description,
+    } = useUserStore();
     const register = useAuthStore((state) => state.register);
 
     const pickImage = async () => {
@@ -90,15 +96,22 @@ const RegistrationApp: React.FC = () => {
 
     const handleNextStep = () => {
         const step = REGISTRATION_STEPS[activeIndex];
+
+        console.log(step.key);
         if (step.key === "1") {
             setName(formData[step.key] || "");
         } else if (step.key === "2") {
             setDiscipline(selectedOptions[step.key] || "");
         } else if (step.key === "3") {
             setTypeOfProjects(selectedOptions[step.key] || "");
+            console.log(formData[step.key]);
+        } else if (step.key === "4") {
+            setDescription(formData[step.key] || "");
         }
         handleNext(activeIndex, flatListRef, setActiveIndex);
     };
+
+    console.log(description);
 
     const handleRegister = async () => {
         try {
@@ -109,6 +122,7 @@ const RegistrationApp: React.FC = () => {
                 name,
                 discipline,
                 typeOfProjects,
+                description,
             } = useUserStore.getState();
 
             const uploadedImageData: any = await uploadImage(
@@ -124,7 +138,8 @@ const RegistrationApp: React.FC = () => {
                 name,
                 discipline,
                 typeOfProjects,
-                uploadedImageData.downloadURL
+                uploadedImageData.downloadURL,
+                description
             );
 
             if (user) {
@@ -168,7 +183,8 @@ const RegistrationApp: React.FC = () => {
                         activeIndex,
                         REGISTRATION_STEPS,
                         formData,
-                        selectedOptions
+                        selectedOptions,
+                        image
                     )
                 }
                 className="flex-1"
@@ -234,7 +250,8 @@ const RegistrationApp: React.FC = () => {
                                     activeIndex,
                                     REGISTRATION_STEPS,
                                     formData,
-                                    selectedOptions
+                                    selectedOptions,
+                                    image
                                 )
                                     ? "bg-gray-400"
                                     : "bg-primary"
@@ -244,7 +261,8 @@ const RegistrationApp: React.FC = () => {
                                 activeIndex,
                                 REGISTRATION_STEPS,
                                 formData,
-                                selectedOptions
+                                selectedOptions,
+                                image
                             )}
                         >
                             <AnimatedCircularProgress
