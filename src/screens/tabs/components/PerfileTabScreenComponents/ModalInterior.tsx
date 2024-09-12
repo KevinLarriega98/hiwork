@@ -10,7 +10,10 @@ import {
 import React, { useState } from "react";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import useAuthStore from "../../../../context/useAuthStore";
-import { updateUserNameAndDescription } from "../../../../service/api/authService";
+import {
+    updateUserNameAndDescription,
+    uploadImage,
+} from "../../../../service/api/authService";
 import { UserState } from "../../../../types/profile";
 import * as ImagePicker from "expo-image-picker";
 
@@ -26,7 +29,9 @@ const ModalInterior = ({
     const [name, setName] = useState(currentUser?.name);
     const [description, setDescription] = useState(currentUser?.description);
 
-    const [image, setImage] = useState<string | null>(null);
+    const [image, setImage] = useState<string>(currentUser?.image);
+
+    const [progress, setProgress] = useState(0);
 
     const pickImage = async () => {
         try {
@@ -43,6 +48,29 @@ const ModalInterior = ({
         } catch (error: any) {
             Alert.alert("Error", error.message);
         }
+    };
+
+    const handleUpdateUserNameAndDescriptionAndImage = async () => {
+        if (image !== currentUser?.image) {
+            uploadImage(image, currentUser?.email, (progress: any) =>
+                setProgress(progress)
+            );
+        }
+
+        updateUserNameAndDescription(
+            currentUser?.uid,
+            currentUser?.profileType,
+            name,
+            description,
+            image
+        );
+
+        setCurrentUser({
+            ...currentUser,
+            name: name,
+            description: description,
+            image: image,
+        } as UserState);
     };
 
     return (
@@ -79,30 +107,17 @@ const ModalInterior = ({
                         <Text>Edit Image</Text>
                     </TouchableOpacity>
                     <View className=" border border-gray-700 rounded-lg p-1  w-[110px] h-[110px]">
-                        {image && (
-                            <Image
-                                source={{ uri: image }}
-                                className=" w-[100px] h-[100px] "
-                            />
-                        )}
+                        <Image
+                            source={{ uri: image || currentUser?.image }}
+                            className=" w-[100px] h-[100px] "
+                        />
                     </View>
                 </View>
 
                 <TouchableOpacity
                     className="bg-primary items-center mr-2 rounded-xl py-2 px-3"
                     onPress={() => {
-                        updateUserNameAndDescription(
-                            currentUser?.uid,
-                            currentUser?.profileType,
-                            name,
-                            description
-                        );
-
-                        setCurrentUser({
-                            ...currentUser,
-                            name: name,
-                            description: description,
-                        } as UserState);
+                        handleUpdateUserNameAndDescriptionAndImage();
                     }}
                 >
                     <Text className="text-white">Save Data</Text>

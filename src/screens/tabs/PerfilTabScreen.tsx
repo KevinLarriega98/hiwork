@@ -10,7 +10,6 @@ import {
 import React, { useState } from "react";
 import useAuthStore from "../../context/useAuthStore";
 import ProfileImageAndButtons from "./components/PerfileTabScreenComponents/ProfileImageAndButtons";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import ModalInterior from "./components/PerfileTabScreenComponents/ModalInterior";
 
 const PerfilTabScreen = () => {
@@ -25,8 +24,6 @@ const PerfilTabScreen = () => {
                     {currentUser?.name}
                 </Text>
             </View>
-
-            {/* MODAL */}
 
             <Modal
                 animationType="fade"
@@ -53,7 +50,6 @@ const PerfilTabScreen = () => {
                 </Text>
 
                 <Text className="text-base text-[#666666] mb-5 mx-5">
-                    {/* TODO Aquí ira la descripción del usuario. */}
                     {currentUser?.description}
                 </Text>
                 <Text className="text-xl font-bold mb-2 mx-5">

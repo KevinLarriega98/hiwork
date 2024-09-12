@@ -15,6 +15,7 @@ import {
     uploadBytesResumable,
     getDownloadURL,
 } from "firebase/storage";
+import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 
 export const getUserDataFromFirestore = async (user: User) => {
     const collections = ["Voluntarios", "ONGs"];
@@ -104,20 +105,26 @@ export const sendPasswordResetEmailAuth = async (
     }
 };
 
+const compressImage = async (uri: string) => {
+    const compressedImage = await manipulateAsync(
+        uri,
+        [{ resize: { width: 600 } }],
+        { compress: 0.7, format: SaveFormat.JPEG }
+    );
+    return compressedImage.uri;
+};
+
 export const uploadImage = async (
     uri: string,
     fileName: string,
     onProgress?: (progress: any) => void
 ) => {
-    const fetchResponse = await fetch(uri);
-
-    console.log(fetchResponse);
-
+    const compressedUri = await compressImage(uri);
+    const fetchResponse = await fetch(compressedUri);
     const blob = await fetchResponse.blob();
 
-    console.log(blob);
-
     const imageRef = ref(getStorage(), `images/${fileName}`);
+
     const uploadTask = uploadBytesResumable(imageRef, blob);
 
     return new Promise((resolve, reject) => {
@@ -128,7 +135,10 @@ export const uploadImage = async (
                     (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                 onProgress && onProgress(progress);
             },
-            (error) => {},
+            (error) => {
+                console.error(error);
+                reject(error);
+            },
             async () => {
                 const downloadURL = await getDownloadURL(
                     uploadTask.snapshot.ref
@@ -146,19 +156,21 @@ export const updateUserNameAndDescription = async (
     userID: string,
     userType: "Voluntario" | "ONG",
     name: string,
-    description: string
+    description: string,
+    image: string
 ): Promise<void> => {
     try {
         const user = auth.currentUser;
-
-        console.log(user?.providerData);
 
         const userDocRef = doc(db, userType + "s", userID);
 
         const prueba = await updateDoc(userDocRef, {
             name: name,
             description: description,
+            image: image,
         });
+
+        console.log(prueba);
 
         return prueba;
     } catch (error) {

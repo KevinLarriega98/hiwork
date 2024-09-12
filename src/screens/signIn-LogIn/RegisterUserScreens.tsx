@@ -58,7 +58,7 @@ const RegistrationApp: React.FC = () => {
     }>({});
     const [error, setError] = useState<string>("");
 
-    const [progress, setProgress] = useState(0);
+    const [progress, setProgress] = useState(null);
 
     const {
         setName,
@@ -144,7 +144,6 @@ const RegistrationApp: React.FC = () => {
 
             if (user) {
                 console.log("Registered successfully", user);
-                navigation.navigate("TabsBottom");
                 clearSensitiveData();
             } else {
                 throw new Error("Unknown error occurred during registration.");

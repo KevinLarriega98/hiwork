@@ -1,5 +1,5 @@
-import { View, TouchableOpacity, Image } from "react-native";
-import React from "react";
+import { View, TouchableOpacity, Image, ActivityIndicator } from "react-native";
+import React, { useState } from "react";
 import profileImage from "../../../../assets/profile-image.jpg";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import useAuthStore from "../../../../context/useAuthStore";

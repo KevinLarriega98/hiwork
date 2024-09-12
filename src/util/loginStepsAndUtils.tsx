@@ -96,7 +96,7 @@ export const renderItem = (
     setSelectedOptions: (data: { [key: string]: string }) => void,
     pickImage: () => void,
     image: string | null,
-    progress: number
+    progress: number | null
 ) => {
     return (
         <View
@@ -113,13 +113,16 @@ export const renderItem = (
                 </Text>
             )}
 
-            {item.type === "message" && (
-                <AnimatedCircularProgress
-                    size={200}
-                    width={4}
-                    fill={progress}
-                />
-            )}
+            {item.type === "message" ||
+                (progress !== null && (
+                    <AnimatedCircularProgress
+                        size={200}
+                        width={4}
+                        fill={progress}
+                    >
+                        {() => <Text>{progress}%</Text>}
+                    </AnimatedCircularProgress>
+                ))}
 
             {item.type === "image" && (
                 <>
