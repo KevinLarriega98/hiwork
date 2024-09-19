@@ -136,7 +136,9 @@ const BusquedaTabScreen = () => {
                         {item.remote ? "Remote" : "Local"}
                     </Text>
                 </View>
-                <Text className="text-gray-500">{item.description}</Text>
+                <Text numberOfLines={4} className="text-gray-500">
+                    {item.description}
+                </Text>
             </TouchableOpacity>
         );
     };
