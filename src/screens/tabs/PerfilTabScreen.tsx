@@ -1,75 +1,143 @@
+import React, { useState } from "react";
 import {
+    Dimensions,
     View,
     Text,
-    ScrollView,
-    Modal,
-    Pressable,
-    TextInput,
+    Image,
+    Linking,
     TouchableOpacity,
+    Modal,
+    TouchableWithoutFeedback,
 } from "react-native";
-import React, { useState } from "react";
+import { TabView, SceneMap } from "react-native-tab-view";
+import Prueba from "../../components/profile/TabBarCustomProfile";
+import profileImage from "../../assets/profile-image.jpg";
 import useAuthStore from "../../context/useAuthStore";
-import ProfileImageAndButtons from "./components/PerfileTabScreenComponents/ProfileImageAndButtons";
-import ModalInterior from "./components/PerfileTabScreenComponents/ModalInterior";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import EditProfileAndLogOut from "./components/PerfileTabScreenComponents/EditProfileAndLogOut";
 
 const PerfilTabScreen = () => {
-    const { currentUser } = useAuthStore();
+    const [index, setIndex] = useState(0);
+    const [routes] = useState([
+        { key: "perfil", title: "Perfil" },
+        { key: "proyectos", title: "Proyectos App" },
+    ]);
 
     const [modalVisible, setModalVisible] = useState(false);
+    const { currentUser } = useAuthStore();
+
+    const openLink = (url: string) => {
+        Linking.openURL(url).catch((err) =>
+            console.error("Error al abrir enlace", err)
+        );
+    };
+
+    const PerfilScreen = () => (
+        <View className="flex-1 px-6">
+            <Text numberOfLines={14}>{currentUser?.description}</Text>
+            <Text className="mt-4">23 trabajos realizados | 22 feedbacks</Text>
+
+            <TouchableOpacity
+                onPress={() =>
+                    openLink("https://www.linkedin.com/in/marcgonzaleztarrio/")
+                }
+                className="flex flex-row items-center mt-2"
+            >
+                <MaterialCommunityIcons
+                    name="linkedin"
+                    color={"black"}
+                    size={26}
+                />
+                <Text className="ml-2">marcgonzaleztarrio</Text>
+            </TouchableOpacity>
+        </View>
+    );
+
+    const ProyectosScreen = () => (
+        <View className="flex-1 items-center">
+            <Text>23 trabajos realizados</Text>
+        </View>
+    );
+
+    const initialLayout = { width: Dimensions.get("window").width };
+
+    const renderScene = SceneMap({
+        perfil: PerfilScreen,
+        proyectos: ProyectosScreen,
+    });
 
     return (
-        <ScrollView className="flex-1">
-            <View className="h-[13%] bg-white justify-top items-center relative z-0 mt-4">
-                <Text className="text-2xl font-bold text-center">
-                    {currentUser?.name}
-                </Text>
-            </View>
-
-            <Modal
-                animationType="fade"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => {
-                    setModalVisible(!modalVisible);
-                }}
-            >
-                <ModalInterior
+        <View className="flex-1">
+            <View className="flex flex-col items-center bg-gray_4 p-4 rounded-b-3xl">
+                <EditProfileAndLogOut
                     setModalVisible={setModalVisible}
                     modalVisible={modalVisible}
                 />
-            </Modal>
 
-            <ProfileImageAndButtons
-                setModalVisible={setModalVisible}
-                modalVisible={modalVisible}
-            />
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => setModalVisible(false)}
+                >
+                    <TouchableWithoutFeedback
+                        onPress={() => setModalVisible(false)}
+                    >
+                        <View
+                            style={{
+                                backgroundColor: "rgba(0,0,0,0.5)",
+                            }}
+                            className="flex-1 justify-end"
+                        >
+                            <TouchableWithoutFeedback>
+                                <View className="w-full bg-white p-4 rounded-t-lg">
+                                    <Text className="text-xl font-bold mb-4">
+                                        Editar Perfil
+                                    </Text>
+                                    <Text className="text-xl font-bold ">
+                                        Cerrar Sesión
+                                    </Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </View>
+                    </TouchableWithoutFeedback>
+                </Modal>
 
-            <View className="min-h-full bg-gray-100 pt-24 mb-24 rounded-t-3xl">
-                <Text className="text-lg text-center font-bold mb-5">
-                    23 trabajos realizados | 22 feedbacks
+                <Image
+                    source={{ uri: currentUser?.image || profileImage }}
+                    className="w-40 h-40 rounded-full border-4 border-white"
+                />
+                <Text className="text-2xl font-bold text-center mt-2">
+                    {currentUser?.name}
                 </Text>
-
-                <Text className="text-base text-[#666666] mb-5 mx-5">
-                    {currentUser?.description}
-                </Text>
-                <Text className="text-xl font-bold mb-2 mx-5">
-                    Trabajos en curso
-                </Text>
-                <View className="mb-5 px-5">
-                    <View className="bg-gray-300 w-full h-24 rounded-lg" />
-                </View>
-                <Text className="text-xl font-bold mb-2 mx-5">
-                    Trabajos Anteriores
-                </Text>
-                {/* TODO Aquí ira una flatList con los trabajos anteriores. */}
-                <View className="flex-row flex-wrap justify-between mb-2 px-5 gap-1">
-                    <View className="bg-gray-300 w-[48%] h-24 rounded-lg mb-2" />
-                    <View className="bg-gray-300 w-[48%] h-24 rounded-lg mb-2" />
-                    <View className="bg-gray-300 w-[48%] h-24 rounded-lg mb-2" />
-                    <View className="bg-gray-300 w-[48%] h-24 rounded-lg mb-2" />
+                <View className="flex flex-row justify-center items-center mt-1">
+                    <Text className="text-black text-sm">
+                        <MaterialCommunityIcons
+                            name="google-maps"
+                            color={"black"}
+                            size={20}
+                        />{" "}
+                        Barcelona
+                    </Text>
+                    <Text className="text-black text-sm mx-1">|</Text>
+                    <Text className="text-black text-sm">
+                        <MaterialCommunityIcons
+                            name="account-voice"
+                            color={"black"}
+                            size={20}
+                        />{" "}
+                        Catalan, Castellano
+                    </Text>
                 </View>
             </View>
-        </ScrollView>
+            <TabView
+                navigationState={{ index, routes }}
+                renderScene={renderScene}
+                onIndexChange={setIndex}
+                initialLayout={initialLayout}
+                renderTabBar={(props) => <Prueba {...props} />}
+            />
+        </View>
     );
 };
 

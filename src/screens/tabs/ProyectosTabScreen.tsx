@@ -113,17 +113,16 @@ const ProyectosTabScreen = () => {
 
         return (
             <TouchableOpacity
-                className="bg-[#e6e6e6] p-4 rounded-2xl mb-4 w-[48%]"
+                className="bg-gray_1 p-4 rounded-2xl mb-4 w-[48%]"
                 onPress={() => handleProjectPress(item)}
             >
                 <View className="flex flex-row justify-between items-center mb-2">
-                    <View className="px-2 py-1 bg-[#7f7f7f] rounded-full justify-center items-center">
-                        <Text className="text-[#e6e6e6] text-xs font-normal leading-none">
+                    <View className="px-2 py-1 bg-gray_2 rounded-full justify-center items-center">
+                        <Text className="text-gray_1 text-xs font-normal leading-none">
                             Design ux/ui
                         </Text>
                     </View>
                     <TouchableOpacity
-                        //FIXME de momento esta disabled que nose que hacer con el pero algo voy a hacer en el futuro
                         className="flex flex-row gap-1 items-center mb-2 z-30"
                         onPress={() =>
                             saveProjectUser(
@@ -148,7 +147,7 @@ const ProyectosTabScreen = () => {
                         )}
                     </TouchableOpacity>
                 </View>
-                <Text className="text-xl font-medium mb-1 text-black">
+                <Text className="text-xl font-medium mb-1 text-text_black">
                     {item.title}
                 </Text>
 
@@ -158,7 +157,7 @@ const ProyectosTabScreen = () => {
                         color={"black"}
                         size={18}
                     />
-                    <Text className="text-gray-500">{item.ongName}</Text>
+                    <Text className="text-text_black">{item.ongName}</Text>
                 </View>
                 <View className="flex flex-col items-start mb-1">
                     <View className="flex flex-row items-center mb-1">
@@ -167,7 +166,9 @@ const ProyectosTabScreen = () => {
                             color={"#7f7f7f"}
                             size={18}
                         />
-                        <Text className="text-gray-500 mr-2">{weeksRange}</Text>
+                        <Text className="text-text_black mr-2">
+                            {weeksRange}
+                        </Text>
                     </View>
                     <View className="flex flex-row items-center mb-1">
                         <MaterialCommunityIcons
@@ -175,7 +176,7 @@ const ProyectosTabScreen = () => {
                             color={"#7f7f7f"}
                             size={18}
                         />
-                        <Text className="text-gray-500">
+                        <Text className="text-text_black">
                             {item.remote ? "Remote" : "Local"}
                         </Text>
                     </View>
@@ -185,14 +186,14 @@ const ProyectosTabScreen = () => {
     };
 
     return (
-        <View className="flex-1 bg-white">
+        <View className="flex-1 bg-background">
             <BellComponent />
             <View className="px-4 flex-1">
                 <Text className="text-xl font-bold mb-4">Hola, hiDoer!</Text>
                 {/* TODO quitar el hardcode y hacer la lógica de mirar si tienes algún proyecto activo o no */}
-                <View className="bg-gray-200 p-4 rounded-lg mb-4 flex flex-row items-center justify-evenly">
+                <View className="bg-gray_1 p-4 rounded-lg mb-4 flex flex-row items-center justify-evenly">
                     <InfoSVG />
-                    <Text className="text-gray-600 text-center text-base">
+                    <Text className="text-text_black text-center text-base">
                         No tienes ningún proyecto activo
                     </Text>
                 </View>

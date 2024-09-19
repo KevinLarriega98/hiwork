@@ -22,7 +22,7 @@ const CustomTabBar: React.FC<MaterialTopTabBarProps> = (props) => {
                         <TouchableOpacity
                             key={i}
                             className={`flex-1 p-1  rounded-xl ${
-                                isFocused ? "bg-[#666666]" : "bg-[#cccccc]"
+                                isFocused ? "bg-gray_3" : "bg-[#cccccc]"
                             }`}
                             onPress={() => navigation.navigate(route.name)}
                         >
