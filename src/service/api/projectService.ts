@@ -49,7 +49,7 @@ export const applyToProject = async (
     volunteerName: string,
     volunteerEmail: string,
     coverLetter: string
-): Promise<void> => {
+): Promise<string> => {
     const application = {
         volunteerID,
         volunteerName,
@@ -66,6 +66,8 @@ export const applyToProject = async (
         );
         const docRef = doc(applicationsColRef, volunteerID);
         await setDoc(docRef, application);
+
+        return docRef.id;
     } catch (error) {
         console.error("Error al enviar la aplicación:", error);
         throw new Error("No se pudo enviar la aplicación.");

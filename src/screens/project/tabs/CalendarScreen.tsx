@@ -113,6 +113,8 @@ const CalendarScreen: React.FC = () => {
         project.objectiveTimeline[0]?.date || new Date()
     );
 
+    console.log(agendaItems);
+
     const handleDayPress = (day: any) => {
         const selectedDate = day.dateString;
         setClickedDate({ day: day, clicked: true });

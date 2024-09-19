@@ -32,7 +32,7 @@ export const ProjectScreenNavigation = () => {
                 component={ApplicatorProfile}
                 options={({ route }: { route: any }) => ({
                     title:
-                        route.params?.item.volunteerName ||
+                        "Applicator " + route.params?.item.volunteerName ||
                         "Detalles del applicator",
                 })}
             />

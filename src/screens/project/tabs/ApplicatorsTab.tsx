@@ -9,11 +9,7 @@ import {
     RefreshControl,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
-import {
-    getApplications,
-    getProjects,
-    updateStatusApplicator,
-} from "../../../service/api/projectService";
+import { getApplications } from "../../../service/api/projectService";
 import useAuthStore from "../../../context/useAuthStore";
 import {
     RouteProp,
@@ -98,22 +94,6 @@ const ApplicatorsTab = () => {
                                 <View className="flex-row items-center gap-2">
                                     <Text>{item.volunteerName}</Text>
                                     <Text>{item.status}</Text>
-                                </View>
-                                <View className="flex-row items-center gap-2">
-                                    <TouchableOpacity
-                                        onPress={() =>
-                                            updateStatusApplicator(
-                                                project.id!,
-                                                item.volunteerID,
-                                                "accepted"
-                                            )
-                                        }
-                                    >
-                                        <Text>Aceptar</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity>
-                                        <Text>Rechazar</Text>
-                                    </TouchableOpacity>
                                 </View>
                             </View>
                         </Pressable>

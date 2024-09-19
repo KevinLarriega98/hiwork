@@ -75,8 +75,8 @@ const ApplyToProjectButton = ({ projectID }: { projectID: string }) => {
 
     if (loading || hasApplied === null) {
         return (
-            <View className="absolute bottom-5 right-5 rounded-full px-5 bg-gray-700 py-4 justify-center items-center elevation-5 opacity-50">
-                <ActivityIndicator size="small" color="white" />
+            <View className="absolute bottom-14 flex justify-center w-full h-fit left-2  items-center ">
+                <ActivityIndicator size="small" color="#D9D9D9" />
             </View>
         );
     }
@@ -92,8 +92,8 @@ const ApplyToProjectButton = ({ projectID }: { projectID: string }) => {
                     setModalBoolean(!modalBoolean);
                 }}
             >
-                <View className="flex-1 items-center relative">
-                    <View className="w-[75%] h-[60%] bg-gray-100 justify-center items-center rounded-lg absolute top-[19%] shadow-md p-6">
+                <View className="flex-1 items-center relative ">
+                    <View className="w-[75%] h-[60%] bg-gray-100 justify-center items-center rounded-lg absolute top-[19%] shadow-md p-6 border-2 border-[#D9D9D9] ">
                         <View className="absolute top-0 right-0 p-2 rounded-full z-20">
                             <Pressable
                                 onPress={() => setModalBoolean(!modalBoolean)}
@@ -120,7 +120,7 @@ const ApplyToProjectButton = ({ projectID }: { projectID: string }) => {
                                 textAlignVertical={"top"}
                             />
                             <TouchableOpacity
-                                className=" border border-gray-600 rounded-full px-4 py-2 mt-4"
+                                className=" border border-gray-600 rounded-lg px-5 py-4 mt-4"
                                 onPress={handleApply}
                             >
                                 <Text>Enviar</Text>
@@ -129,18 +129,19 @@ const ApplyToProjectButton = ({ projectID }: { projectID: string }) => {
                     </View>
                 </View>
             </Modal>
-
-            <TouchableOpacity
-                className={`absolute bottom-5 right-5  rounded-full px-5 bg-gray-700 py-4 justify-center items-center elevation-5 ${
-                    hasApplied ? " opacity-50" : " opacity-100"
-                }`}
-                onPress={() => setModalBoolean(!modalBoolean)}
-                disabled={loading || hasApplied}
-            >
-                <Text className="text-white text-base font-bold">
-                    {hasApplied ? "Ya Aplicado" : "Aplicar"}
-                </Text>
-            </TouchableOpacity>
+            <View className=" absolute bottom-14 flex justify-center w-full h-fit left-2  items-center">
+                <TouchableOpacity
+                    className={`rounded-lg  px-5  py-4 elevation-5  w-[60%]  border border-gray-600 flex items-center  ${
+                        hasApplied ? " opacity-50" : " opacity-100"
+                    }`}
+                    onPress={() => setModalBoolean(!modalBoolean)}
+                    disabled={loading || hasApplied}
+                >
+                    <Text className="text-black text-base font-bold">
+                        {hasApplied ? "Ya Aplicado" : "Aplicar"}
+                    </Text>
+                </TouchableOpacity>
+            </View>
         </>
     );
 };

@@ -5,11 +5,12 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import useAuthStore from "../../../context/useAuthStore";
 import { RootStackParamList } from "../../../types/navigation";
 import { calculateWeeksRange } from "../../../util/calculateWeeksRange";
+import ApplyToProjectButton from "../components/ApplyToProjectButton";
 
 type ProjectScreenRouteProp = RouteProp<RootStackParamList, "Project">;
 
 const ProjectInfoScreen = () => {
-    const { currentUser } = useAuthStore();
+    const { currentUser, userType } = useAuthStore();
     const route = useRoute<ProjectScreenRouteProp>();
     const { project } = route.params;
 
@@ -80,6 +81,10 @@ const ProjectInfoScreen = () => {
                             </View>
                         </View>
                     </View>
+
+                    {userType === "Voluntario" && (
+                        <ApplyToProjectButton projectID={project.id!} />
+                    )}
 
                     <View className="flex-row items-center justify-between">
                         <Text className="text-[#666] text-sm">
