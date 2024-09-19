@@ -16,9 +16,10 @@ import {
 } from "../../service/api/projectService";
 import loader from "../../util/loader";
 import { ProjectState } from "../../types/project";
-import { RootStackParamList } from "../../routes/LoginStackNavigation";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import useAuthStore from "../../context/useAuthStore";
+import { RootStackParamList } from "../../types/navigation";
+import { calculateWeeksRange } from "../../util/calculateWeeksRange";
 
 type ProjectDetailScreenNavigationProp = NavigationProp<
     RootStackParamList,
@@ -45,7 +46,6 @@ const ProyectosTabScreen = () => {
                 const unsubscribe = await getSavedProjects(
                     currentUser?.uid,
                     (savedProjects) => {
-                        console.log(22222222);
                         setSavedProjects(savedProjects);
                         setLoading(false);
                     }
@@ -71,7 +71,6 @@ const ProyectosTabScreen = () => {
         setLoading(true);
 
         const unsubscribe = getProjects((projects) => {
-            console.log(11111111111);
             setLocalProjects(projects);
             setLoading(false);
         });
@@ -105,45 +104,6 @@ const ProyectosTabScreen = () => {
 
     const handleProjectPress = (project: ProjectState) => {
         navigation.navigate("Project", { project });
-    };
-
-    const calculateWeeksRange = (
-        datesArray: {
-            date: string;
-            name: string;
-            data: string;
-            height: number;
-            day: string;
-        }[]
-    ) => {
-        if (Array.isArray(datesArray) && datesArray.length > 0) {
-            try {
-                const dates = datesArray.map(
-                    (dateObj) => new Date(dateObj.date)
-                );
-
-                const validDates = dates.filter(
-                    (date) => !isNaN(date.getTime())
-                );
-
-                if (validDates.length > 0) {
-                    const firstDate = validDates[0];
-                    const lastDate = validDates[validDates.length - 1];
-
-                    const timeDiff = lastDate.getTime() - firstDate.getTime();
-                    const diffWeeks = Math.ceil(
-                        timeDiff / (1000 * 60 * 60 * 24 * 7)
-                    );
-
-                    const minWeeks = 1;
-                    const maxWeeks = Math.max(minWeeks, diffWeeks);
-                    return `${minWeeks}-${maxWeeks} weeks`;
-                }
-            } catch (error) {
-                console.error("Error calculating weeks range:", error);
-            }
-        }
-        return "No valid dates";
     };
 
     const renderItem = ({ item }: { item: any }) => {

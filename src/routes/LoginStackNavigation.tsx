@@ -7,7 +7,7 @@ import withSafeArea from "../util/withSafeArea";
 import RegisterUserScreens from "../screens/signIn-LogIn/RegisterUserScreens";
 import RegisterTypeUser from "../screens/signIn-LogIn/RegisterTypeUser";
 import useAuthStore from "../context/useAuthStore";
-import { ProjectState } from "../types/project";
+import { RootStackParamList } from "../types/navigation";
 
 // Apply withSafeArea outside of the function
 const SafeHomeScreen = withSafeArea(HomeScreen);
@@ -15,16 +15,6 @@ const SafeLoginScreen = withSafeArea(LoginScreen);
 const SafeRegisterScreen = withSafeArea(RegisterScreen);
 const SafeRegisterTypeUser = withSafeArea(RegisterTypeUser);
 const SafeRegisterUserScreens = withSafeArea(RegisterUserScreens);
-
-export type RootStackParamList = {
-    Home: undefined;
-    Login: undefined;
-    Register: undefined;
-    RegisterUserScreens: { profileType: "Voluntario" | "ONG" };
-    RegisterTypeUser: undefined;
-    TabsBottom: undefined;
-    Project: { project: ProjectState };
-};
 
 const Stack = createStackNavigator<RootStackParamList>();
 

@@ -19,7 +19,7 @@ import {
 } from "../../data/dropdownData";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { ProjectState } from "../../types/project";
-import { RootStackParamList } from "../../routes/LoginStackNavigation";
+import { RootStackParamList } from "../../types/navigation";
 
 type ProjectDetailScreenNavigationProp = NavigationProp<
     RootStackParamList,

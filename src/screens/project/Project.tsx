@@ -1,7 +1,7 @@
 import { RouteProp, useRoute } from "@react-navigation/native";
 import React from "react";
-import { RootStackParamList } from "../../routes/LoginStackNavigation";
 import ProjectTabsNavigation from "../../routes/ProjectTabsNavigation";
+import { RootStackParamList } from "../../types/navigation";
 
 type ProjectScreenRouteProp = RouteProp<RootStackParamList, "Project">;
 

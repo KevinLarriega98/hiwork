@@ -18,7 +18,6 @@ import {
     useRoute,
     NavigationProp,
 } from "@react-navigation/native";
-import { RootStackParamList } from "../../routes/LoginStackNavigation";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import {
     StepItem,
@@ -31,6 +30,7 @@ import useUserStore from "../../context/useRegisterStore";
 import useAuthStore from "../../context/useAuthStore";
 import * as ImagePicker from "expo-image-picker";
 import { uploadImage } from "../../service/api/authService";
+import { RootStackParamList } from "../../types/navigation";
 
 type TabsBottomScreenNavigationProp = NavigationProp<
     RootStackParamList,
@@ -58,7 +58,7 @@ const RegistrationApp: React.FC = () => {
     }>({});
     const [error, setError] = useState<string>("");
 
-    const [progress, setProgress] = useState(null);
+    const [progress, setProgress] = useState(0);
 
     const {
         setName,

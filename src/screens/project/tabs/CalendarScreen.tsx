@@ -11,7 +11,6 @@ import {
 import React, { useEffect, useState, useMemo } from "react";
 import { Agenda } from "react-native-calendars";
 import { RouteProp, useRoute } from "@react-navigation/native";
-import { RootStackParamList } from "../../../routes/LoginStackNavigation";
 import useAuthStore from "../../../context/useAuthStore";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import {
@@ -19,6 +18,7 @@ import {
     updateProjectObjectiveTimeline,
 } from "../../../service/api/projectService";
 import { CalendarEvent } from "../../../types/project";
+import { RootStackParamList } from "../../../types/navigation";
 
 type ProjectScreenRouteProp = RouteProp<RootStackParamList, "Project">;
 

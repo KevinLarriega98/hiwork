@@ -49,7 +49,7 @@ export const applyToProject = async (
     volunteerName: string,
     volunteerEmail: string,
     coverLetter: string
-): Promise<string> => {
+): Promise<void> => {
     const application = {
         volunteerID,
         volunteerName,
@@ -64,8 +64,8 @@ export const applyToProject = async (
             doc(db, "projects", projectID),
             "applications"
         );
-        const docRef = await addDoc(applicationsColRef, application);
-        return docRef.id;
+        const docRef = doc(applicationsColRef, volunteerID);
+        await setDoc(docRef, application);
     } catch (error) {
         console.error("Error al enviar la aplicación:", error);
         throw new Error("No se pudo enviar la aplicación.");
@@ -258,5 +258,38 @@ export const saveProjectUser = async (
         }
     } catch (error) {
         console.error("Error al guardar/desguardar el proyecto:", error);
+    }
+};
+
+export const updateStatusApplicator = async (
+    projectID: string,
+    volunteerID: string,
+    status: string
+) => {
+    try {
+        const projectDocRef = doc(
+            db,
+            "projects",
+            projectID,
+            "applications",
+            volunteerID
+        );
+
+        await updateDoc(projectDocRef, {
+            status,
+            updatedAt: serverTimestamp(),
+        });
+
+        console.log(
+            "Aplicación actualizada exitosamente en la subcolección 'status'."
+        );
+    } catch (error) {
+        console.error(
+            "Error al actualizar la aplicación en la subcolección 'status'",
+            error
+        );
+        throw new Error(
+            "No se pudo actualizar la aplicación en la subcolección."
+        );
     }
 };

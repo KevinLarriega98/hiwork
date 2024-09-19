@@ -14,8 +14,6 @@ const App = () => {
         initializeAuth();
     }, [initializeAuth]);
 
-    console.log(" currentUser", currentUser);
-
     return (
         <SafeAreaProvider>
             <NavigationContainer>

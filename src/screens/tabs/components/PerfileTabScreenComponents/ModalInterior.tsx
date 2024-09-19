@@ -31,8 +31,6 @@ const ModalInterior = ({
 
     const [image, setImage] = useState<string>(currentUser?.image);
 
-    const [progress, setProgress] = useState(0);
-
     const pickImage = async () => {
         try {
             let result = await ImagePicker.launchImageLibraryAsync({
@@ -52,9 +50,7 @@ const ModalInterior = ({
 
     const handleUpdateUserNameAndDescriptionAndImage = async () => {
         if (image !== currentUser?.image) {
-            uploadImage(image, currentUser?.email, (progress: any) =>
-                setProgress(progress)
-            );
+            uploadImage(image, currentUser?.email);
         }
 
         updateUserNameAndDescription(

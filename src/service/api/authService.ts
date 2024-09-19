@@ -16,6 +16,8 @@ import {
     getDownloadURL,
 } from "firebase/storage";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
+import { VolunteerState } from "../../types/volunteer";
+import { UserState } from "../../types/profile";
 
 export const getUserDataFromFirestore = async (user: User) => {
     const collections = ["Voluntarios", "ONGs"];
@@ -176,4 +178,20 @@ export const updateUserNameAndDescription = async (
     } catch (error) {
         console.log(error);
     }
+};
+
+export const getVolunteerDataFromFirestore = async (
+    userID: string
+): Promise<UserState | null> => {
+    try {
+        const docRef = doc(db, "Voluntarios", userID);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            return docSnap.data() as UserState;
+        }
+    } catch (error) {
+        console.error("Error al obtener datos del voluntario:", error);
+    }
+    return null;
 };

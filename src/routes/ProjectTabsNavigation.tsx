@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import ProjectInfoScreen from "../screens/project/tabs/ProjectInfoScreen";
 import CalendarScreen from "../screens/project/tabs/CalendarScreen";
@@ -6,13 +6,16 @@ import CompletedTasksScreen from "../screens/project/tabs/CompletedTasksScreen";
 import CustomTabBar from "../components/createProjectONG/CustomTabBar";
 import { ProjectState } from "../types/project";
 import { View } from "react-native";
-import ApplyToProjectButton from "../screens/project/components/ApplyToProjectButton";
 import useAuthStore from "../context/useAuthStore";
+import ApplicatorsTab from "../screens/project/tabs/ApplicatorsTab";
 
 const Tab = createMaterialTopTabNavigator();
 
 const ProjectTabsNavigation = ({ project }: { project: ProjectState }) => {
-    const { userType } = useAuthStore();
+    const { currentUser } = useAuthStore();
+
+    console.log("this is project", project.ongID);
+    console.log("this is current", currentUser?.uid);
 
     return (
         <View style={{ flex: 1 }}>
@@ -45,13 +48,15 @@ const ProjectTabsNavigation = ({ project }: { project: ProjectState }) => {
                     initialParams={{ project }}
                     options={{ title: "Hecho" }}
                 />
+                {currentUser?.uid === project.ongID && (
+                    <Tab.Screen
+                        name="Applicators"
+                        component={ApplicatorsTab}
+                        initialParams={{ project }}
+                        options={{ title: "Applicators" }}
+                    />
+                )}
             </Tab.Navigator>
-
-            {userType === "Voluntario" && (
-                <ApplyToProjectButton
-                    projectID={project.id ? project.id : ""}
-                />
-            )}
         </View>
     );
 };
