@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import React from "react";
-import useAuthStore from "../../context/useAuthStore";
+import useAuthStore from "../../stores/useAuthStore";
 import BellComponent from "../../components/Projects/BellComponent";
 import NewProjectONG from "../../components/createProjectONG/NewProjectONG";
 

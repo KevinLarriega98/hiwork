@@ -9,7 +9,7 @@ import {
     Pressable,
     TextInput,
 } from "react-native";
-import useAuthStore from "../../../context/useAuthStore";
+import useAuthStore from "../../../stores/useAuthStore";
 import {
     applyToProject,
     checkIfApplied,

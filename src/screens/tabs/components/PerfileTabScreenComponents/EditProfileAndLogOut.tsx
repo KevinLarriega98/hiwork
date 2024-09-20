@@ -1,7 +1,7 @@
 import { View, TouchableOpacity } from "react-native";
 import React from "react";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import useAuthStore from "../../../../context/useAuthStore";
+import useAuthStore from "../../../../stores/useAuthStore";
 
 const EditProfileAndLogOut = ({
     modalVisible,

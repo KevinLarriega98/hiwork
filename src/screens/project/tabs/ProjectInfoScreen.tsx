@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, Image } from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import useAuthStore from "../../../context/useAuthStore";
+import useAuthStore from "../../../stores/useAuthStore";
 import { RootStackParamList } from "../../../types/navigation";
 import { calculateWeeksRange } from "../../../util/calculateWeeksRange";
 import ApplyToProjectButton from "../components/ApplyToProjectButton";

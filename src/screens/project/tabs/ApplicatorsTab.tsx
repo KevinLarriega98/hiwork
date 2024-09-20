@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { getApplications } from "../../../service/api/projectService";
-import useAuthStore from "../../../context/useAuthStore";
+import useAuthStore from "../../../stores/useAuthStore";
 import {
     RouteProp,
     useIsFocused,

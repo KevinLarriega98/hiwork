@@ -17,9 +17,10 @@ import {
 import loader from "../../util/loader";
 import { ProjectState } from "../../types/project";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
-import useAuthStore from "../../context/useAuthStore";
+import useAuthStore from "../../stores/useAuthStore";
 import { RootStackParamList } from "../../types/navigation";
 import { calculateWeeksRange } from "../../util/calculateWeeksRange";
+import pruebaHide from "../../stores/pruebaHide";
 
 type ProjectDetailScreenNavigationProp = NavigationProp<
     RootStackParamList,
@@ -28,7 +29,7 @@ type ProjectDetailScreenNavigationProp = NavigationProp<
 
 const ProyectosTabScreen = () => {
     const navigation = useNavigation<ProjectDetailScreenNavigationProp>();
-    const { currentUser } = useAuthStore();
+    const { currentUser, userType } = useAuthStore();
 
     const [localProjects, setLocalProjects] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -37,6 +38,8 @@ const ProyectosTabScreen = () => {
     const unsubscribeRef = useRef<() => void | undefined>();
 
     const [savedProjects, setSavedProjects] = useState<string[]>([]);
+
+    const { hide, setHide } = pruebaHide();
 
     useEffect(() => {
         setLoading(true);
@@ -104,6 +107,13 @@ const ProyectosTabScreen = () => {
 
     const handleProjectPress = (project: ProjectState) => {
         navigation.navigate("Project", { project });
+    };
+
+    const handleCreateProject = () => {
+        setHide(!hide);
+        navigation.navigate("CreateNewProject", {
+            profileType: "ONG",
+        });
     };
 
     const renderItem = ({ item }: { item: any }) => {
@@ -197,6 +207,24 @@ const ProyectosTabScreen = () => {
                         No tienes ningún proyecto activo
                     </Text>
                 </View>
+
+                {/* esto es el crear nuevo proyecto */}
+                {userType === "ONG" && (
+                    <TouchableOpacity
+                        onPress={() => handleCreateProject()}
+                        className="bg-gray_1 p-4 rounded-lg mb-4 flex flex-row items-center "
+                    >
+                        <MaterialCommunityIcons
+                            name="pencil-outline"
+                            color={"#000000"}
+                            size={18}
+                        />
+                        <Text className="text-text_black text-center text-base ml-3">
+                            Crear un proyecto
+                        </Text>
+                    </TouchableOpacity>
+                )}
+
                 <Text className="text-lg font-semibold mb-4">
                     Aquí tienes algunos proyectos que creemos que te podrían
                     interesar...

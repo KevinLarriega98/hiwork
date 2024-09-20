@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import useAuthStore from "../../../../context/useAuthStore";
+import useAuthStore from "../../../../stores/useAuthStore";
 import {
     updateUserNameAndDescription,
     uploadImage,

@@ -4,6 +4,7 @@ import ProyectosTabScreen from "../screens/tabs/ProyectosTabScreen";
 import Project from "../screens/project/Project";
 import withSafeArea from "../util/withSafeArea";
 import ApplicatorProfile from "../screens/project/ApplicatorProfile";
+import CreateNewProject from "../screens/project/CreateNewProject";
 
 const Stack = createStackNavigator();
 
@@ -35,6 +36,14 @@ export const ProjectScreenNavigation = () => {
                         "Applicator " + route.params?.item.volunteerName ||
                         "Detalles del applicator",
                 })}
+            />
+            <Stack.Screen
+                name="CreateNewProject"
+                component={CreateNewProject}
+                options={{
+                    headerShown: true,
+                    title: "Nuevo Proyecto",
+                }}
             />
         </Stack.Navigator>
     );

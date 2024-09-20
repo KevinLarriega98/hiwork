@@ -11,7 +11,7 @@ import React, { useEffect, useState } from "react";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import DropDownPicker from "react-native-dropdown-picker";
 import BellComponent from "../../components/Projects/BellComponent";
-import useProjectStore from "../../context/useProjectStore";
+import useProjectStore from "../../stores/useProjectStore";
 import {
     formatItemsData,
     locationItemsData,

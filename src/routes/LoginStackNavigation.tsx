@@ -6,7 +6,7 @@ import RegisterScreen from "../screens/signIn-LogIn/RegisterScreen";
 import withSafeArea from "../util/withSafeArea";
 import RegisterUserScreens from "../screens/signIn-LogIn/RegisterUserScreens";
 import RegisterTypeUser from "../screens/signIn-LogIn/RegisterTypeUser";
-import useAuthStore from "../context/useAuthStore";
+import useAuthStore from "../stores/useAuthStore";
 import { RootStackParamList } from "../types/navigation";
 
 // Apply withSafeArea outside of the function

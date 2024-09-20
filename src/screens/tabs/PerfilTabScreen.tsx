@@ -12,7 +12,7 @@ import {
 import { TabView, SceneMap } from "react-native-tab-view";
 import Prueba from "../../components/profile/TabBarCustomProfile";
 import profileImage from "../../assets/profile-image.jpg";
-import useAuthStore from "../../context/useAuthStore";
+import useAuthStore from "../../stores/useAuthStore";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import EditProfileAndLogOut from "./components/PerfileTabScreenComponents/EditProfileAndLogOut";
 
@@ -24,12 +24,16 @@ const PerfilTabScreen = () => {
     ]);
 
     const [modalVisible, setModalVisible] = useState(false);
-    const { currentUser } = useAuthStore();
+    const { currentUser, logout } = useAuthStore();
 
     const openLink = (url: string) => {
         Linking.openURL(url).catch((err) =>
             console.error("Error al abrir enlace", err)
         );
+    };
+
+    const logOutFunction = async () => {
+        await logout();
     };
 
     const PerfilScreen = () => (
@@ -94,9 +98,13 @@ const PerfilTabScreen = () => {
                                     <Text className="text-xl font-bold mb-4">
                                         Editar Perfil
                                     </Text>
-                                    <Text className="text-xl font-bold ">
-                                        Cerrar Sesión
-                                    </Text>
+                                    <TouchableOpacity
+                                        onPress={() => logOutFunction()}
+                                    >
+                                        <Text className="text-xl font-bold ">
+                                            Cerrar Sesión
+                                        </Text>
+                                    </TouchableOpacity>
                                 </View>
                             </TouchableWithoutFeedback>
                         </View>

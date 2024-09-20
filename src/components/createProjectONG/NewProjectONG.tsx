@@ -1,7 +1,7 @@
-import { View, Text, TextInput, Switch, Button, Alert } from "react-native";
+import { View, Text, TextInput, Switch, Button, Alert,  } from "react-native";
 import React, { useState } from "react";
-import useAuthStore from "../../context/useAuthStore";
-import useProjectStore from "../../context/useProjectStore";
+import useAuthStore from "../../stores/useAuthStore";
+import useProjectStore from "../../stores/useProjectStore";
 import { Calendar } from "react-native-calendars";
 
 // Define el tipo para los días marcados en el calendario

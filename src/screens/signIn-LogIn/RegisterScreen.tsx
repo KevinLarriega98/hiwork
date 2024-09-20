@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { RootStackParamList } from "../../routes/LoginStackNavigation";
 import { FontAwesome } from "@expo/vector-icons";
-import useUserStore from "../../context/useRegisterStore";
+import useUserStore from "../../stores/useRegisterStore";
+import { RootStackParamList } from "../../types/navigation";
 
 type RegisterScreenNavigationProp = NavigationProp<
     RootStackParamList,

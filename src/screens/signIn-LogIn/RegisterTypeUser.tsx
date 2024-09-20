@@ -1,7 +1,7 @@
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import useUserStore from "../../context/useRegisterStore";
+import useUserStore from "../../stores/useRegisterStore";
 import { RootStackParamList } from "../../types/navigation";
 
 type RegisterTypeUserScreenNavigationProp = NavigationProp<

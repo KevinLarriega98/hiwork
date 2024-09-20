@@ -6,7 +6,7 @@ import CompletedTasksScreen from "../screens/project/tabs/CompletedTasksScreen";
 import CustomTabBar from "../components/createProjectONG/CustomTabBar";
 import { ProjectState } from "../types/project";
 import { View } from "react-native";
-import useAuthStore from "../context/useAuthStore";
+import useAuthStore from "../stores/useAuthStore";
 import ApplicatorsTab from "../screens/project/tabs/ApplicatorsTab";
 
 const Tab = createMaterialTopTabNavigator();

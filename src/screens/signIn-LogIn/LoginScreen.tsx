@@ -10,7 +10,7 @@ import {
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { RootStackParamList } from "../../routes/LoginStackNavigation";
 import { FontAwesome } from "@expo/vector-icons";
-import useAuthStore from "../../context/useAuthStore";
+import useAuthStore from "../../stores/useAuthStore";
 import { sendPasswordResetEmailAuth } from "../../service/api/authService";
 
 type LoginScreenNavigationProp = NavigationProp<RootStackParamList, "Login">;

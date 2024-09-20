@@ -12,12 +12,7 @@ import {
 } from "react-native";
 import { ExpandingDot } from "react-native-animated-pagination-dots";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
-import {
-    useNavigation,
-    RouteProp,
-    useRoute,
-    NavigationProp,
-} from "@react-navigation/native";
+import { RouteProp, useRoute, NavigationProp } from "@react-navigation/native";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import {
     StepItem,
@@ -26,16 +21,11 @@ import {
     isNextDisabled,
     handleNext,
 } from "../../util/loginStepsAndUtils";
-import useUserStore from "../../context/useRegisterStore";
-import useAuthStore from "../../context/useAuthStore";
+import useUserStore from "../../stores/useRegisterStore";
+import useAuthStore from "../../stores/useAuthStore";
 import * as ImagePicker from "expo-image-picker";
 import { uploadImage } from "../../service/api/authService";
 import { RootStackParamList } from "../../types/navigation";
-
-type TabsBottomScreenNavigationProp = NavigationProp<
-    RootStackParamList,
-    "TabsBottom"
->;
 
 type RegistrationAppRouteProp = RouteProp<
     RootStackParamList,
@@ -45,7 +35,6 @@ type RegistrationAppRouteProp = RouteProp<
 const RegistrationApp: React.FC = () => {
     const route = useRoute<RegistrationAppRouteProp>();
     const { profileType } = route.params;
-    const navigation = useNavigation<TabsBottomScreenNavigationProp>();
 
     const { width } = useWindowDimensions();
     const scrollX = useRef(new Animated.Value(0)).current;
@@ -110,8 +99,6 @@ const RegistrationApp: React.FC = () => {
         }
         handleNext(activeIndex, flatListRef, setActiveIndex);
     };
-
-    console.log(description);
 
     const handleRegister = async () => {
         try {

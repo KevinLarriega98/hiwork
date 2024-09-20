@@ -11,7 +11,7 @@ import {
 import React, { useEffect, useState, useMemo } from "react";
 import { Agenda } from "react-native-calendars";
 import { RouteProp, useRoute } from "@react-navigation/native";
-import useAuthStore from "../../../context/useAuthStore";
+import useAuthStore from "../../../stores/useAuthStore";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import {
     getObjectiveTimelineProjects,

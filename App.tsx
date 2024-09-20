@@ -4,7 +4,7 @@ import { View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import LoginStackNavigation from "./src/routes/LoginStackNavigation";
-import useAuthStore from "./src/context/useAuthStore";
+import useAuthStore from "./src/stores/useAuthStore";
 import { TabsBottomNavigation } from "./src/routes/TabsBottomNavigation";
 
 const App = () => {

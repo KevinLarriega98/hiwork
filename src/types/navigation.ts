@@ -10,4 +10,5 @@ export type RootStackParamList = {
     TabsBottom: undefined;
     Project: { project: ProjectState };
     ApplicatorProfile: { item: Applicator; project: ProjectState };
+    CreateNewProject: { profileType: "Voluntario" | "ONG" };
 };
