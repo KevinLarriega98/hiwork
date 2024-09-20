@@ -13,6 +13,7 @@ module.exports = {
                 gray_2: "#808080",
                 gray_3: "#666",
                 gray_4: "#A6A6A6",
+                gray_5: "#D9D9D9",
                 text_black: "#000000",
             },
         },
