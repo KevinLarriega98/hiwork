@@ -21,6 +21,7 @@ const ProjectInfoScreen = () => {
 
     const weekRange = calculateWeeksRange(project.objectiveTimeline);
 
+
     return (
         <View className="flex-1 p-6 bg-white">
             <View className="flex-1 bg-[#D9D9D9] rounded-lg p-2 justify-between">
@@ -68,16 +69,6 @@ const ProjectInfoScreen = () => {
                                     size={18}
                                 />
                                 <Text>{weekRange}</Text>
-                            </View>
-                            <View className="flex flex-row items-center">
-                                <MaterialCommunityIcons
-                                    name="square-rounded"
-                                    color={"#7f7f7f"}
-                                    size={18}
-                                />
-                                <Text>
-                                    {project.remote ? "Remote" : "Local"}
-                                </Text>
                             </View>
                         </View>
                     </View>

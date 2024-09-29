@@ -4,7 +4,6 @@ import {
     ActivityIndicator,
     FlatList,
     Pressable,
-    TouchableOpacity,
     Alert,
     RefreshControl,
 } from "react-native";
@@ -34,8 +33,6 @@ const ApplicatorsTab = () => {
     const [applications, setApplications] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [refreshing, setRefreshing] = useState(false);
-
-    const isFocused = useIsFocused();
 
     const fetchApplications = async () => {
         if (
@@ -76,6 +73,10 @@ const ApplicatorsTab = () => {
         <View className="flex-1 p-6 bg-white">
             {loading ? (
                 <ActivityIndicator size="large" color="#808080" />
+            ) : applications.length === 0 ? (
+                <Text className="text-center text-xl">
+                    No hay aplicaciones para este proyecto
+                </Text>
             ) : (
                 <FlatList
                     data={applications}

@@ -89,9 +89,6 @@ const CreateNewProject = () => {
         },
     ];
 
-    console.log(newProjectData.objectiveTimeline);
-    console.log(newProjectData);
-
     const validateCurrentStep = () => {
         if (currentStep === 0) {
             setIsValid(newProjectData.title.length > 0);

@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
-import { View, StyleSheet, Animated } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text } from "react-native";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../../types/navigation";
+import { AnimatedCircularProgress } from "react-native-circular-progress";
 
 type WelcomeTypeUserScreenNavigationProp = NavigationProp<
     RootStackParamList,
@@ -10,41 +11,46 @@ type WelcomeTypeUserScreenNavigationProp = NavigationProp<
 
 export default function WelcomeScreen() {
     const navigation = useNavigation<WelcomeTypeUserScreenNavigationProp>();
-    const fadeAnim = new Animated.Value(0);
+    const [progress, setProgress] = useState(0);
 
     useEffect(() => {
-        Animated.timing(fadeAnim, {
-            toValue: 1,
-            duration: 2000,
-            useNativeDriver: true,
-        }).start();
+        const progressInterval = setInterval(() => {
+            setProgress((prevProgress) => {
+                const newProgress = prevProgress + 100 / 20;
+                if (newProgress >= 100) clearInterval(progressInterval);
+                return newProgress;
+            });
+        }, 100);
 
         const timeout = setTimeout(() => {
-            navigation.navigate("Home");
+            navigation.navigate("Login");
         }, 3000);
 
-        return () => clearTimeout(timeout);
+        return () => {
+            clearInterval(progressInterval);
+            clearTimeout(timeout);
+        };
     }, []);
 
     return (
-        <View style={styles.container}>
-            <Animated.Text style={[styles.welcomeText, { opacity: fadeAnim }]}>
-                Bienvenido
-            </Animated.Text>
+        <View className="flex-1 bg-white items-center justify-center">
+            <AnimatedCircularProgress
+                size={300}
+                width={10}
+                fill={progress}
+                tintColor="#004932"
+            >
+                {() => (
+                    <View>
+                        <Text className="text-center text-2xl font-bold text-[#004932]">
+                            ¡Bienvenido!
+                        </Text>
+                        <Text className="text-center text-lg font-bold text-gray_2 mt-2">
+                            ¿Preparado para cambiar el mundo?
+                        </Text>
+                    </View>
+                )}
+            </AnimatedCircularProgress>
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#004932",
-    },
-    welcomeText: {
-        fontSize: 32,
-        color: "#ffffff",
-        fontWeight: "bold",
-    },
-});

@@ -3,6 +3,7 @@ import { Pressable, Text, View } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import useUserStore from "../../stores/useRegisterStore";
 import { RootStackParamList } from "../../types/navigation";
+import ButtonCustom from "../../components/buttons/ButtonCustom";
 
 type RegisterTypeUserScreenNavigationProp = NavigationProp<
     RootStackParamList,
@@ -29,31 +30,29 @@ const RegisterTypeUser = () => {
             <Text className="text-2xl font-bold mb-2 text-center">
                 Tu perfil
             </Text>
-            <Text className="text-base text-gray-600 text-center">
-                ¡Queremos saber de ti!
+            <Text className="text-lg text-gray_2 text-center font-bold">
+                ¿Cuál es tu perfil?
+            </Text>
+            <Text className="text-base text-black text-center mt-2 ">
+                Escoge tu camino
             </Text>
 
             <View className="flex-1 justify-center px-6">
-                <Text className="text-center text-black text-xl font-bold mb-6">
-                    ¿Qué perfil eres?
-                </Text>
-                <View className="flex-col items-center gap-2">
-                    <Pressable
-                        className="bg-[#666666] p-3 rounded-[10px] w-full"
-                        onPress={() => handleTypeUser("Voluntario")}
-                    >
-                        <Text className="text-center text-white font-bold text-sm">
-                            Voluntario
-                        </Text>
-                    </Pressable>
-                    <Pressable
-                        className="bg-[#666666] p-3 rounded-[10px] w-full"
-                        onPress={() => handleTypeUser("ONG")}
-                    >
-                        <Text className="text-center text-white font-bold text-sm">
-                            ONG
-                        </Text>
-                    </Pressable>
+                <View className="flex-col items-center justify-center ">
+                    <ButtonCustom
+                        functionDirection={() => handleTypeUser("Voluntario")}
+                        text="Voluntario"
+                        haveBackground={false}
+                    />
+                    <Text className="text-black text-center text-sm my-3 font-bold">
+                        O
+                    </Text>
+
+                    <ButtonCustom
+                        functionDirection={() => handleTypeUser("ONG")}
+                        text="ONG"
+                        haveBackground={false}
+                    />
                 </View>
             </View>
         </View>

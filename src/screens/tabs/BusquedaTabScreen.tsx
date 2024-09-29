@@ -74,10 +74,10 @@ const BusquedaTabScreen = () => {
         setLocationOpen(false);
     };
 
-    const filteredProjects = projects.filter((project) => {
+    //TODO: fix this filter on create new project put the chose of format and location in the project
+    const filteredProjects = projects.filter((project: ProjectState) => {
         const matchesVolunteer =
-            volunteerValue === "all" ||
-            project.volunteerType === volunteerValue;
+            volunteerValue === "all" || project.roles.includes(volunteerValue);
         const matchesFormat =
             formatValue === "all" || project.format === formatValue;
         const matchesLocation =
@@ -98,7 +98,7 @@ const BusquedaTabScreen = () => {
         navigation.navigate("Project", { project });
     };
 
-    const renderItem = ({ item }: { item: any }) => {
+    const renderItem = ({ item }: { item: ProjectState }) => {
         const firstDate = new Date(item.objectiveTimeline[0].date);
         const lastDate = new Date(
             item.objectiveTimeline[item.objectiveTimeline.length - 1].date
@@ -108,7 +108,15 @@ const BusquedaTabScreen = () => {
                 className={`bg-[#E6E6E6] p-4 rounded-lg mb-4 flex-1 mx-1 `}
                 onPress={() => handleProjectPress(item)}
             >
-                <Text className="text-lg  mb-1">{item.title}</Text>
+                <View className="px-2 py-1 bg-gray_2 rounded-full justify-center items-center w-20 mb-2">
+                    <Text className="text-gray_1 text-xs font-normal leading-none">
+                        {item.roles[0]}
+                    </Text>
+                </View>
+
+                <Text className="text-lg  mb-1 font-bold ml-1">
+                    {item.title}
+                </Text>
 
                 <View className="flex flex-row gap-1 items-center mb-1">
                     <MaterialCommunityIcons
@@ -127,18 +135,7 @@ const BusquedaTabScreen = () => {
                     <Text className="text-gray-500 mr-2">
                         {calculateWeeksDifference(firstDate, lastDate)}
                     </Text>
-                    <MaterialCommunityIcons
-                        name="square-rounded"
-                        color={"#7f7f7f"}
-                        size={18}
-                    />
-                    <Text className="text-gray-500">
-                        {item.remote ? "Remote" : "Local"}
-                    </Text>
                 </View>
-                <Text numberOfLines={4} className="text-gray-500">
-                    {item.description}
-                </Text>
             </TouchableOpacity>
         );
     };
@@ -150,7 +147,7 @@ const BusquedaTabScreen = () => {
                 onStartShouldSetResponder={() => true}
             >
                 <BellComponent />
-                <View className="p-4 ">
+                <View className="px-6 pt-4 ">
                     <View style={styles.searchContainer}>
                         <TextInput
                             style={styles.searchInput}
@@ -165,7 +162,7 @@ const BusquedaTabScreen = () => {
                         />
                     </View>
 
-                    <View className="items-center">
+                    <View className="-mb-5">
                         <View style={styles.column}>
                             <Text style={styles.firstText}>
                                 Quiero ver voluntarios de
@@ -177,7 +174,6 @@ const BusquedaTabScreen = () => {
                                 setOpen={setVolunteerOpen}
                                 setValue={setVolunteerValue}
                                 setItems={setVolunteerItems}
-                                theme="DARK"
                                 style={styles.firstSelectPicker}
                                 containerStyle={
                                     styles.firstSelectPickerInnerContainer
@@ -197,7 +193,6 @@ const BusquedaTabScreen = () => {
                                 setOpen={setFormatOpen}
                                 setValue={setFormatValue}
                                 setItems={setFormatItems}
-                                theme="DARK"
                                 style={styles.picker}
                                 containerStyle={styles.pickerInnerContainer}
                                 textStyle={styles.dropdownText}
@@ -215,7 +210,6 @@ const BusquedaTabScreen = () => {
                                 setOpen={setLocationOpen}
                                 setValue={setLocationValue}
                                 setItems={setLocationItems}
-                                theme="DARK"
                                 style={styles.picker}
                                 containerStyle={styles.pickerInnerContainer}
                                 textStyle={styles.dropdownText}
@@ -228,7 +222,7 @@ const BusquedaTabScreen = () => {
                     <FlatList
                         data={filteredProjects}
                         renderItem={renderItem}
-                        keyExtractor={(item) => item.id}
+                        keyExtractor={(item) => item.id!}
                     />
                 </View>
             </View>
@@ -239,6 +233,7 @@ const BusquedaTabScreen = () => {
 const styles = StyleSheet.create({
     column: {
         flexDirection: "row",
+        paddingHorizontal: 10,
     },
     firstSelectPicker: {
         width: 137,
@@ -269,19 +264,16 @@ const styles = StyleSheet.create({
         fontSize: 12,
     },
     firstText: {
-        fontSize: 14,
+        fontSize: 16,
         marginRight: 5,
-        fontWeight: "600",
     },
     text: {
-        fontSize: 14,
+        fontSize: 16,
         marginRight: 5,
-        fontWeight: "600",
         marginTop: 10,
     },
     searchContainer: {
         position: "relative",
-        backgroundColor: "gray",
         flexDirection: "row",
         alignItems: "center",
         padding: 2,
@@ -289,9 +281,10 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     searchInput: {
-        backgroundColor: "white",
-        padding: 8,
-        borderRadius: 20,
+        backgroundColor: "#f1f1f1",
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 16,
         fontSize: 16,
         flex: 1,
     },

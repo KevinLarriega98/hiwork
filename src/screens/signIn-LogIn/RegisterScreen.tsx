@@ -4,6 +4,7 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
 import useUserStore from "../../stores/useRegisterStore";
 import { RootStackParamList } from "../../types/navigation";
+import ButtonCustom from "../../components/buttons/ButtonCustom";
 
 type RegisterScreenNavigationProp = NavigationProp<
     RootStackParamList,
@@ -88,20 +89,18 @@ const RegisterScreen: React.FC = () => {
                     {error}
                 </Text>
 
-                <TouchableOpacity
-                    className="bg-[#666666] w-full py-3 rounded mb-4"
-                    onPress={handleRegister}
-                >
-                    <Text className="text-center text-white font-bold">
-                        Registrarse
-                    </Text>
-                </TouchableOpacity>
+                <ButtonCustom
+                    functionDirection={handleRegister}
+                    text="Crear cuenta"
+                    haveBackground={true}
+                    customStyle="mb-4"
+                />
 
-                <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-                    <Text className="text-center text-gray-700 font-bold">
-                        Ya tengo cuenta
-                    </Text>
-                </TouchableOpacity>
+                <ButtonCustom
+                    functionDirection={() => navigation.navigate("Login")}
+                    text="Ya tengo cuenta"
+                    haveBackground={false}
+                />
             </View>
 
             <View className="justify-center items-center">

@@ -17,15 +17,11 @@ const ApplicatorProfile = () => {
 
     const [volunteer, setVolunteer] = useState<UserState>();
 
-    console.log(project);
-
     useEffect(() => {
         getVolunteerDataFromFirestore(item.volunteerID).then((volunteer) => {
             setVolunteer(volunteer as UserState);
         });
     }, [item.id]);
-
-    console.log(item);
 
     return (
         <View className="flex-1 p-6">

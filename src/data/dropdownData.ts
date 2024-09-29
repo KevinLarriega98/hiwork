@@ -1,8 +1,9 @@
 export const volunteerItemsData = [
     { label: "Todos", value: "all" },
-    { label: "Design UX/UI", value: "designUXUI" },
-    { label: "Marketing", value: "marketing" },
-    { label: "Programación", value: "programación" },
+    { label: "Desarrollador", value: "Desarrollador" },
+    { label: "Diseñador", value: "Diseñador" },
+    { label: "Traductor", value: "Traductor" },
+    { label: "Marketing", value: "Marketing" },
 ];
 
 export const formatItemsData = [

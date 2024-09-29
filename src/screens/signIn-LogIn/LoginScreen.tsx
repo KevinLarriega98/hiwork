@@ -8,10 +8,11 @@ import {
     ActivityIndicator,
 } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { RootStackParamList } from "../../routes/LoginStackNavigation";
 import { FontAwesome } from "@expo/vector-icons";
 import useAuthStore from "../../stores/useAuthStore";
 import { sendPasswordResetEmailAuth } from "../../service/api/authService";
+import { RootStackParamList } from "../../types/navigation";
+import ButtonCustom from "../../components/buttons/ButtonCustom";
 
 type LoginScreenNavigationProp = NavigationProp<RootStackParamList, "Login">;
 
@@ -29,7 +30,6 @@ const LoginScreen: React.FC = () => {
         const savedUser = await login(user.email, user.password);
         if (!savedUser) {
             setError("Usuario o contraseña incorrectos");
-            Alert.alert("Error", "Usuario o contraseña incorrectos");
         }
         setLoading(false);
 
@@ -55,14 +55,14 @@ const LoginScreen: React.FC = () => {
         <View className="flex-1 bg-white justify-between px-6 py-11">
             <View className=" justify-center items-center">
                 <Text className="text-2xl font-bold mb-4">Inicia sesión</Text>
-                <Text className="text-base text-gray-600 text-center">
-                    ¡Bienvenido de vuelta, te hemos extrañado!
+                <Text className="text-lg text-gray_2 text-center">
+                    Conecta con nuestra comunidad
                 </Text>
             </View>
 
             <View className="justify-center items-center flex-col">
                 <TextInput
-                    className="w-full border border-gray-300 rounded p-2 focus:border-gray-700 mb-7"
+                    className="w-full border border-gray-300 rounded-md p-2 focus:border-gray-700 mb-5"
                     placeholder="Correo electrónico"
                     keyboardType="email-address"
                     autoCapitalize="none"
@@ -72,7 +72,7 @@ const LoginScreen: React.FC = () => {
                 />
 
                 <TextInput
-                    className="w-full border border-gray-300 rounded p-2 focus:border-gray-700 mb-1"
+                    className="w-full border border-gray-300 rounded-md p-2 focus:border-gray-700 mb-1"
                     placeholder="Contraseña"
                     secureTextEntry
                     autoCapitalize="none"
@@ -85,29 +85,30 @@ const LoginScreen: React.FC = () => {
                     className="w-full mb-8"
                     onPress={() => handleResetPassword()}
                 >
-                    <Text className="text-sm text-[#000]">
+                    <Text className="text-sm text-gray_2">
                         ¿Olvidaste tu contraseña?
                     </Text>
                 </TouchableOpacity>
                 {error && <Text className="text-red-500 text-sm">{error}</Text>}
-                <TouchableOpacity
-                    className="bg-[#666666] w-full py-3 rounded mb-4"
-                    onPress={() => {
-                        handleLogin();
-                    }}
-                >
-                    <Text className="text-center text-white font-bold">
-                        Iniciar sesión
-                    </Text>
-                </TouchableOpacity>
 
-                <TouchableOpacity
-                    onPress={() => navigation.navigate("Register")}
-                >
-                    <Text className="text-center text-gray-700 font-bold">
-                        No tengo cuenta
-                    </Text>
-                </TouchableOpacity>
+                <View className=" w-full flex justify-center">
+                    <ButtonCustom
+                        functionDirection={() => {
+                            handleLogin();
+                        }}
+                        text="Iniciar sesión"
+                        haveBackground={true}
+                        customStyle="mb-4"
+                    />
+
+                    <ButtonCustom
+                        functionDirection={() =>
+                            navigation.navigate("Register")
+                        }
+                        text="No tengo cuenta"
+                        haveBackground={false}
+                    />
+                </View>
             </View>
 
             {loading && (

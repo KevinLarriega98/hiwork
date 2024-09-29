@@ -116,7 +116,9 @@ const ProyectosTabScreen = () => {
         });
     };
 
-    const renderItem = ({ item }: { item: any }) => {
+    const renderItem = ({ item }: { item: ProjectState }) => {
+        console.log(item);
+
         const weeksRange = item.objectiveTimeline
             ? calculateWeeksRange(item.objectiveTimeline)
             : "No dates available";
@@ -129,20 +131,20 @@ const ProyectosTabScreen = () => {
                 <View className="flex flex-row justify-between items-center mb-2">
                     <View className="px-2 py-1 bg-gray_2 rounded-full justify-center items-center">
                         <Text className="text-gray_1 text-xs font-normal leading-none">
-                            Design ux/ui
+                            {item.roles[0]}
                         </Text>
                     </View>
                     <TouchableOpacity
-                        className="flex flex-row gap-1 items-center mb-2 z-30"
+                        className="flex flex-row gap-1 items-center  z-30"
                         onPress={() =>
                             saveProjectUser(
-                                item.id,
+                                item.id!,
                                 currentUser?.uid,
                                 savedProjects
                             )
                         }
                     >
-                        {savedProjects.includes(item.id) ? (
+                        {savedProjects.includes(item.id!) ? (
                             <MaterialCommunityIcons
                                 name="bookmark"
                                 color={"black"}
@@ -180,16 +182,6 @@ const ProyectosTabScreen = () => {
                             {weeksRange}
                         </Text>
                     </View>
-                    <View className="flex flex-row items-center mb-1">
-                        <MaterialCommunityIcons
-                            name="square-rounded"
-                            color={"#7f7f7f"}
-                            size={18}
-                        />
-                        <Text className="text-text_black">
-                            {item.remote ? "Remote" : "Local"}
-                        </Text>
-                    </View>
                 </View>
             </TouchableOpacity>
         );
@@ -208,7 +200,6 @@ const ProyectosTabScreen = () => {
                     </Text>
                 </View>
 
-                {/* esto es el crear nuevo proyecto */}
                 {userType === "ONG" && (
                     <TouchableOpacity
                         onPress={() => handleCreateProject()}
@@ -235,7 +226,7 @@ const ProyectosTabScreen = () => {
                     <FlatList
                         data={localProjects}
                         renderItem={renderItem}
-                        keyExtractor={(item) => item.id}
+                        keyExtractor={(item) => item.id!}
                         numColumns={2}
                         columnWrapperStyle={{
                             justifyContent: "space-between",

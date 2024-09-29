@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { ExpandingDot } from "react-native-animated-pagination-dots";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { RouteProp, useRoute, NavigationProp } from "@react-navigation/native";
+import { RouteProp, useRoute } from "@react-navigation/native";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import {
     StepItem,
