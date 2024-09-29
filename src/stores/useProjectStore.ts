@@ -9,10 +9,10 @@ const useProjectStore = create<ProjectActions & ProjectState>((set) => ({
     ongName: "",
     title: "",
     description: "",
+    roles: [],
     objectiveTimeline: [],
     createdAt: null,
     updatedAt: null,
-    remote: false,
 
     setProjects: (projects) => set({ projects }),
     setOng: (ongName) => set({ ongName }),
@@ -21,21 +21,20 @@ const useProjectStore = create<ProjectActions & ProjectState>((set) => ({
     setObjectiveTimeline: (objectiveTimeline) => set({ objectiveTimeline }),
     setCreatedAt: (createdAt) => set({ createdAt }),
     setUpdatedAt: (updatedAt) => set({ updatedAt }),
-    setRemote: (remote) => set({ remote }),
 
     createProject: async (
         ongID: string,
         ongName: string,
         title: string,
         description: string,
+        roles: any[],
         objectiveTimeline: {
             date: string;
             name: string;
             data: string;
             height: number;
             day: string;
-        }[],
-        remote: boolean
+        }[]
     ) => {
         try {
             const project = await createProjectService(
@@ -43,8 +42,8 @@ const useProjectStore = create<ProjectActions & ProjectState>((set) => ({
                 ongName,
                 title,
                 description,
-                objectiveTimeline,
-                remote
+                roles,
+                objectiveTimeline
             );
             set((state) => ({
                 projects: [...state.projects, project],

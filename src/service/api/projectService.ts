@@ -20,8 +20,8 @@ export const createProject = async (
     ongName: string,
     title: string,
     description: string,
-    objectiveTimeline: {}[],
-    remote: boolean
+    roles: string[],
+    objectiveTimeline: {}[]
 ): Promise<any> => {
     const project = {
         ongID,
@@ -29,9 +29,9 @@ export const createProject = async (
         title,
         description,
         objectiveTimeline,
+        roles,
         createdAt: serverTimestamp(),
         updatedAt: null,
-        remote,
     };
 
     try {

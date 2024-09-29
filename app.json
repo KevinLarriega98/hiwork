@@ -1,16 +1,16 @@
 {
     "expo": {
-        "name": "HiWork",
-        "slug": "HiWork",
+        "name": "Volu",
+        "slug": "Volu",
         "version": "1.0.0",
         "orientation": "portrait",
-        "icon": "./assets/icon.png",
-        "scheme": "hiwork",
+        "icon": "./assets/logo-volu.png",
+        "scheme": "volu",
         "userInterfaceStyle": "light",
         "splash": {
-            "image": "./assets/splash.png",
+            "image": "./assets/volu-icon-sin-fondo.png",
             "resizeMode": "contain",
-            "backgroundColor": "#ffffff"
+            "backgroundColor": "#004932"
         },
         "ios": {
             "supportsTablet": true,

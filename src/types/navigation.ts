@@ -11,4 +11,5 @@ export type RootStackParamList = {
     Project: { project: ProjectState };
     ApplicatorProfile: { item: Applicator; project: ProjectState };
     CreateNewProject: { profileType: "Voluntario" | "ONG" };
+    Welcome: undefined;
 };

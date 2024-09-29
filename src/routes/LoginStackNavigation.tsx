@@ -8,6 +8,7 @@ import RegisterUserScreens from "../screens/signIn-LogIn/RegisterUserScreens";
 import RegisterTypeUser from "../screens/signIn-LogIn/RegisterTypeUser";
 import useAuthStore from "../stores/useAuthStore";
 import { RootStackParamList } from "../types/navigation";
+import WelcomeScreen from "../screens/welcome/WelcomeScreen";
 
 // Apply withSafeArea outside of the function
 const SafeHomeScreen = withSafeArea(HomeScreen);
@@ -25,7 +26,7 @@ const LoginStackNavigation = () => {
         initializeAuth: state.initializeAuth,
     }));
     const [initialRoute, setInitialRoute] =
-        useState<keyof RootStackParamList>("Home");
+        useState<keyof RootStackParamList>("Welcome");
 
     useEffect(() => {
         initializeAuth();
@@ -35,7 +36,7 @@ const LoginStackNavigation = () => {
         if (isAuthenticated) {
             setInitialRoute(initialRoute);
         } else {
-            setInitialRoute("Home");
+            setInitialRoute("Welcome");
         }
     }, [isAuthenticated]);
 
@@ -46,6 +47,7 @@ const LoginStackNavigation = () => {
                 headerShown: false,
             }}
         >
+            <Stack.Screen name="Welcome" component={WelcomeScreen} />
             <Stack.Screen name="Home" component={SafeHomeScreen} />
             <Stack.Screen name="Login" component={SafeLoginScreen} />
             <Stack.Screen name="Register" component={SafeRegisterScreen} />

@@ -7,6 +7,7 @@ export interface ProjectState {
     ongName: string;
     title: string;
     description: string;
+    roles: any[];
     objectiveTimeline: {
         date: string;
         name: string;
@@ -16,7 +17,6 @@ export interface ProjectState {
     }[];
     createdAt: Timestamp | null;
     updatedAt: Timestamp | null;
-    remote: boolean;
 }
 
 export interface ProjectActions {
@@ -35,20 +35,19 @@ export interface ProjectActions {
     ) => void;
     setCreatedAt: (createdAt: Timestamp | null) => void;
     setUpdatedAt: (updatedAt: Timestamp | null) => void;
-    setRemote: (remote: boolean) => void;
     createProject: (
         ongID: string,
         ongName: string,
         title: string,
         description: string,
+        roles: any[],
         objectiveTimeline: {
             date: string;
             name: string;
             data: string;
             height: number;
             day: string;
-        }[],
-        remote: boolean
+        }[]
     ) => Promise<any>;
     fetchProjects: () => Promise<{ id: string }[] | undefined>;
 }
