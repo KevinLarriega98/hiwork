@@ -9,6 +9,7 @@ import RegisterTypeUser from "../screens/signIn-LogIn/RegisterTypeUser";
 import useAuthStore from "../stores/useAuthStore";
 import { RootStackParamList } from "../types/navigation";
 import WelcomeScreen from "../screens/welcome/WelcomeScreen";
+import CreateNewProject from "../screens/project/CreateNewProject";
 
 // Apply withSafeArea outside of the function
 const SafeHomeScreen = withSafeArea(HomeScreen);
@@ -20,29 +21,9 @@ const SafeRegisterUserScreens = withSafeArea(RegisterUserScreens);
 const Stack = createStackNavigator<RootStackParamList>();
 
 const LoginStackNavigation = () => {
-    const { isAuthenticated, initializeAuth } = useAuthStore((state) => ({
-        user: state.user,
-        isAuthenticated: state.isAuthenticated,
-        initializeAuth: state.initializeAuth,
-    }));
-    const [initialRoute, setInitialRoute] =
-        useState<keyof RootStackParamList>("Welcome");
-
-    useEffect(() => {
-        initializeAuth();
-    }, [initializeAuth]);
-
-    useEffect(() => {
-        if (isAuthenticated) {
-            setInitialRoute(initialRoute);
-        } else {
-            setInitialRoute("Welcome");
-        }
-    }, [isAuthenticated]);
-
     return (
         <Stack.Navigator
-            initialRouteName={"TabsBottom"}
+            initialRouteName={"Welcome"}
             screenOptions={{
                 headerShown: false,
             }}

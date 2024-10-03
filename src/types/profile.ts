@@ -6,17 +6,21 @@ export interface UserState {
     name: string;
     discipline: string;
     typeOfProjects: string;
-    currentUser: {
-        id: string;
-        email: string;
-        profileType: string;
-        name: string;
-        discipline: string;
-        typeOfProjects: string;
-    } | null;
+    currentUser: CurrentUser;
     image: string | null;
     description: string;
 }
+
+export type CurrentUser = {
+    id: string;
+    email: string;
+    profileType: string;
+    name: string;
+    discipline: string;
+    typeOfProjects: string;
+    description: string;
+    image: string;
+} | null;
 
 export interface UserActions {
     setEmail: (email: string) => void;

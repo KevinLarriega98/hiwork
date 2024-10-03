@@ -1,13 +1,12 @@
 import { User } from "firebase/auth";
 import { DocumentData } from "firebase/firestore";
-import { UserActions, UserState } from "./profile";
+import { CurrentUser, UserActions, UserState } from "./profile";
 
 export interface AuthState {
     user: UserState | DocumentData | null;
     token: string | null;
     isAuthenticated: boolean;
-    userType: "Voluntario" | "ONG" | null;
-    currentUser: UserState | null | DocumentData;
+    currentUser: CurrentUser | DocumentData;
 }
 
 export interface AuthActions {
@@ -26,6 +25,6 @@ export interface AuthActions {
         description: string
     ) => Promise<User | null | Error>;
     initializeAuth: () => void;
-    setUserType: (userType: "Voluntario" | "ONG" | null) => void;
+
     setCurrentUser: (currentUser: UserState | null) => void;
 }

@@ -10,6 +10,7 @@ import React, { useState, useEffect } from "react";
 import { Calendar } from "react-native-calendars";
 import useProjectStore from "../../stores/useProjectStore";
 import useAuthStore from "../../stores/useAuthStore";
+import pruebaHide from "../../stores/pruebaHide";
 
 type MarkedDatesType = {
     [key: string]: {

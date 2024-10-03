@@ -29,7 +29,8 @@ type ProjectDetailScreenNavigationProp = NavigationProp<
 
 const ProyectosTabScreen = () => {
     const navigation = useNavigation<ProjectDetailScreenNavigationProp>();
-    const { currentUser, userType } = useAuthStore();
+    const navigation2 = useNavigation<any>();
+    const { currentUser } = useAuthStore();
 
     const [localProjects, setLocalProjects] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -39,15 +40,13 @@ const ProyectosTabScreen = () => {
 
     const [savedProjects, setSavedProjects] = useState<string[]>([]);
 
-    const { hide, setHide } = pruebaHide();
-
     useEffect(() => {
         setLoading(true);
 
         const fetchSavedProjects = async () => {
             try {
                 const unsubscribe = await getSavedProjects(
-                    currentUser?.uid,
+                    currentUser?.id,
                     (savedProjects) => {
                         setSavedProjects(savedProjects);
                         setLoading(false);
@@ -68,7 +67,7 @@ const ProyectosTabScreen = () => {
                 unsubscribeRef.current();
             }
         };
-    }, [currentUser?.uid]);
+    }, [currentUser?.id]);
 
     useEffect(() => {
         setLoading(true);
@@ -110,15 +109,10 @@ const ProyectosTabScreen = () => {
     };
 
     const handleCreateProject = () => {
-        setHide(!hide);
-        navigation.navigate("CreateNewProject", {
-            profileType: "ONG",
-        });
+        navigation2.navigate("CreateNewProject");
     };
 
     const renderItem = ({ item }: { item: ProjectState }) => {
-        console.log(item);
-
         const weeksRange = item.objectiveTimeline
             ? calculateWeeksRange(item.objectiveTimeline)
             : "No dates available";
@@ -139,7 +133,7 @@ const ProyectosTabScreen = () => {
                         onPress={() =>
                             saveProjectUser(
                                 item.id!,
-                                currentUser?.uid,
+                                currentUser?.id,
                                 savedProjects
                             )
                         }
@@ -200,7 +194,7 @@ const ProyectosTabScreen = () => {
                     </Text>
                 </View>
 
-                {userType === "ONG" && (
+                {currentUser?.profileType === "ONG" && (
                     <TouchableOpacity
                         onPress={() => handleCreateProject()}
                         className="bg-gray_1 p-4 rounded-lg mb-4 flex flex-row items-center "

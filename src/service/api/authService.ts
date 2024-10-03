@@ -16,7 +16,6 @@ import {
     getDownloadURL,
 } from "firebase/storage";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
-import { VolunteerState } from "../../types/volunteer";
 import { UserState } from "../../types/profile";
 
 export const getUserDataFromFirestore = async (user: User) => {

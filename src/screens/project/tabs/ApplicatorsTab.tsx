@@ -29,15 +29,17 @@ const ApplicatorsTab = () => {
     const navigation = useNavigation<ApplicatorProfileScreenRouteProp>();
     const route = useRoute<ProjectScreenRouteProp>();
     const { project } = route.params;
-    const { userType, currentUser } = useAuthStore();
+    const { currentUser } = useAuthStore();
     const [applications, setApplications] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [refreshing, setRefreshing] = useState(false);
 
+    console.log(currentUser);
+
     const fetchApplications = async () => {
         if (
-            userType === "ONG" &&
-            currentUser?.uid === project.ongID &&
+            currentUser?.profileType === "ONG" &&
+            currentUser?.id === project.ongID &&
             project.id
         ) {
             try {
@@ -67,7 +69,7 @@ const ApplicatorsTab = () => {
 
     useEffect(() => {
         fetchApplications();
-    }, [project.id, userType, currentUser?.uid, project.ongID]);
+    }, [project.id, currentUser?.profileType, currentUser?.id, project.ongID]);
 
     return (
         <View className="flex-1 p-6 bg-white">
@@ -75,7 +77,7 @@ const ApplicatorsTab = () => {
                 <ActivityIndicator size="large" color="#808080" />
             ) : applications.length === 0 ? (
                 <Text className="text-center text-xl">
-                    No hay aplicaciones para este proyecto
+                    Aun no hay aplicaciones para este proyecto
                 </Text>
             ) : (
                 <FlatList
@@ -89,12 +91,16 @@ const ApplicatorsTab = () => {
                                     project,
                                 })
                             }
-                            className="p-4 border border-red-600"
+                            className="p-4 bg-gray_5 rounded mb-3"
                         >
                             <View className="flex-row items-center justify-between">
-                                <View className="flex-row items-center gap-2">
-                                    <Text>{item.volunteerName}</Text>
-                                    <Text>{item.status}</Text>
+                                <View className="flex-row items-center justify-around w-full">
+                                    <Text className=" font-bold">
+                                        {item.volunteerName}
+                                    </Text>
+                                    <Text className=" uppercase font-semibold bg-slate-50 rounded-xl px-2 py-1">
+                                        {item.status}
+                                    </Text>
                                 </View>
                             </View>
                         </Pressable>

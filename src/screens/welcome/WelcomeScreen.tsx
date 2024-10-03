@@ -11,34 +11,17 @@ type WelcomeTypeUserScreenNavigationProp = NavigationProp<
 
 export default function WelcomeScreen() {
     const navigation = useNavigation<WelcomeTypeUserScreenNavigationProp>();
-    const [progress, setProgress] = useState(0);
-
-    useEffect(() => {
-        const progressInterval = setInterval(() => {
-            setProgress((prevProgress) => {
-                const newProgress = prevProgress + 100 / 20;
-                if (newProgress >= 100) clearInterval(progressInterval);
-                return newProgress;
-            });
-        }, 100);
-
-        const timeout = setTimeout(() => {
-            navigation.navigate("Login");
-        }, 3000);
-
-        return () => {
-            clearInterval(progressInterval);
-            clearTimeout(timeout);
-        };
-    }, []);
 
     return (
         <View className="flex-1 bg-white items-center justify-center">
             <AnimatedCircularProgress
                 size={300}
                 width={10}
-                fill={progress}
+                fill={100}
+                duration={1500}
                 tintColor="#004932"
+                backgroundColor="#e0e0e0"
+                onAnimationComplete={() => navigation.navigate("Login")}
             >
                 {() => (
                     <View>

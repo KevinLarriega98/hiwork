@@ -14,12 +14,10 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
     user: null,
     token: null,
     isAuthenticated: false,
-    userType: null as "Voluntario" | "ONG" | null,
     currentUser: null,
     setUser: (user: UserActions | null) =>
         set({ user, isAuthenticated: !!user }),
     setToken: (token: string | null) => set({ token }),
-    setUserType: (userType: "Voluntario" | "ONG" | null) => set({ userType }),
     setCurrentUser: (currentUser: UserState | null) => set({ currentUser }),
 
     logout: async () => {
@@ -46,7 +44,6 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
                 set({
                     user: { ...user },
                     isAuthenticated: !!user,
-                    userType: userData.profileType,
                     currentUser: { ...userData, uid: user.uid },
                 });
             }
@@ -84,7 +81,6 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
                 set({
                     user: { ...user },
                     isAuthenticated: !!user,
-                    userType: userData.profileType,
                     currentUser: { ...userData, uid: user.uid },
                 });
 
@@ -104,7 +100,13 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
     initializeAuth: () => {
         initializeAuth((user) => {
             if (user) {
-                set({ user, isAuthenticated: true });
+                getUserDataFromFirestore(user).then((userDataDB) => {
+                    set({
+                        user,
+                        isAuthenticated: true,
+                        currentUser: userDataDB,
+                    });
+                });
             } else {
                 set({ user: null, isAuthenticated: false });
             }

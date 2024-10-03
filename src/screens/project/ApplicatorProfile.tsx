@@ -58,8 +58,9 @@ const ApplicatorProfile = () => {
                                     "accepted"
                                 )
                             }
+                            className=" bg-gray_2 rounded-full px-6 py-3"
                         >
-                            <Text>Aceptar</Text>
+                            <Text className="text-white">Aceptar</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={() =>
@@ -69,8 +70,9 @@ const ApplicatorProfile = () => {
                                     "rejected"
                                 )
                             }
+                            className=" bg-gray_2 rounded-full px-6 py-3"
                         >
-                            <Text>Rechazar</Text>
+                            <Text className="text-white">Rechazar</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

@@ -10,7 +10,7 @@ import ApplyToProjectButton from "../components/ApplyToProjectButton";
 type ProjectScreenRouteProp = RouteProp<RootStackParamList, "Project">;
 
 const ProjectInfoScreen = () => {
-    const { currentUser, userType } = useAuthStore();
+    const { currentUser } = useAuthStore();
     const route = useRoute<ProjectScreenRouteProp>();
     const { project } = route.params;
 
@@ -20,7 +20,6 @@ const ProjectInfoScreen = () => {
     let updatedAtFormatted = "";
 
     const weekRange = calculateWeeksRange(project.objectiveTimeline);
-
 
     return (
         <View className="flex-1 p-6 bg-white">
@@ -73,7 +72,7 @@ const ProjectInfoScreen = () => {
                         </View>
                     </View>
 
-                    {userType === "Voluntario" && (
+                    {currentUser?.profileType === "Voluntario" && (
                         <ApplyToProjectButton projectID={project.id!} />
                     )}
 
