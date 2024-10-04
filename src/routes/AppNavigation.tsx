@@ -11,15 +11,6 @@ export const AppNavigation = () => {
     const [initialRoute, setInitialRoute] =
         useState<keyof RootStackParamList>("Tabs");
 
-    const { isAuthenticated } = useAuthStore();
-
-    useEffect(() => {
-        if (isAuthenticated) {
-            setInitialRoute(initialRoute);
-        } else {
-            setInitialRoute("CreateNewProject");
-        }
-    }, [isAuthenticated]);
     return (
         <Stack.Navigator initialRouteName={initialRoute}>
             <Stack.Screen

@@ -108,7 +108,7 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
                     });
                 });
             } else {
-                set({ user: null, isAuthenticated: false });
+                set({ user: null, isAuthenticated: false, currentUser: null });
             }
         });
     },

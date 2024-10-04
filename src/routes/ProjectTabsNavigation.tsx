@@ -15,7 +15,7 @@ const ProjectTabsNavigation = ({ project }: { project: ProjectState }) => {
     const { currentUser } = useAuthStore();
 
     console.log("this is project", project.ongID);
-    console.log("this is current", currentUser?.uid);
+    console.log("this is current", currentUser?.id);
 
     return (
         <View style={{ flex: 1 }}>
@@ -48,7 +48,7 @@ const ProjectTabsNavigation = ({ project }: { project: ProjectState }) => {
                     initialParams={{ project }}
                     options={{ title: "Hecho" }}
                 />
-                {currentUser?.uid === project.ongID && (
+                {currentUser?.id === project.ongID && (
                     <Tab.Screen
                         name="Applicators"
                         component={ApplicatorsTab}

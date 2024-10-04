@@ -10,14 +10,8 @@ import { AppNavigation } from "./src/routes/AppNavigation";
 import { RootStackParamList } from "./src/types/navigation";
 
 const App = () => {
-    const { isAuthenticated, initializeAuth, currentUser } = useAuthStore(
-        (state) => ({
-            user: state.user,
-            isAuthenticated: state.isAuthenticated,
-            initializeAuth: state.initializeAuth,
-            currentUser: state.currentUser,
-        })
-    );
+    const { isAuthenticated, initializeAuth } = useAuthStore();
+
     useEffect(() => {
         initializeAuth();
     }, [initializeAuth]);
