@@ -1,7 +1,6 @@
 // useAuthStore.ts
 import { create } from "zustand";
 import {
-    login,
     register,
     logout,
     initializeAuth,
@@ -35,24 +34,6 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
         }
     },
 
-    login: async (email: string, password: string) => {
-        try {
-            const user = await login(email, password);
-            if (user) {
-                const userData = await getUserDataFromFirestore(user);
-
-                set({
-                    user: { ...user },
-                    isAuthenticated: !!user,
-                    currentUser: { ...userData, uid: user.uid },
-                });
-            }
-            return user;
-        } catch (error) {
-            console.error(error);
-            return null;
-        }
-    },
     register: async (
         email: string,
         password: string,

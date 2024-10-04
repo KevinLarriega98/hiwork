@@ -13,7 +13,6 @@ export interface AuthActions {
     setUser: (user: UserActions | null) => void;
     setToken: (token: string | null) => void;
     logout: () => Promise<void>;
-    login: (email: string, password: string) => Promise<User | null>;
     register: (
         email: string,
         password: string,

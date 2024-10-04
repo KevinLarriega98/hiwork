@@ -10,14 +10,16 @@ import {
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
 import useAuthStore from "../../stores/useAuthStore";
-import { sendPasswordResetEmailAuth } from "../../service/api/authService";
+import {
+    login,
+    sendPasswordResetEmailAuth,
+} from "../../service/api/authService";
 import { RootStackParamList } from "../../types/navigation";
 import ButtonCustom from "../../components/buttons/ButtonCustom";
 
 type LoginScreenNavigationProp = NavigationProp<RootStackParamList, "Login">;
 
 const LoginScreen: React.FC = () => {
-    const login = useAuthStore((state) => state.login);
     const navigation = useNavigation<LoginScreenNavigationProp>();
 
     const [user, setUser] = useState({ email: "", password: "" });

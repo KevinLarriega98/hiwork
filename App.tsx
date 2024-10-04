@@ -6,11 +6,10 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import LoginStackNavigation from "./src/routes/LoginStackNavigation";
 import useAuthStore from "./src/stores/useAuthStore";
 import { AppNavigation } from "./src/routes/AppNavigation";
-
-import { RootStackParamList } from "./src/types/navigation";
+import { auth } from "./src/service/api/firebase";
 
 const App = () => {
-    const { isAuthenticated, initializeAuth } = useAuthStore();
+    const { initializeAuth } = useAuthStore();
 
     useEffect(() => {
         initializeAuth();
@@ -20,7 +19,7 @@ const App = () => {
         <SafeAreaProvider>
             <NavigationContainer>
                 <View style={{ flex: 1, backgroundColor: "white" }}>
-                    {isAuthenticated ? (
+                    {auth.currentUser ? (
                         <AppNavigation />
                     ) : (
                         <LoginStackNavigation />
