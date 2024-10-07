@@ -20,7 +20,6 @@ import { NavigationProp, useNavigation } from "@react-navigation/native";
 import useAuthStore from "../../stores/useAuthStore";
 import { RootStackParamList } from "../../types/navigation";
 import { calculateWeeksRange } from "../../util/calculateWeeksRange";
-import pruebaHide from "../../stores/pruebaHide";
 
 type ProjectDetailScreenNavigationProp = NavigationProp<
     RootStackParamList,

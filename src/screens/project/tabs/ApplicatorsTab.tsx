@@ -12,7 +12,6 @@ import { getApplications } from "../../../service/api/projectService";
 import useAuthStore from "../../../stores/useAuthStore";
 import {
     RouteProp,
-    useIsFocused,
     useNavigation,
     useRoute,
 } from "@react-navigation/native";

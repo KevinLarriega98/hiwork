@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
-import useAuthStore from "../../stores/useAuthStore";
 import {
     login,
     sendPasswordResetEmailAuth,

@@ -1,15 +1,13 @@
 import { createStackNavigator } from "@react-navigation/stack";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import HomeScreen from "../screens/signIn-LogIn/HomeScreen";
 import LoginScreen from "../screens/signIn-LogIn/LoginScreen";
 import RegisterScreen from "../screens/signIn-LogIn/RegisterScreen";
 import withSafeArea from "../util/withSafeArea";
 import RegisterUserScreens from "../screens/signIn-LogIn/RegisterUserScreens";
 import RegisterTypeUser from "../screens/signIn-LogIn/RegisterTypeUser";
-import useAuthStore from "../stores/useAuthStore";
 import { RootStackParamList } from "../types/navigation";
 import WelcomeScreen from "../screens/welcome/WelcomeScreen";
-import CreateNewProject from "../screens/project/CreateNewProject";
 
 // Apply withSafeArea outside of the function
 const SafeHomeScreen = withSafeArea(HomeScreen);

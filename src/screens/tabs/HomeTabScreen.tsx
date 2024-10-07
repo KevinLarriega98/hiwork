@@ -1,6 +1,5 @@
 import { View, Text } from "react-native";
 import React from "react";
-import useAuthStore from "../../stores/useAuthStore";
 import BellComponent from "../../components/Projects/BellComponent";
 
 const HomeTabScreen = () => {

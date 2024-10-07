@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, Text, View } from "react-native";
+import {  Text, View } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import useUserStore from "../../stores/useRegisterStore";
 import { RootStackParamList } from "../../types/navigation";

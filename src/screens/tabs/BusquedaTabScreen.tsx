@@ -78,19 +78,20 @@ const BusquedaTabScreen = () => {
     const filteredProjects = projects.filter((project: ProjectState) => {
         const matchesVolunteer =
             volunteerValue === "all" || project.roles.includes(volunteerValue);
-        const matchesFormat =
-            formatValue === "all" || project.format === formatValue;
-        const matchesLocation =
-            locationValue === "all" || project.location === locationValue;
-        const matchesSearchText = project.title
-            .toLowerCase()
-            .includes(searchText.toLowerCase());
+        // const matchesFormat =
+        //     formatValue === "all" || project.format === formatValue;
+        // const matchesLocation =
+        //     locationValue === "all" || project.location === locationValue;
+        // const matchesSearchText = project.title
+        //     .toLowerCase()
+        //     .includes(searchText.toLowerCase());
 
         return (
-            matchesVolunteer &&
-            matchesFormat &&
-            matchesLocation &&
-            matchesSearchText
+            matchesVolunteer 
+            // &&
+            // matchesFormat &&
+            // matchesLocation &&
+            // matchesSearchText
         );
     });
 

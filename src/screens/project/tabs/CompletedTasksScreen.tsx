@@ -1,6 +1,5 @@
 import { View, Text } from "react-native";
 import React from "react";
-import { ProjectState } from "../../../types/project";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { RootStackParamList } from "../../../types/navigation";
 

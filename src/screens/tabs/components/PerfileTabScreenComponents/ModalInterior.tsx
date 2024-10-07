@@ -54,7 +54,7 @@ const ModalInterior = ({
         }
 
         updateUserNameAndDescription(
-            currentUser?.uid,
+            currentUser?.id,
             currentUser?.profileType,
             name,
             description,

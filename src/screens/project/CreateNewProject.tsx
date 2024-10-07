@@ -242,7 +242,7 @@ const CreateNewProject = () => {
 
         try {
             await createProject(
-                currentUser?.uid,
+                currentUser?.id,
                 currentUser?.name,
                 title,
                 description,
