@@ -1,7 +1,6 @@
 import { View, TouchableOpacity } from "react-native";
 import React from "react";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import useAuthStore from "../../../../stores/useAuthStore";
 
 const EditProfileAndLogOut = ({
     modalVisible,
@@ -10,13 +9,6 @@ const EditProfileAndLogOut = ({
     modalVisible: boolean;
     setModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-    const { logout, currentUser } = useAuthStore();
-
-    const logOutFunction = async () => {
-        await logout();
-    };
-
-    // TODO esto no funciona no me deja cerrar el modal
     return (
         <View className="flex-1 w-screen h-full">
             <View className="flex flex-row justify-end px-2">

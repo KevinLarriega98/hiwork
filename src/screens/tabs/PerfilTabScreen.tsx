@@ -15,6 +15,7 @@ import profileImage from "../../assets/profile-image.jpg";
 import useAuthStore from "../../stores/useAuthStore";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import EditProfileAndLogOut from "./components/PerfileTabScreenComponents/EditProfileAndLogOut";
+import ModalInterior from "./components/PerfileTabScreenComponents/ModalInterior";
 
 const PerfilTabScreen = () => {
     const [index, setIndex] = useState(0);
@@ -23,6 +24,8 @@ const PerfilTabScreen = () => {
         { key: "proyectos", title: "Proyectos App" },
     ]);
 
+    const [modalUpdateProfileVisible, setModalUpdateProfileVisible] =
+        useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const { currentUser, logout } = useAuthStore();
 
@@ -81,6 +84,18 @@ const PerfilTabScreen = () => {
                 <Modal
                     animationType="fade"
                     transparent={true}
+                    visible={modalUpdateProfileVisible}
+                    onRequestClose={() => setModalUpdateProfileVisible(false)}
+                >
+                    <ModalInterior
+                        setModalVisible={setModalUpdateProfileVisible}
+                        modalVisible={modalUpdateProfileVisible}
+                    />
+                </Modal>
+
+                <Modal
+                    animationType="fade"
+                    transparent={true}
                     visible={modalVisible}
                     onRequestClose={() => setModalVisible(false)}
                 >
@@ -95,9 +110,16 @@ const PerfilTabScreen = () => {
                         >
                             <TouchableWithoutFeedback>
                                 <View className="w-full bg-white p-4 rounded-t-lg">
-                                    <Text className="text-xl font-bold mb-4">
-                                        Editar Perfil
-                                    </Text>
+                                    <TouchableOpacity
+                                        onPress={() =>
+                                            setModalUpdateProfileVisible(true)
+                                        }
+                                    >
+                                        <Text className="text-xl font-bold mb-4">
+                                            Editar Perfil
+                                        </Text>
+                                    </TouchableOpacity>
+
                                     <TouchableOpacity
                                         onPress={() => logOutFunction()}
                                     >
