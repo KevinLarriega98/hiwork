@@ -9,7 +9,7 @@ const CustomTabBar: React.FC<MaterialTopTabBarProps> = (props) => {
 
     return (
         <View className=" bg-white w-screen flex  items-center px-6">
-            <View className=" flex-row bg-[#cccccc] rounded-xl">
+            <View className=" flex-row bg-verde_claro rounded-full ">
                 {routes.map((route, i) => {
                     const isFocused = i === index;
                     const { options } = descriptors[route.key];
@@ -21,14 +21,14 @@ const CustomTabBar: React.FC<MaterialTopTabBarProps> = (props) => {
                     return (
                         <TouchableOpacity
                             key={i}
-                            className={`flex-1 p-1  rounded-xl ${
-                                isFocused ? "bg-gray_3" : "bg-[#cccccc]"
+                            className={`flex-1 p-1  rounded-full py-2  ${
+                                isFocused ? "bg-verde_oscuro " : "bg-verde_claro"
                             }`}
                             onPress={() => navigation.navigate(route.name)}
                         >
                             <Text
                                 className={`text-center ${
-                                    isFocused ? "text-white " : "text-gray-600"
+                                    isFocused ? "text-verde_claro " : "text-verde_oscuro"
                                 }`}
                             >
                                 {title}

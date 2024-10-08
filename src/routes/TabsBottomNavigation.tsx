@@ -45,7 +45,7 @@ export const TabsBottomNavigation = () => {
                 }}
             />
             <Tab.Screen
-                name="Mis Proyectos"
+                name="Proyectos"
                 component={ProjectScreenNavigation}
                 options={{
                     tabBarLabel: "Proyectos",

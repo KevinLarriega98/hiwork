@@ -184,7 +184,9 @@ const ProyectosTabScreen = () => {
         <View className="flex-1 bg-background">
             <BellComponent />
             <View className="px-4 flex-1">
-                <Text className="text-xl font-bold mb-4">Hola, hiDoer!</Text>
+                <Text className="text-xl font-bold mb-4">
+                    Hola, {currentUser?.name}
+                </Text>
                 {/* TODO quitar el hardcode y hacer la lógica de mirar si tienes algún proyecto activo o no */}
                 <View className="bg-gray_1 p-4 rounded-lg mb-4 flex flex-row items-center justify-evenly">
                     <InfoSVG />

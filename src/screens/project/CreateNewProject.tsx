@@ -10,7 +10,9 @@ import React, { useState, useEffect } from "react";
 import { Calendar } from "react-native-calendars";
 import useProjectStore from "../../stores/useProjectStore";
 import useAuthStore from "../../stores/useAuthStore";
-import pruebaHide from "../../stores/pruebaHide";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+
+import { RootStackParamList } from "../../types/navigation";
 
 type MarkedDatesType = {
     [key: string]: {
@@ -28,9 +30,16 @@ type ProjectData = {
     objectiveTimeline: string[];
 };
 
+type RegisterScreenNavigationProp = NavigationProp<
+    RootStackParamList,
+    "TabsBottom"
+>;
+
 const CreateNewProject = () => {
     const [currentStep, setCurrentStep] = useState(0);
     const [isValid, setIsValid] = useState(false);
+
+    const navigation = useNavigation<RegisterScreenNavigationProp>();
 
     const { createProject } = useProjectStore((state) => ({
         createProject: state.createProject,
@@ -248,7 +257,7 @@ const CreateNewProject = () => {
                 description,
                 roles,
                 objectiveTimelineObjects
-            );
+            ).then((res) => navigation.navigate("TabsBottom"));
         } catch (error) {
             Alert.alert("Error", "Failed to create project.");
             console.error("Error creating project:", error);

@@ -23,6 +23,7 @@ export const ProjectScreenNavigation = () => {
                 name="Project"
                 component={Project}
                 options={({ route }: { route: any }) => ({
+                    headerTitleAlign: "center",
                     title:
                         route.params?.project.title || "Detalles del Proyecto",
                 })}
