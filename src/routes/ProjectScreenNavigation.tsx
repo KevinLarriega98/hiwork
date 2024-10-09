@@ -1,9 +1,9 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import ProyectosTabScreen from "../screens/tabs/ProyectosTabScreen";
 import Project from "../screens/project/Project";
 import withSafeArea from "../util/withSafeArea";
 import ApplicatorProfile from "../screens/project/ApplicatorProfile";
+import ProyectosTabScreen from "../screens/tabs/ProyectosTabScreen";
 
 const Stack = createStackNavigator();
 

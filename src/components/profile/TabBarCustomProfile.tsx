@@ -8,17 +8,19 @@ const TabBarCustomProfile: React.FC<TabBarProps<Route>> = React.memo(
 
         return (
             <View className="bg-white w-full flex items-center px-6 py-2">
-                <View className="flex-row bg-[#e0e0e0] rounded-full w-full">
+                <View className="flex-row bg-verde_claro rounded-full w-full">
                     {routes.map(({ key, title }, i: number) => {
                         const isFocused = i === index;
 
                         const buttonStyle = [
-                            "flex-1 py-1  rounded-full justify-center items-center",
-                            isFocused && "bg-gray_3",
+                            "flex-1 py-2  rounded-full justify-center items-center",
+                            isFocused && "bg-verde_oscuro",
                         ].join(" ");
                         const textStyle = [
                             "text-center text-base font-medium",
-                            isFocused ? "text-white" : "text-gray_3",
+                            isFocused
+                                ? "text-verde_claro"
+                                : "text-verde_oscuro",
                         ].join(" ");
 
                         return (

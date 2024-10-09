@@ -2,9 +2,9 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { RootStackParamList } from "../../types/navigation";
 import { Text, View, Image, TouchableOpacity } from "react-native";
-import { getVolunteerDataFromFirestore } from "../../service/api/authService";
 import { UserState } from "../../types/profile";
 import { updateStatusApplicator } from "../../service/api/projectService";
+import { getUserDataFromFirestore } from "../../service/api/authService";
 
 type ProjectScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -18,7 +18,7 @@ const ApplicatorProfile = () => {
     const [volunteer, setVolunteer] = useState<UserState>();
 
     useEffect(() => {
-        getVolunteerDataFromFirestore(item.volunteerID).then((volunteer) => {
+        getUserDataFromFirestore(item.volunteerID).then((volunteer) => {
             setVolunteer(volunteer as UserState);
         });
     }, [item.id]);

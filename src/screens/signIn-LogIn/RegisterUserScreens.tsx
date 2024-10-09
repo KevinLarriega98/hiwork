@@ -49,6 +49,8 @@ const RegistrationApp: React.FC = () => {
 
     const [progress, setProgress] = useState(0);
 
+    console.log(selectedOptions);
+
     const {
         setName,
         setDiscipline,
@@ -57,6 +59,7 @@ const RegistrationApp: React.FC = () => {
         setDescription,
         description,
     } = useUserStore();
+
     const register = useAuthStore((state) => state.register);
 
     const pickImage = async () => {
@@ -216,10 +219,10 @@ const RegistrationApp: React.FC = () => {
                     containerStyle={styles.containerStyles}
                 />
             </View>
-            <View className="flex-row p-5 justify-between items-center">
+            <View className="flex-row p-5 justify-between items-center ">
                 <TouchableOpacity
                     className={`${
-                        activeIndex === 0 ? "invisible" : "bg-primary"
+                        activeIndex === 0 ? "invisible" : "bg-red-500"
                     } p-2 rounded-full w-12 h-12 justify-center items-center`}
                     onPress={() =>
                         handlePrev(activeIndex, flatListRef, setActiveIndex)
@@ -240,7 +243,7 @@ const RegistrationApp: React.FC = () => {
                                     image
                                 )
                                     ? "bg-gray-400"
-                                    : "bg-primary"
+                                    : "bg-verde_claro"
                             }`}
                             onPress={handleNextStep}
                             disabled={isNextDisabled(
@@ -265,14 +268,14 @@ const RegistrationApp: React.FC = () => {
                                     <MaterialIcons
                                         name="arrow-forward"
                                         size={24}
-                                        color="white"
+                                        color="red"
                                     />
                                 )}
                             </AnimatedCircularProgress>
                         </TouchableOpacity>
                     ) : (
                         <TouchableOpacity
-                            className="p-2 bg-primary rounded-full w-12 h-12 justify-center items-center"
+                            className="p-2 bg-verde_oscuro rounded-full w-12 h-12 justify-center items-center"
                             onPress={() => handleRegister()}
                         >
                             <MaterialCommunityIcons

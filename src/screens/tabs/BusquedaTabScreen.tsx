@@ -86,13 +86,11 @@ const BusquedaTabScreen = () => {
         //     .toLowerCase()
         //     .includes(searchText.toLowerCase());
 
-        return (
-            matchesVolunteer 
-            // &&
-            // matchesFormat &&
-            // matchesLocation &&
-            // matchesSearchText
-        );
+        return matchesVolunteer;
+        // &&
+        // matchesFormat &&
+        // matchesLocation &&
+        // matchesSearchText
     });
 
     const handleProjectPress = (project: ProjectState) => {
@@ -220,11 +218,18 @@ const BusquedaTabScreen = () => {
                             />
                         </View>
                     </View>
-                    <FlatList
-                        data={filteredProjects}
-                        renderItem={renderItem}
-                        keyExtractor={(item) => item.id!}
-                    />
+
+                    {filteredProjects.length <= 0 ? (
+                        <Text className=" text-xl text-center">
+                            No existen proyectos aún
+                        </Text>
+                    ) : (
+                        <FlatList
+                            data={filteredProjects}
+                            renderItem={renderItem}
+                            keyExtractor={(item) => item.id!}
+                        />
+                    )}
                 </View>
             </View>
         </TouchableWithoutFeedback>

@@ -19,13 +19,13 @@ export const REGISTRATION_STEPS_VOLUNTARIO = [
     {
         key: "2",
         question: "¿Qué disciplinas eres experto?",
-        options: ["Reducir mi estrés", "Reducir mi estrés"],
+        options: ["Reducir mi estrés3", "Reducir mi estrés4"],
         type: "options",
     },
     {
         key: "3",
         question: "Selecciona en qué tipo de proyectos te gustaría participar",
-        options: ["Reducir mi estrés", "Reducir mi estrés"],
+        options: ["Reducir mi estrés1", "Reducir mi estrés2"],
         type: "options",
     },
     {
@@ -61,7 +61,7 @@ export const REGISTRATION_STEPS_ONG = [
     {
         key: "3",
         question: "Selecciona en qué tipo de proyectos te gustaría participar",
-        options: ["Reducir mi estrés", "Reducir mi estrés"],
+        options: ["Reducir mi estrés1", "Reducir mi estrés2"],
         type: "options",
     },
     {
@@ -97,6 +97,8 @@ export const renderItem = (
     image: string | null,
     progress: number
 ) => {
+    console.log(selectedOptions);
+
     return (
         <View
             className="justify-center items-center p-6 mt-10 mx-10 rounded-2xl"
@@ -157,13 +159,31 @@ export const renderItem = (
                 item.options.map((option: string, index: React.Key) => (
                     <TouchableOpacity
                         key={index}
-                        className="w-full p-3 border border-gray-300 rounded mb-2 items-center"
-                        onPress={() =>
-                            setSelectedOptions({
-                                ...selectedOptions,
-                                [item.key]: option,
-                            })
+                        className={`${
+                            selectedOptions[item.key]?.includes(option) &&
+                            "bg-verde_claro"
                         }
+            w-full p-3 border border-gray-300 rounded mb-2 items-center
+            `}
+                        onPress={() => {
+                            setSelectedOptions((prevSelectedOptions: any) => {
+                                const currentOptions =
+                                    prevSelectedOptions[item.key] || [];
+
+                                const updatedOptions = currentOptions.includes(
+                                    option
+                                )
+                                    ? currentOptions.filter(
+                                          (opt: string) => opt !== option
+                                      )
+                                    : [...currentOptions, option];
+
+                                return {
+                                    ...prevSelectedOptions,
+                                    [item.key]: updatedOptions,
+                                };
+                            });
+                        }}
                     >
                         <Text className="text-black">{option}</Text>
                     </TouchableOpacity>
