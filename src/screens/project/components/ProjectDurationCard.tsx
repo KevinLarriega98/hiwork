@@ -1,4 +1,3 @@
-// ProjectDurationCard.js
 import React from "react";
 import { View, Text } from "react-native";
 
@@ -19,13 +18,15 @@ const ProjectDurationCard = ({
     const startDateFormatted = formatDate(startDate);
     const endDateFormatted = formatDate(endDate);
 
+    //FIXME ESTOY AQUÍ
+
     return (
-        <View className="bg-gray-200 rounded-lg p-4 mb-4 flex-row">
-            <View className="mr-4">
+        <View className="bg-gray-200 rounded-lg p-4 mb-4 flex-row mt-2">
+            <View className="mr-4  ">
                 <Text className="text-3xl font-bold text-gray-500">
                     {startDateFormatted.split(" ")[0]}
                 </Text>
-                <Text className="text-lg text-gray-500">
+                <Text className="text-lg text-gray-500  text-center">
                     {startDateFormatted.split(" ")[1]}
                 </Text>
             </View>

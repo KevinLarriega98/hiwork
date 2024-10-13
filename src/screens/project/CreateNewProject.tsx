@@ -430,10 +430,10 @@ const CreateNewProject = () => {
                         <View className="flex-row justify-between mt-4 gap-2">
                             {currentStep > 0 && (
                                 <TouchableOpacity
-                                    className=" py-4 rounded-full flex-1 items-center bg-verde_oscuro opacity-80"
+                                    className=" py-4 rounded-full flex-1 items-center border border-cta_secondary "
                                     onPress={previousStep}
                                 >
-                                    <Text className="text-verde_claro font-bold">
+                                    <Text className="text-cta_secondary font-bold uppercase">
                                         Anterior
                                     </Text>
                                 </TouchableOpacity>
@@ -441,18 +441,14 @@ const CreateNewProject = () => {
                             <TouchableOpacity
                                 className={` py-4 rounded-full flex-1 items-center ${
                                     isValid
-                                        ? "bg-verde_oscuro"
-                                        : "bg-verde_claro opacity-20"
+                                        ? "bg-cta_primary"
+                                        : "bg-cta_primary opacity-30"
                                 }`}
                                 onPress={nextStep}
                                 disabled={!isValid}
                             >
                                 <Text
-                                    className={`font-bold ${
-                                        isValid
-                                            ? " text-verde_claro"
-                                            : " text-verde_oscuro"
-                                    }`}
+                                    className={`font-bold uppercase text-cta_secondary`}
                                 >
                                     Siguiente
                                 </Text>
@@ -462,10 +458,10 @@ const CreateNewProject = () => {
                         <View className="flex-row justify-between mt-4">
                             {currentStep > 0 && (
                                 <TouchableOpacity
-                                    className="bg-verde_oscuro  py-4 rounded-full flex-1 mr-2 items-center  opacity-80"
+                                    className=" border border-verde_oscuro  py-4 rounded-full flex-1 mr-2 items-center  "
                                     onPress={previousStep}
                                 >
-                                    <Text className="text-verde_claro font-bold">
+                                    <Text className="text-verde_oscuro font-bold">
                                         Anterior
                                     </Text>
                                 </TouchableOpacity>
