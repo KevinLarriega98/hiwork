@@ -5,6 +5,9 @@ import {
     TouchableOpacity,
     FlatList,
     Alert,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { Calendar } from "react-native-calendars";
@@ -13,6 +16,8 @@ import useAuthStore from "../../stores/useAuthStore";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 
 import { RootStackParamList } from "../../types/navigation";
+import CollapsibleType from "./components/CollapsibleType";
+import ProjectDurationCard from "./components/ProjectDurationCard";
 
 type MarkedDatesType = {
     [key: string]: {
@@ -23,10 +28,15 @@ type MarkedDatesType = {
     };
 };
 
+type RoleData = {
+    role: string;
+    count: number;
+};
+
 type ProjectData = {
     title: string;
     description: string;
-    roles: string[];
+    roles: RoleData[];
     objectiveTimeline: string[];
 };
 
@@ -56,6 +66,8 @@ const CreateNewProject = () => {
         objectiveTimeline: objectiveTimeline,
     });
 
+    console.log(objectiveTimeline);
+
     const [startDate, setStartDate] = useState<string>("");
     const [isStartDatePicked, setIsStartDatePicked] = useState<boolean>(false);
 
@@ -65,35 +77,33 @@ const CreateNewProject = () => {
         {
             key: "1",
             step: "Paso 1",
-            question: "Ponle un título a tu proyecto:",
-            placeholder: "Escribe un título",
+            question: [
+                "Ponle un título a tu proyecto:",
+                "Describe tu proyecto:",
+            ],
+            placeholder: [
+                "Escribe un título",
+                "Describe tu proyecto es lo que verán los voluntarios",
+            ],
             type: "input",
-            data: "title",
+            data: ["title", "description"],
         },
         {
             key: "2",
             step: "Paso 2",
-            question: "Describe tu proyecto:",
-            placeholder: "Describe tu proyecto es lo que verán los voluntarios",
-            type: "inputBig",
-            data: "description",
-        },
-        {
-            key: "3",
-            step: "Paso 3",
             question: "Que cargos necesitas:",
             options: ["Desarrollador", "Diseñador", "Traductor", "Marketing"],
             type: "options",
         },
         {
-            key: "4",
-            step: "Paso 4",
+            key: "3",
+            step: "Paso 3",
             question: "Para cuando debe de estar:",
             type: "dates",
         },
         {
-            key: "5",
-            step: "Paso 5",
+            key: "4",
+            step: "Paso 4",
             question: "Revisa tu información antes de finalizar",
             type: "review",
         },
@@ -101,12 +111,13 @@ const CreateNewProject = () => {
 
     const validateCurrentStep = () => {
         if (currentStep === 0) {
-            setIsValid(newProjectData.title.length > 0);
+            setIsValid(
+                newProjectData.title.length > 0 &&
+                    newProjectData.description.length > 0
+            );
         } else if (currentStep === 1) {
-            setIsValid(newProjectData.description.length > 0);
-        } else if (currentStep === 2) {
             setIsValid(newProjectData.roles.length > 0);
-        } else if (currentStep === 3) {
+        } else if (currentStep === 2) {
             setIsValid(
                 Object.keys(newProjectData.objectiveTimeline).length > 0
             );
@@ -135,11 +146,19 @@ const CreateNewProject = () => {
         setNewProjectData({ ...newProjectData, [data!]: text });
     };
 
-    const handleOptionsChange = (text: string) => {
+    const handleOptionsChange = (role: string, change: number) => {
         setNewProjectData((prevData: ProjectData) => {
-            const updatedRoles = prevData.roles.includes(text)
-                ? prevData.roles.filter((role) => role !== text)
-                : [...prevData.roles, text];
+            const currentCount =
+                prevData.roles.find((r) => r.role === role)?.count || 0;
+
+            const newCount = Math.max(0, currentCount + change);
+
+            const updatedRoles = prevData.roles.filter((r) => r.role !== role);
+
+            if (newCount > 0) {
+                updatedRoles.push({ role, count: newCount });
+            }
+
             return { ...prevData, roles: updatedRoles };
         });
     };
@@ -266,174 +285,203 @@ const CreateNewProject = () => {
 
     return (
         <View className="flex-1 p-4 bg-white justify-center">
-            <View className="flex-row justify-between mb-4 bg-gray-300 rounded-full max-w-screen">
-                {CreateNewProjectSteps.map((step, index) => (
-                    <View key={step.key} className="items-center w-fit">
-                        <Text
-                            className={`px-4 py-2 rounded-full text-center ${
-                                currentStep === index
-                                    ? "bg-gray-700 text-white"
-                                    : "bg-gray-300 text-gray-700"
-                            }`}
-                        >
-                            {step.step}
-                        </Text>
-                    </View>
-                ))}
-            </View>
-
-            <View className="flex-1 justify-center">
-                <Text className="text-xl font-bold mb-4">
-                    {CreateNewProjectSteps[currentStep].question}
-                </Text>
-
-                {CreateNewProjectSteps[currentStep].type === "input" && (
-                    <>
-                        <TextInput
-                            className="border border-gray_3 p-3 rounded-md mb-4"
-                            placeholder={
-                                CreateNewProjectSteps[currentStep].placeholder
-                            }
-                            value={newProjectData.title}
-                            onChangeText={(text) =>
-                                handleInputChange(
-                                    text,
-                                    CreateNewProjectSteps[currentStep].data
-                                )
-                            }
-                            maxLength={200}
-                        />
-                        <Text className="text-right text-gray-500 px-3">
-                            {newProjectData.title.length}/200
-                        </Text>
-                    </>
-                )}
-
-                {CreateNewProjectSteps[currentStep].type === "inputBig" && (
-                    <>
-                        <TextInput
-                            className="border border-gray_3 p-3 rounded-md mb-4 "
-                            placeholder={
-                                CreateNewProjectSteps[currentStep].placeholder
-                            }
-                            value={newProjectData.description}
-                            onChangeText={(text) =>
-                                handleInputChange(
-                                    text,
-                                    CreateNewProjectSteps[currentStep].data
-                                )
-                            }
-                            maxLength={500}
-                            numberOfLines={18}
-                            textAlignVertical="top"
-                        />
-                        <Text className="text-right text-gray-500 px-3">
-                            {newProjectData.description.length}/500
-                        </Text>
-                    </>
-                )}
-
-                {CreateNewProjectSteps[currentStep].type === "options" && (
-                    <FlatList
-                        data={CreateNewProjectSteps[currentStep].options}
-                        renderItem={({ item }) => (
-                            <View className=" flex-1 items-center">
-                                <TouchableOpacity
-                                    onPress={() => handleOptionsChange(item)}
-                                    className={`w-full py-5 bg-gray_5 rounded-2xl mb-3 items-center ${
-                                        newProjectData.roles.includes(item) &&
-                                        "bg-gray_2"
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                style={{ flex: 1 }}
+            >
+                <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                    <View className="flex-row justify-between mb-4 bg-verde_claro rounded-full max-w-screen">
+                        {CreateNewProjectSteps.map((step, index) => (
+                            <View key={step.key} className="flex-1 ">
+                                <Text
+                                    className={`rounded-full text-center w-full py-3 ${
+                                        currentStep === index
+                                            ? "bg-verde_oscuro text-verde_claro"
+                                            : "bg-verde_claro text-verde_oscuro"
                                     }`}
                                 >
-                                    <Text>{item}</Text>
-                                </TouchableOpacity>
+                                    {step.step}
+                                </Text>
+                            </View>
+                        ))}
+                    </View>
+
+                    <View className="flex-1 justify-center">
+                        <Text className="text-xl font-bold mb-4">
+                            {CreateNewProjectSteps[currentStep].question}
+                        </Text>
+
+                        {CreateNewProjectSteps[currentStep].type ===
+                            "input" && (
+                            <>
+                                <TextInput
+                                    className="border border-gray_3 p-3 rounded-md mb-4"
+                                    placeholder={
+                                        CreateNewProjectSteps[currentStep]
+                                            ?.placeholder?.[0]
+                                    }
+                                    value={newProjectData.title}
+                                    onChangeText={(text) =>
+                                        handleInputChange(
+                                            text,
+                                            CreateNewProjectSteps[currentStep]
+                                                .data?.[0]
+                                        )
+                                    }
+                                    maxLength={200}
+                                />
+                                <Text className="text-right text-gray-500 px-3">
+                                    {newProjectData.title.length}/200
+                                </Text>
+                                <Text className="text-xl font-bold mb-4">
+                                    Describe tu proyecto:
+                                </Text>
+                                <TextInput
+                                    className="border border-gray_3 p-3 rounded-md mb-4 "
+                                    placeholder={
+                                        CreateNewProjectSteps[currentStep]
+                                            ?.placeholder?.[1]
+                                    }
+                                    value={newProjectData.description}
+                                    onChangeText={(text) =>
+                                        handleInputChange(
+                                            text,
+                                            CreateNewProjectSteps[currentStep]
+                                                .data?.[1]
+                                        )
+                                    }
+                                    maxLength={800}
+                                    numberOfLines={18}
+                                    multiline
+                                    textAlignVertical="top"
+                                />
+                                <Text className="text-right text-gray-500 px-3">
+                                    {newProjectData.description.length}/800
+                                </Text>
+                            </>
+                        )}
+
+                        {CreateNewProjectSteps[currentStep].type ===
+                            "options" && (
+                            <CollapsibleType
+                                handleOptionsChange={handleOptionsChange}
+                                newProjectDataRoles={newProjectData.roles}
+                            />
+                        )}
+
+                        {CreateNewProjectSteps[currentStep].type ===
+                            "dates" && (
+                            <View className="flex-1">
+                                <Calendar
+                                    markingType={"period"}
+                                    markedDates={markedDates}
+                                    onDayPress={onDayPress}
+                                />
+
+                                {objectiveTimeline.length > 0 && (
+                                    <ProjectDurationCard
+                                        startDate={objectiveTimeline[0]}
+                                        endDate={
+                                            objectiveTimeline[
+                                                objectiveTimeline.length - 1
+                                            ]
+                                        }
+                                        description="Calendarización de 3 posts semanales, para este Julio."
+                                    />
+                                )}
                             </View>
                         )}
-                    />
-                )}
 
-                {CreateNewProjectSteps[currentStep].type === "dates" && (
-                    <View className="flex-1">
-                        <Calendar
-                            markingType={"period"}
-                            markedDates={markedDates}
-                            onDayPress={onDayPress}
-                        />
-                    </View>
-                )}
-
-                {CreateNewProjectSteps[currentStep].type === "review" && (
-                    <View className="flex-1">
-                        <Text className=" font-bold text-xl">
-                            {newProjectData.title}
-                        </Text>
-                        <Text className="text-gray-500 text-sm">
-                            {newProjectData.description}
-                        </Text>
-                        <View>
-                            <Text className=" font-bold text-lg">
-                                Profesionales solicitados:
-                            </Text>
-                            {newProjectData.roles.map((role, index) => (
-                                <Text
-                                    key={index}
-                                    className="text-gray-500 text-sm"
-                                >
-                                    {role}
+                        {CreateNewProjectSteps[currentStep].type ===
+                            "review" && (
+                            <View className="flex-1">
+                                <Text className=" font-bold text-xl">
+                                    {newProjectData.title}
                                 </Text>
-                            ))}
-                        </View>
-                        <Text className=" font-bold text-lg">Duración:</Text>
+                                <Text className="text-gray-500 text-sm">
+                                    {newProjectData.description}
+                                </Text>
+                                <View>
+                                    <Text className=" font-bold text-lg">
+                                        Profesionales solicitados:
+                                    </Text>
+                                    {newProjectData.roles.map((role, index) => (
+                                        <Text
+                                            key={index}
+                                            className="text-gray_3 text-sm"
+                                        >
+                                            {role.role} : {role.count}{" "}
+                                            {role.count > 1
+                                                ? "professionals"
+                                                : "professional"}
+                                        </Text>
+                                    ))}
+                                </View>
+                                <Text className=" font-bold text-lg">
+                                    Duración:
+                                </Text>
 
-                        <View>{projectDuration()}</View>
+                                <View>{projectDuration()}</View>
+                            </View>
+                        )}
                     </View>
-                )}
-            </View>
 
-            {CreateNewProjectSteps[currentStep].type !== "review" ? (
-                <View className="flex-row justify-between mt-4">
-                    {currentStep > 0 && (
-                        <TouchableOpacity
-                            className="bg-gray_3 px-4 py-3 rounded-full flex-1 mr-2 items-center"
-                            onPress={previousStep}
-                        >
-                            <Text className="text-white font-bold">
-                                Anterior
-                            </Text>
-                        </TouchableOpacity>
+                    {CreateNewProjectSteps[currentStep].type !== "review" ? (
+                        <View className="flex-row justify-between mt-4 gap-2">
+                            {currentStep > 0 && (
+                                <TouchableOpacity
+                                    className=" py-4 rounded-full flex-1 items-center bg-verde_oscuro opacity-80"
+                                    onPress={previousStep}
+                                >
+                                    <Text className="text-verde_claro font-bold">
+                                        Anterior
+                                    </Text>
+                                </TouchableOpacity>
+                            )}
+                            <TouchableOpacity
+                                className={` py-4 rounded-full flex-1 items-center ${
+                                    isValid
+                                        ? "bg-verde_oscuro"
+                                        : "bg-verde_claro opacity-20"
+                                }`}
+                                onPress={nextStep}
+                                disabled={!isValid}
+                            >
+                                <Text
+                                    className={`font-bold ${
+                                        isValid
+                                            ? " text-verde_claro"
+                                            : " text-verde_oscuro"
+                                    }`}
+                                >
+                                    Siguiente
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    ) : (
+                        <View className="flex-row justify-between mt-4">
+                            {currentStep > 0 && (
+                                <TouchableOpacity
+                                    className="bg-verde_oscuro  py-4 rounded-full flex-1 mr-2 items-center  opacity-80"
+                                    onPress={previousStep}
+                                >
+                                    <Text className="text-verde_claro font-bold">
+                                        Anterior
+                                    </Text>
+                                </TouchableOpacity>
+                            )}
+                            <TouchableOpacity
+                                className="bg-verde_oscuro  py-4 rounded-full flex-1 mr-2 items-center"
+                                onPress={handleCreateProject}
+                            >
+                                <Text className="text-verde_claro font-bold">
+                                    Crear proyecto
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
                     )}
-                    <TouchableOpacity
-                        className={`px-4 py-3 rounded-full flex-1 items-center ${
-                            isValid ? "bg-gray_3" : "bg-gray-300"
-                        }`}
-                        onPress={nextStep}
-                        disabled={!isValid}
-                    >
-                        <Text className="text-white font-bold">Siguiente</Text>
-                    </TouchableOpacity>
-                </View>
-            ) : (
-                <View className="flex-row justify-between mt-4">
-                    {currentStep > 0 && (
-                        <TouchableOpacity
-                            className="bg-gray_3 px-4 py-3 rounded-full flex-1 mr-2 items-center"
-                            onPress={previousStep}
-                        >
-                            <Text className="text-white font-bold">
-                                Anterior
-                            </Text>
-                        </TouchableOpacity>
-                    )}
-                    <TouchableOpacity
-                        className="bg-gray_3 px-4 py-3 rounded-full flex-1 mr-2 items-center"
-                        onPress={handleCreateProject}
-                    >
-                        <Text className="text-white font-bold">
-                            Crear proyecto
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            )}
+                </ScrollView>
+            </KeyboardAvoidingView>
         </View>
     );
 };

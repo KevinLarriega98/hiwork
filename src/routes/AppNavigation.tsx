@@ -23,6 +23,7 @@ export const AppNavigation = () => {
                 options={{
                     headerShown: true,
                     title: "Nuevo Proyecto",
+                    headerTitleAlign: "center",
                 }}
             />
         </Stack.Navigator>
