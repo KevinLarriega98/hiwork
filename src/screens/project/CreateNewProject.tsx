@@ -66,12 +66,8 @@ const CreateNewProject = () => {
         objectiveTimeline: objectiveTimeline,
     });
 
-    console.log(objectiveTimeline);
-
     const [startDate, setStartDate] = useState<string>("");
     const [isStartDatePicked, setIsStartDatePicked] = useState<boolean>(false);
-
-    console.log("this is marked", markedDates);
 
     const CreateNewProjectSteps = [
         {
@@ -183,7 +179,7 @@ const CreateNewProject = () => {
             setMarkedDates({
                 [day.dateString]: {
                     startingDay: true,
-                    color: "blue",
+                    color: "#7F35E9",
                     textColor: "white",
                 },
             });
@@ -196,7 +192,7 @@ const CreateNewProject = () => {
             const rangeObject = range.reduce<MarkedDatesType>(
                 (acc, date, index) => {
                     acc[date] = {
-                        color: "blue",
+                        color: "#7F35E9",
                         textColor: "white",
                         startingDay: index === 0,
                         endingDay: index === range.length - 1,
@@ -276,7 +272,7 @@ const CreateNewProject = () => {
                 description,
                 roles,
                 objectiveTimelineObjects
-            ).then((res) => navigation.navigate("TabsBottom"));
+            ).then((res) => navigation.navigate("Home"));
         } catch (error) {
             Alert.alert("Error", "Failed to create project.");
             console.error("Error creating project:", error);
@@ -378,6 +374,10 @@ const CreateNewProject = () => {
                                     onDayPress={onDayPress}
                                 />
 
+                                <Text className=" text-xl font-bold mb-3">
+                                    Duración del proyecto
+                                </Text>
+
                                 {objectiveTimeline.length > 0 && (
                                     <ProjectDurationCard
                                         startDate={objectiveTimeline[0]}
@@ -387,6 +387,8 @@ const CreateNewProject = () => {
                                             ]
                                         }
                                         description="Calendarización de 3 posts semanales, para este Julio."
+                                        newProjectData={newProjectData}
+                                        setNewProjectData={setNewProjectData}
                                     />
                                 )}
                             </View>
@@ -455,22 +457,22 @@ const CreateNewProject = () => {
                             </TouchableOpacity>
                         </View>
                     ) : (
-                        <View className="flex-row justify-between mt-4">
+                        <View className="flex-row justify-between mt-4 gap-2">
                             {currentStep > 0 && (
                                 <TouchableOpacity
-                                    className=" border border-verde_oscuro  py-4 rounded-full flex-1 mr-2 items-center  "
+                                    className=" py-4 rounded-full flex-1 items-center border border-cta_secondary "
                                     onPress={previousStep}
                                 >
-                                    <Text className="text-verde_oscuro font-bold">
+                                    <Text className="text-cta_secondary font-bold uppercase">
                                         Anterior
                                     </Text>
                                 </TouchableOpacity>
                             )}
                             <TouchableOpacity
-                                className="bg-verde_oscuro  py-4 rounded-full flex-1 mr-2 items-center"
+                                className="py-4 rounded-full flex-1 items-center bg-cta_primary"
                                 onPress={handleCreateProject}
                             >
-                                <Text className="text-verde_claro font-bold">
+                                <Text className="font-bold uppercase text-cta_secondary">
                                     Crear proyecto
                                 </Text>
                             </TouchableOpacity>

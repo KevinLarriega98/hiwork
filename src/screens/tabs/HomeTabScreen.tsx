@@ -20,6 +20,7 @@ import { NavigationProp, useNavigation } from "@react-navigation/native";
 import useAuthStore from "../../stores/useAuthStore";
 import { RootStackParamList } from "../../types/navigation";
 import { calculateWeeksRange } from "../../util/calculateWeeksRange";
+import Project from "../project/Project";
 
 type ProjectDetailScreenNavigationProp = NavigationProp<
     RootStackParamList,
@@ -27,7 +28,7 @@ type ProjectDetailScreenNavigationProp = NavigationProp<
 >;
 
 const HomeTabScreen = () => {
-    const navigation = useNavigation<ProjectDetailScreenNavigationProp>();
+    const navigation = useNavigation<any>();
     const navigation2 = useNavigation<any>();
     const { currentUser } = useAuthStore();
 
@@ -116,19 +117,24 @@ const HomeTabScreen = () => {
             ? calculateWeeksRange(item.objectiveTimeline)
             : "No dates available";
 
-        console.log(item);
+        console.log(item.roles);
 
         return (
             <TouchableOpacity
-                className="bg-gray_1 p-4 rounded-2xl mb-4 w-[48%]"
+                className="bg-gray_1 p-4 rounded-2xl mb-4 w-full"
                 onPress={() => handleProjectPress(item)}
             >
-                <View className="flex flex-row justify-between items-center mb-2">
-                    <View className="px-2 py-1 bg-gray_2 rounded-full justify-center items-center">
-                        <Text className="text-gray_1 text-xs font-normal leading-none">
-                            {item.roles[0]}
-                        </Text>
+                <View className="flex flex-row justify-between items-start mb-2">
+                    <View className="flex-1 flex flex-row gap-1 flex-wrap">
+                        {item.roles.map((role, index) => (
+                            <View className="px-2 py-1 bg-gray_2 rounded-full justify-center items-center">
+                                <Text className="text-gray_1 text-xs font-normal leading-none">
+                                    {role.role}
+                                </Text>
+                            </View>
+                        ))}
                     </View>
+
                     <TouchableOpacity
                         className="flex flex-row gap-1 items-center  z-30"
                         onPress={() =>
@@ -213,7 +219,8 @@ const HomeTabScreen = () => {
                     </TouchableOpacity>
                 )}
 
-                <Text className="text-lg font-semibold mb-4">
+                <Text className=" text-xl font-bold mb-1">Recomendados</Text>
+                <Text className="text-base  mb-4">
                     Aquí tienes algunos proyectos que creemos que te podrían
                     interesar...
                 </Text>
@@ -228,10 +235,6 @@ const HomeTabScreen = () => {
                         data={localProjects}
                         renderItem={renderItem}
                         keyExtractor={(item) => item.id!}
-                        numColumns={2}
-                        columnWrapperStyle={{
-                            justifyContent: "space-between",
-                        }}
                         refreshControl={
                             <RefreshControl
                                 refreshing={refreshing}

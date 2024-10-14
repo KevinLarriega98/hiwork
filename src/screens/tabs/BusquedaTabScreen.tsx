@@ -2,24 +2,20 @@ import {
     View,
     Text,
     FlatList,
-    StyleSheet,
     TextInput,
     TouchableWithoutFeedback,
     TouchableOpacity,
+    Modal,
+    ScrollView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import DropDownPicker from "react-native-dropdown-picker";
-import BellComponent from "../../components/Projects/BellComponent";
 import useProjectStore from "../../stores/useProjectStore";
-import {
-    formatItemsData,
-    locationItemsData,
-    volunteerItemsData,
-} from "../../data/dropdownData";
+
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { ProjectState } from "../../types/project";
 import { RootStackParamList } from "../../types/navigation";
+import { REGISTRATION_STEPS_VOLUNTARIO } from "../../util/loginStepsAndUtils";
 
 type ProjectDetailScreenNavigationProp = NavigationProp<
     RootStackParamList,
@@ -29,21 +25,8 @@ type ProjectDetailScreenNavigationProp = NavigationProp<
 const BusquedaTabScreen = () => {
     const navigation = useNavigation<ProjectDetailScreenNavigationProp>();
 
-    const [volunteerItems, setVolunteerItems] = useState(volunteerItemsData);
-    const [formatItems, setFormatItems] = useState(formatItemsData);
-    const [locationItems, setLocationItems] = useState(locationItemsData);
-
-    const [volunteerOpen, setVolunteerOpen] = useState(false);
-    const [volunteerValue, setVolunteerValue] = useState(
-        volunteerItems[0].value
-    );
-
-    const [formatOpen, setFormatOpen] = useState(false);
-    const [formatValue, setFormatValue] = useState(formatItems[0].value);
-
-    const [locationOpen, setLocationOpen] = useState(false);
-    const [locationValue, setLocationValue] = useState(locationItems[0].value);
-
+    const [volunteerValue, setVolunteerValue] = useState<string[]>([]);
+    const [modalOpen, setModalOpen] = useState(false);
     const [searchText, setSearchText] = useState("");
 
     const { projects, fetchProjects } = useProjectStore((state) => ({
@@ -51,11 +34,13 @@ const BusquedaTabScreen = () => {
         fetchProjects: state.fetchProjects,
     }));
 
+    useEffect(() => {
+        fetchProjects();
+    }, [fetchProjects]);
+
     const calculateWeeksDifference = (startDate: Date, endDate: Date) => {
         const diffInMs = startDate.getTime() - endDate.getTime();
-
         const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
-
         const diffInWeeks = diffInDays / 7;
 
         if (diffInWeeks < 1) return "Less than 1 week";
@@ -64,34 +49,14 @@ const BusquedaTabScreen = () => {
         else return `${Math.floor(diffInWeeks)}+ weeks`;
     };
 
-    useEffect(() => {
-        fetchProjects();
-    }, [fetchProjects]);
-
-    const closeDropdowns = () => {
-        setVolunteerOpen(false);
-        setFormatOpen(false);
-        setLocationOpen(false);
-    };
-
-    //TODO: fix this filter on create new project put the chose of format and location in the project
     const filteredProjects = projects.filter((project: ProjectState) => {
         const matchesVolunteer =
-            volunteerValue === "all" || project.roles.includes(volunteerValue);
-        // const matchesFormat =
-        //     formatValue === "all" || project.format === formatValue;
-        // const matchesLocation =
-        //     locationValue === "all" || project.location === locationValue;
-        // const matchesSearchText = project.title
-        //     .toLowerCase()
-        //     .includes(searchText.toLowerCase());
-
+            volunteerValue.length === 0 ||
+            project.roles.some((role) => volunteerValue.includes(role.role));
         return matchesVolunteer;
-        // &&
-        // matchesFormat &&
-        // matchesLocation &&
-        // matchesSearchText
     });
+
+    console.log(filteredProjects);
 
     const handleProjectPress = (project: ProjectState) => {
         navigation.navigate("Project", { project });
@@ -102,21 +67,27 @@ const BusquedaTabScreen = () => {
         const lastDate = new Date(
             item.objectiveTimeline[item.objectiveTimeline.length - 1].date
         );
+
         return (
             <TouchableOpacity
-                className={`bg-[#E6E6E6] p-4 rounded-lg mb-4 flex-1 mx-1 `}
+                className={`bg-[#E6E6E6] p-3 rounded-lg mb-4 flex-1 mx-1 min-h-fit`}
                 onPress={() => handleProjectPress(item)}
             >
-                <View className="px-2 py-1 bg-gray_2 rounded-full justify-center items-center w-20 mb-2">
-                    <Text className="text-gray_1 text-xs font-normal leading-none">
-                        {item.roles[0]}
-                    </Text>
+                <View className="flex flex-row w-full flex-wrap gap-1">
+                    {item.roles.map((role, index) => (
+                        <View
+                            key={index}
+                            className="flex flex-row px-2 py-1 bg-gray_2 rounded-full justify-center items-center mb-2"
+                        >
+                            <Text className="text-gray_1 text-xs font-normal leading-none">
+                                {role.role}
+                            </Text>
+                        </View>
+                    ))}
                 </View>
-
-                <Text className="text-lg  mb-1 font-bold ml-1">
+                <Text className="text-lg mb-1 font-bold ml-1">
                     {item.title}
                 </Text>
-
                 <View className="flex flex-row gap-1 items-center mb-1">
                     <MaterialCommunityIcons
                         name="checkbox-blank-circle"
@@ -139,92 +110,158 @@ const BusquedaTabScreen = () => {
         );
     };
 
+    const toggleVolunteerValue = (herramienta: string) => {
+        setVolunteerValue((prev) =>
+            prev.includes(herramienta)
+                ? prev.filter((item) => item !== herramienta)
+                : [...prev, herramienta]
+        );
+    };
+
     return (
-        <TouchableWithoutFeedback onPress={closeDropdowns}>
+        <TouchableWithoutFeedback>
             <View
                 className="flex-1 bg-white"
                 onStartShouldSetResponder={() => true}
             >
-                <BellComponent />
                 <View className="px-6 pt-4 ">
-                    <View style={styles.searchContainer}>
-                        <TextInput
-                            style={styles.searchInput}
-                            placeholder="Buscar..."
-                            value={searchText}
-                            onChangeText={setSearchText}
-                        />
-                        <MaterialCommunityIcons
-                            name="magnify"
-                            size={24}
-                            style={styles.searchIcon}
-                        />
-                    </View>
-
-                    <View className="-mb-5">
-                        <View style={styles.column}>
-                            <Text style={styles.firstText}>
-                                Quiero ver voluntarios de
-                            </Text>
-                            <DropDownPicker
-                                open={volunteerOpen}
-                                value={volunteerValue}
-                                items={volunteerItems}
-                                setOpen={setVolunteerOpen}
-                                setValue={setVolunteerValue}
-                                setItems={setVolunteerItems}
-                                style={styles.firstSelectPicker}
-                                containerStyle={
-                                    styles.firstSelectPickerInnerContainer
-                                }
-                                textStyle={styles.dropdownText}
-                                dropDownContainerStyle={
-                                    styles.dropdownContainer
-                                }
+                    <View className="flex-row items-center justify-between">
+                        <View className="flex flex-row flex-wrap relative">
+                            <TextInput
+                                className="bg-gray_1 p-2 min-w-[85%] rounded-full"
+                                placeholder="Buscar..."
+                                value={searchText}
+                                onChangeText={setSearchText}
+                                inlineImageLeft="search"
                             />
+                            <View className="absolute right-3 top-3 flex items-center h-full">
+                                <MaterialCommunityIcons
+                                    name="magnify"
+                                    size={24}
+                                    className="rounded-lg"
+                                />
+                            </View>
                         </View>
-                        <View style={styles.column}>
-                            <Text style={styles.text}>en formato</Text>
-                            <DropDownPicker
-                                open={formatOpen}
-                                value={formatValue}
-                                items={formatItems}
-                                setOpen={setFormatOpen}
-                                setValue={setFormatValue}
-                                setItems={setFormatItems}
-                                style={styles.picker}
-                                containerStyle={styles.pickerInnerContainer}
-                                textStyle={styles.dropdownText}
-                                dropDownContainerStyle={
-                                    styles.dropdownContainer
-                                }
-                            />
-                            <Text className="ml-1" style={styles.text}>
-                                en
-                            </Text>
-                            <DropDownPicker
-                                open={locationOpen}
-                                value={locationValue}
-                                items={locationItems}
-                                setOpen={setLocationOpen}
-                                setValue={setLocationValue}
-                                setItems={setLocationItems}
-                                style={styles.picker}
-                                containerStyle={styles.pickerInnerContainer}
-                                textStyle={styles.dropdownText}
-                                dropDownContainerStyle={
-                                    styles.dropdownContainer
-                                }
-                            />
+                        <View>
+                            <TouchableOpacity
+                                className="bg-naranja_oscuro p-2 rounded-full"
+                                onPress={() => setModalOpen(!modalOpen)}
+                            >
+                                <MaterialCommunityIcons
+                                    name="tune-vertical"
+                                    size={24}
+                                    color={"white"}
+                                    className="rounded-lg"
+                                />
+                            </TouchableOpacity>
                         </View>
                     </View>
 
-                    {filteredProjects.length <= 0 ? (
-                        <Text className=" text-xl text-center">
+                    {volunteerValue.length > 0 && (
+                        <View className="flex flex-row items-center mt-2">
+                            <Text className="text-gray_1 text-sm">
+                                {volunteerValue.length} proyectos
+                            </Text>
+                            <MaterialCommunityIcons
+                                name="close"
+                                size={24}
+                                color={"#7F35E9"}
+                                className="ml-2 cursor-pointer"
+                                onPress={() => setVolunteerValue([])}
+                            />
+                        </View>
+                    )}
+
+                    <Modal
+                        animationType="slide"
+                        visible={modalOpen}
+                        onRequestClose={() => setModalOpen(false)}
+                    >
+                        <View className="flex-1 p-6 gap-3">
+                            <View>
+                                <Text className="text-center text-2xl">
+                                    Filtros
+                                </Text>
+                                <TouchableOpacity
+                                    onPress={() => setModalOpen(!modalOpen)}
+                                    className="absolute top-0 right-0"
+                                >
+                                    <MaterialCommunityIcons
+                                        name="close"
+                                        color={"#004932"}
+                                        size={34}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+
+                            <ScrollView>
+                                <Text className="text-xl font-semibold">
+                                    Disciplinas
+                                </Text>
+                                <View className="flex flex-row flex-wrap mt-2">
+                                    {REGISTRATION_STEPS_VOLUNTARIO[2]
+                                        ?.options &&
+                                        Object.entries(
+                                            REGISTRATION_STEPS_VOLUNTARIO[2]
+                                                .options
+                                        ).map(
+                                            ([key, herramientas]: [
+                                                string,
+                                                string[]
+                                            ]) =>
+                                                herramientas.map(
+                                                    (herramienta, idx) => (
+                                                        <TouchableOpacity
+                                                            onPress={() =>
+                                                                toggleVolunteerValue(
+                                                                    herramienta
+                                                                )
+                                                            }
+                                                            key={`${key}-${idx}`}
+                                                            className={`border rounded-full px-4 py-2 m-1 ${
+                                                                key === "Diseño"
+                                                                    ? "border-green-400"
+                                                                    : key ===
+                                                                      "Desarrollo y Tecnología"
+                                                                    ? "border-purple-400"
+                                                                    : key ===
+                                                                      "Otros"
+                                                                    ? "border-pink-400"
+                                                                    : "border-yellow-400"
+                                                            }`}
+                                                        >
+                                                            <Text
+                                                                className={`${
+                                                                    key ===
+                                                                    "Diseño"
+                                                                        ? "text-green-500"
+                                                                        : key ===
+                                                                          "Desarrollo y Tecnología"
+                                                                        ? "text-purple-500"
+                                                                        : key ===
+                                                                          "Otros"
+                                                                        ? "text-pink-500"
+                                                                        : "text-yellow-500"
+                                                                }`}
+                                                            >
+                                                                {herramienta}
+                                                            </Text>
+                                                        </TouchableOpacity>
+                                                    )
+                                                )
+                                        )}
+                                </View>
+                            </ScrollView>
+                        </View>
+                    </Modal>
+
+                    {filteredProjects.length === 0 ? (
+                        <Text className="text-xl text-center">
                             No existen proyectos aún
                         </Text>
                     ) : (
                         <FlatList
+                            className="mt-3"
                             data={filteredProjects}
                             renderItem={renderItem}
                             keyExtractor={(item) => item.id!}
@@ -235,69 +272,5 @@ const BusquedaTabScreen = () => {
         </TouchableWithoutFeedback>
     );
 };
-
-const styles = StyleSheet.create({
-    column: {
-        flexDirection: "row",
-        paddingHorizontal: 10,
-    },
-    firstSelectPicker: {
-        width: 137,
-        minHeight: 20,
-        borderRadius: 20,
-    },
-    firstSelectPickerInnerContainer: {
-        width: 137,
-        zIndex: 2,
-        marginTop: -2,
-    },
-    picker: {
-        width: 118,
-        minHeight: 20,
-        borderRadius: 20,
-    },
-    pickerInnerContainer: {
-        width: 118,
-        marginBottom: 40,
-        zIndex: 1,
-        marginTop: 7,
-    },
-    dropdownContainer: {
-        position: "absolute",
-        zIndex: 1,
-    },
-    dropdownText: {
-        fontSize: 12,
-    },
-    firstText: {
-        fontSize: 16,
-        marginRight: 5,
-    },
-    text: {
-        fontSize: 16,
-        marginRight: 5,
-        marginTop: 10,
-    },
-    searchContainer: {
-        position: "relative",
-        flexDirection: "row",
-        alignItems: "center",
-        padding: 2,
-        borderRadius: 22,
-        marginBottom: 16,
-    },
-    searchInput: {
-        backgroundColor: "#f1f1f1",
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 16,
-        fontSize: 16,
-        flex: 1,
-    },
-    searchIcon: {
-        right: 12,
-        position: "absolute",
-    },
-});
 
 export default BusquedaTabScreen;

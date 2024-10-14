@@ -8,6 +8,7 @@ import PerfilTabScreen from "../screens/tabs/PerfilTabScreen";
 import withSafeArea from "../util/withSafeArea";
 import { ProjectScreenNavigation } from "./ProjectScreenNavigation";
 import usePruebaHideStore from "../stores/pruebaHide";
+import ProyectosTabScreen from "../screens/tabs/ProyectosTabScreen";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -18,7 +19,7 @@ export const TabsBottomNavigation = () => {
         <Tab.Navigator barStyle={{ display: hide ? "none" : "flex" }}>
             <Tab.Screen
                 name="Home"
-                component={withSafeArea(HomeTabScreen)}
+                component={ProjectScreenNavigation}
                 options={{
                     tabBarLabel: "Home",
                     tabBarIcon: ({ color }) => (
@@ -46,7 +47,7 @@ export const TabsBottomNavigation = () => {
             />
             <Tab.Screen
                 name="Proyectos"
-                component={ProjectScreenNavigation}
+                component={withSafeArea(ProyectosTabScreen)}
                 options={{
                     tabBarLabel: "Proyectos",
                     tabBarIcon: ({ color }) => (

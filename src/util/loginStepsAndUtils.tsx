@@ -19,14 +19,58 @@ export const REGISTRATION_STEPS_VOLUNTARIO = [
     {
         key: "2",
         question: "¿Qué disciplinas eres experto?",
-        options: ["Reducir mi estrés3", "Reducir mi estrés4"],
+        options: ["Diseño", "Marketing", "Desarrollo y Tecnología", "Otros"],
         type: "options",
     },
     {
         key: "3",
-        question: "Selecciona en qué tipo de proyectos te gustaría participar",
-        options: ["Reducir mi estrés1", "Reducir mi estrés2"],
-        type: "options",
+        question: "¿Que herramientas dominas?",
+        options: {
+            Diseño: [
+                "Diseño Gráfico",
+                "Diseño Web",
+                "UX/UI",
+                "Diseño Editorial",
+                "Branding",
+                "Ilustración",
+                "Animación",
+                "Storyboard",
+            ],
+            Marketing: [
+                "Marketing de Contenidos",
+                "SEO",
+                "SEM",
+                "Social Media Marketing",
+                "Email Marketing",
+                "Influencer Marketing",
+                "Analítica de Marketing",
+                "Gestión de Proyectos",
+                "Project Management",
+                "Gestión de Equipos Creativos",
+            ],
+            "Desarrollo y Tecnología": [
+                "Desarrollo Frontend",
+                "Desarrollo Backend",
+                "Full Stack",
+                "Desarrollo de Aplicaciones",
+                "Desarrollo Web",
+                "Desarrollo de Videojuegos",
+                "Inteligencia Artificial",
+                "Realidad Aumentada",
+                "Realidad Virtual",
+                "Modelado 3D",
+            ],
+            Otros: [
+                "Fotografía",
+                "Video",
+                "Edición de Vídeo",
+                "Podcasting",
+                "Copywriting",
+                "Redacción de Contenidos",
+                "UX Writing",
+            ],
+        },
+        type: "herramientas",
     },
     {
         key: "4",
@@ -101,10 +145,10 @@ export const renderItem = (
 
     return (
         <View
-            className="justify-center items-center p-6 mt-10 mx-10 rounded-2xl"
+            className="flex flex-col items-center p-6 mt-10 mx-10 rounded-2xl"
             style={{ width: width - 80 }}
         >
-            <Text className="text-lg font-bold mb-4 text-center">
+            <Text className="text-lg font-bold text-center">
                 {item.question || item.message}
             </Text>
 
@@ -141,7 +185,7 @@ export const renderItem = (
             )}
             {item.type === "input" && (
                 <TextInput
-                    className={`w-full p-2 border border-gray-300 rounded ${
+                    className={`w-full px-2 border border-gray-300 rounded ${
                         item.key === "4" ? "h-32" : "h-12"
                     }`}
                     placeholder={item.placeholder}
@@ -166,7 +210,7 @@ export const renderItem = (
             w-full p-3 border border-gray-300 rounded mb-2 items-center
             `}
                         onPress={() => {
-                            setSelectedOptions((prevSelectedOptions: any) => {
+                            setSelectedOptions((prevSelectedOptions) => {
                                 const currentOptions =
                                     prevSelectedOptions[item.key] || [];
 
@@ -188,6 +232,10 @@ export const renderItem = (
                         <Text className="text-black">{option}</Text>
                     </TouchableOpacity>
                 ))}
+            {/* 
+                {item.type === "herramientas" && (
+
+                )} */}
         </View>
     );
 };
