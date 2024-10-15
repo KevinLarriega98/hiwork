@@ -13,6 +13,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import useAuthStore from "../../../../stores/useAuthStore";
 import {
     updateUserNameAndDescription,
+    uploadBackGroundImage,
     uploadImage,
 } from "../../../../service/api/authService";
 import { UserState } from "../../../../types/profile";
@@ -31,6 +32,9 @@ const ModalInterior = ({
     const [name, setName] = useState(currentUser?.name);
     const [description, setDescription] = useState(currentUser?.description);
     const [image, setImage] = useState<string>(currentUser?.image);
+    const [backgroundImage, setBackGroundImage] = useState<string>(
+        "../../../../../images/pruebaFondo.png"
+    );
 
     const pickImage = async () => {
         try {
@@ -48,21 +52,50 @@ const ModalInterior = ({
             Alert.alert("Error", error.message);
         }
     };
+    const pickBackGroundImage = async () => {
+        try {
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.All,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
+
+            if (!result.canceled) {
+                setBackGroundImage(result.assets[0].uri);
+            }
+        } catch (error: any) {
+            Alert.alert("Error", error.message);
+        }
+    };
 
     const handleUpdateUserNameAndDescriptionAndImage = async () => {
         if (image !== currentUser?.image) {
             uploadImage(image, currentUser?.email);
         }
 
-        updateUserNameAndDescription(currentUser?.id, name, description, image);
+        if (backgroundImage !== currentUser?.backgroundImage) {
+            uploadBackGroundImage(backgroundImage, currentUser?.email);
+        }
+
+        updateUserNameAndDescription(
+            currentUser?.id,
+            name,
+            description,
+            image,
+            backgroundImage
+        );
 
         setCurrentUser({
             ...currentUser,
             name: name,
             description: description,
             image: image,
+            backgroundImage: backgroundImage,
         } as UserState);
     };
+
+    console.log(currentUserc);
 
     return (
         <View className="flex-1 bg-white flex justify-between">
@@ -87,9 +120,9 @@ const ModalInterior = ({
                     {currentUser?.profileType === "ONG" ? (
                         <ImageBackground
                             source={{
-                                uri: Asset.fromModule(
-                                    require("../../../../../images/pruebaFondo.png")
-                                ).uri,
+                                uri: backgroundImage
+                                    ? backgroundImage
+                                    : "https://firebasestorage.googleapis.com/v0/b/hiwork-43f78.appspot.com/o/profileImage%2FProjectCard.jpg?alt=media&token=6ccef7bd-888c-40bf-bbd5-8c5c5a7deb2e",
                             }}
                             resizeMode="cover"
                             imageStyle={{
@@ -102,9 +135,8 @@ const ModalInterior = ({
                         >
                             <TouchableOpacity
                                 className=" absolute right-0 top-0 py-2 px-4"
-
                                 // TODO falta poner un modal que pueda poner la imagen que quiera
-                                // onPress={() => pickImage()}
+                                onPress={() => pickBackGroundImage()}
                             >
                                 <MaterialCommunityIcons
                                     name="pencil"

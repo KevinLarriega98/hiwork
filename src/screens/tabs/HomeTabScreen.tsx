@@ -20,7 +20,6 @@ import { NavigationProp, useNavigation } from "@react-navigation/native";
 import useAuthStore from "../../stores/useAuthStore";
 import { RootStackParamList } from "../../types/navigation";
 import { calculateWeeksRange } from "../../util/calculateWeeksRange";
-import Project from "../project/Project";
 
 type ProjectDetailScreenNavigationProp = NavigationProp<
     RootStackParamList,
@@ -116,8 +115,6 @@ const HomeTabScreen = () => {
         const weeksRange = item.objectiveTimeline
             ? calculateWeeksRange(item.objectiveTimeline)
             : "No dates available";
-
-        console.log(item.roles);
 
         return (
             <TouchableOpacity

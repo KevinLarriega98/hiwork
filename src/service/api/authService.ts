@@ -148,22 +148,59 @@ export const uploadImage = async (
         );
     });
 };
+export const uploadBackGroundImage = async (
+    uri: string,
+    fileName: string,
+    onProgress?: (progress: any) => void
+) => {
+    const compressedUri = await compressImage(uri);
+    const fetchResponse = await fetch(compressedUri);
+    const blob = await fetchResponse.blob();
+
+    const imageRef = ref(getStorage(), `backgroundImages/${fileName}`);
+
+    const uploadTask = uploadBytesResumable(imageRef, blob);
+
+    return new Promise((resolve, reject) => {
+        uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+                const progress =
+                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                onProgress && onProgress(progress);
+            },
+            (error) => {
+                console.error(error);
+                reject(error);
+            },
+            async () => {
+                const downloadURL = await getDownloadURL(
+                    uploadTask.snapshot.ref
+                );
+                resolve({
+                    downloadURL,
+                    metadata: uploadTask.snapshot.metadata,
+                });
+            }
+        );
+    });
+};
 
 export const updateUserNameAndDescription = async (
     userID: string,
     name: string,
     description: string,
-    image: string
+    image: string,
+    backgroundImage?: string
 ): Promise<void> => {
     try {
-        const user = auth.currentUser;
-
         const userDocRef = doc(db, "Users", userID);
 
         const prueba = await updateDoc(userDocRef, {
             name: name,
             description: description,
             image: image,
+            backgroundImage: backgroundImage,
         });
 
         console.log(prueba);

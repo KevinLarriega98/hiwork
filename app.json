@@ -1,38 +1,46 @@
 {
-    "expo": {
-        "name": "Volu",
-        "slug": "Volu",
-        "version": "1.0.0",
-        "orientation": "portrait",
-        "icon": "./assets/logo-volu.png",
-        "scheme": "volu",
-        "userInterfaceStyle": "light",
-        "splash": {
-            "image": "./assets/volu-icon-sin-fondo.png",
-            "resizeMode": "contain",
-            "backgroundColor": "#004932"
-        },
-        "ios": {
-            "supportsTablet": true,
-            "bundleIdentifier": "com.anonymous.Navigation"
-        },
-        "android": {
-            "adaptiveIcon": {
-                "foregroundImage": "./assets/adaptive-icon.png",
-                "backgroundColor": "#ffffff"
-            },
-            "package": "com.anonymous.Navigation"
-        },
-        "web": {
-            "favicon": "./assets/favicon.png"
-        },
-        "plugins": [
-            [
-                "expo-image-picker",
-                {
-                    "photosPermission": "The app accesses your photos to let you share them with your friends."
-                }
-            ]
-        ]
+  "expo": {
+    "name": "Volu",
+    "slug": "Volu",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/logo-volu.png",
+    "scheme": "volu",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/volu-icon-sin-fondo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#004932"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.Navigation"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.anonymous.Navigation",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "63fe0023-842d-4038-85b7-5a4da6e05dd6"
+      }
     }
+  }
 }

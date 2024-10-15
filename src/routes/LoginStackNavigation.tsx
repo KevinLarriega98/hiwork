@@ -9,7 +9,6 @@ import RegisterTypeUser from "../screens/signIn-LogIn/RegisterTypeUser";
 import { RootStackParamList } from "../types/navigation";
 import WelcomeScreen from "../screens/welcome/WelcomeScreen";
 
-// Apply withSafeArea outside of the function
 const SafeHomeScreen = withSafeArea(HomeScreen);
 const SafeLoginScreen = withSafeArea(LoginScreen);
 const SafeRegisterScreen = withSafeArea(RegisterScreen);

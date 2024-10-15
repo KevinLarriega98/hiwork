@@ -78,9 +78,9 @@ const PerfilTabScreen = () => {
             {currentUser?.profileType === "ONG" ? (
                 <ImageBackground
                     source={{
-                        uri: Asset.fromModule(
-                            require("../../../images/pruebaFondo.png")
-                        ).uri,
+                        uri: currentUser.backgroundImage
+                            ? currentUser.backgroundImage
+                            : "https://firebasestorage.googleapis.com/v0/b/hiwork-43f78.appspot.com/o/profileImage%2FProjectCard.jpg?alt=media&token=6ccef7bd-888c-40bf-bbd5-8c5c5a7deb2e",
                     }}
                     className="w-full"
                     resizeMode="cover"
@@ -88,6 +88,7 @@ const PerfilTabScreen = () => {
                         borderBottomLeftRadius: 20,
                         borderBottomRightRadius: 20,
                     }}
+                    blurRadius={6}
                 >
                     <View className="flex flex-col items-center p-4 rounded-b-3xl">
                         <EditProfileAndLogOut
@@ -132,6 +133,7 @@ const PerfilTabScreen = () => {
                                                         true
                                                     )
                                                 }
+                                                className=""
                                             >
                                                 <Text className="text-xl font-bold mb-4">
                                                     Editar Perfil

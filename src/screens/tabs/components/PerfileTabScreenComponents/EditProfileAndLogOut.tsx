@@ -13,8 +13,8 @@ const EditProfileAndLogOut = ({
         <View className="flex-1 w-screen h-full">
             <View className="flex flex-row justify-end px-2">
                 <TouchableOpacity
-                    className={`w-9 h-9 rounded-full justify-center items-center ${
-                        modalVisible && "bg-white"
+                    className={`w-9 h-9 rounded-full justify-center items-center bg-white ${
+                        modalVisible && "bg-naranja_oscuro"
                     }`}
                     onPress={() => setModalVisible(!modalVisible)}
                 >

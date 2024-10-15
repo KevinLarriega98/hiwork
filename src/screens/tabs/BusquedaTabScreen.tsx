@@ -25,14 +25,11 @@ type ProjectDetailScreenNavigationProp = NavigationProp<
 const BusquedaTabScreen = () => {
     const navigation = useNavigation<ProjectDetailScreenNavigationProp>();
 
-    const [volunteerValue, setVolunteerValue] = useState<string[]>([]);
+    const [volunteerValue, setVolunteerValue] = useState<{}[]>([]);
     const [modalOpen, setModalOpen] = useState(false);
     const [searchText, setSearchText] = useState("");
 
-    const { projects, fetchProjects } = useProjectStore((state) => ({
-        projects: state.projects,
-        fetchProjects: state.fetchProjects,
-    }));
+    const { projects, fetchProjects } = useProjectStore();
 
     useEffect(() => {
         fetchProjects();
@@ -50,31 +47,46 @@ const BusquedaTabScreen = () => {
     };
 
     const filteredProjects = projects.filter((project: ProjectState) => {
-        const matchesVolunteer =
-            volunteerValue.length === 0 ||
-            project.roles.some((role) => volunteerValue.includes(role.role));
-        return matchesVolunteer;
-    });
+        if (volunteerValue.length === 0) {
+            return true;
+        }
 
-    console.log(filteredProjects);
+        const matchesAllFilters = volunteerValue.every((filter) =>
+            project.roles.some((role) => role.role === filter)
+        );
+
+        return matchesAllFilters;
+    });
 
     const handleProjectPress = (project: ProjectState) => {
         navigation.navigate("Project", { project });
     };
 
     const renderItem = ({ item }: { item: ProjectState }) => {
+        if (
+            !item.roles ||
+            item.roles.length === 0 ||
+            !item.objectiveTimeline ||
+            item.objectiveTimeline.length === 0
+        ) {
+            return null;
+        }
+
         const firstDate = new Date(item.objectiveTimeline[0].date);
         const lastDate = new Date(
             item.objectiveTimeline[item.objectiveTimeline.length - 1].date
         );
 
+        const displayedRoles = item.roles.slice(0, 2);
+        const hasMoreRoles = item.roles.length > 2;
+
         return (
             <TouchableOpacity
-                className={`bg-[#E6E6E6] p-3 rounded-lg mb-4 flex-1 mx-1 min-h-fit`}
+                className="bg-[#E6E6E6] p-3 rounded-lg mb-4  mx-1"
                 onPress={() => handleProjectPress(item)}
             >
                 <View className="flex flex-row w-full flex-wrap gap-1">
-                    {item.roles.map((role, index) => (
+                    {displayedRoles.map((role, index) => (
                         <View
                             key={index}
                             className="flex flex-row px-2 py-1 bg-gray_2 rounded-full justify-center items-center mb-2"
@@ -84,7 +96,16 @@ const BusquedaTabScreen = () => {
                             </Text>
                         </View>
                     ))}
+
+                    {hasMoreRoles && (
+                        <View className="flex flex-row px-2 py-1 bg-gray_2 rounded-full justify-center items-center mb-2">
+                            <Text className="text-gray_1 text-xs font-normal leading-none">
+                                ...
+                            </Text>
+                        </View>
+                    )}
                 </View>
+
                 <Text className="text-lg mb-1 font-bold ml-1">
                     {item.title}
                 </Text>
@@ -110,6 +131,8 @@ const BusquedaTabScreen = () => {
         );
     };
 
+    // FIXME mirar de arreglar que no se actualize al hacer tab
+
     const toggleVolunteerValue = (herramienta: string) => {
         setVolunteerValue((prev) =>
             prev.includes(herramienta)
@@ -128,49 +151,42 @@ const BusquedaTabScreen = () => {
                     <View className="flex-row items-center justify-between">
                         <View className="flex flex-row flex-wrap relative">
                             <TextInput
-                                className="bg-gray_1 p-2 min-w-[85%] rounded-full"
+                                className="bg-gray_1 p-2 pl-4 min-w-[85%] rounded-full"
                                 placeholder="Buscar..."
                                 value={searchText}
                                 onChangeText={setSearchText}
-                                inlineImageLeft="search"
                             />
-                            <View className="absolute right-3 top-3 flex items-center h-full">
+                            <View className="absolute right-2 top-1.5 flex items-center h-full">
                                 <MaterialCommunityIcons
                                     name="magnify"
-                                    size={24}
+                                    size={32}
                                     className="rounded-lg"
+                                    color="#808080"
                                 />
                             </View>
                         </View>
                         <View>
                             <TouchableOpacity
-                                className="bg-naranja_oscuro p-2 rounded-full"
+                                className={` ${
+                                    volunteerValue.length > 0
+                                        ? "bg-naranja_oscuro"
+                                        : "border border-naranja_oscuro"
+                                } p-2 rounded-full `}
                                 onPress={() => setModalOpen(!modalOpen)}
                             >
                                 <MaterialCommunityIcons
                                     name="tune-vertical"
                                     size={24}
-                                    color={"white"}
+                                    color={
+                                        volunteerValue.length > 0
+                                            ? "white"
+                                            : "orange"
+                                    }
                                     className="rounded-lg"
                                 />
                             </TouchableOpacity>
                         </View>
                     </View>
-
-                    {volunteerValue.length > 0 && (
-                        <View className="flex flex-row items-center mt-2">
-                            <Text className="text-gray_1 text-sm">
-                                {volunteerValue.length} proyectos
-                            </Text>
-                            <MaterialCommunityIcons
-                                name="close"
-                                size={24}
-                                color={"#7F35E9"}
-                                className="ml-2 cursor-pointer"
-                                onPress={() => setVolunteerValue([])}
-                            />
-                        </View>
-                    )}
 
                     <Modal
                         animationType="slide"
@@ -219,21 +235,39 @@ const BusquedaTabScreen = () => {
                                                             }
                                                             key={`${key}-${idx}`}
                                                             className={`border rounded-full px-4 py-2 m-1 ${
-                                                                key === "Diseño"
-                                                                    ? "border-green-400"
+                                                                volunteerValue.includes(
+                                                                    herramienta
+                                                                )
+                                                                    ? key ===
+                                                                      "Diseño"
+                                                                        ? "bg-green-400 border-green-400"
+                                                                        : key ===
+                                                                          "Desarrollo y Tecnología"
+                                                                        ? "bg-purple-400 border-purple-400"
+                                                                        : key ===
+                                                                          "Otros"
+                                                                        ? "bg-pink-400 border-pink-400"
+                                                                        : "bg-yellow-400 border-yellow-400"
+                                                                    : key ===
+                                                                      "Diseño"
+                                                                    ? "bg-white border-green-400"
                                                                     : key ===
                                                                       "Desarrollo y Tecnología"
-                                                                    ? "border-purple-400"
+                                                                    ? "bg-white border-purple-400"
                                                                     : key ===
                                                                       "Otros"
-                                                                    ? "border-pink-400"
-                                                                    : "border-yellow-400"
+                                                                    ? "bg-white border-pink-400"
+                                                                    : "bg-white border-yellow-400"
                                                             }`}
                                                         >
                                                             <Text
                                                                 className={`${
-                                                                    key ===
-                                                                    "Diseño"
+                                                                    volunteerValue.includes(
+                                                                        herramienta
+                                                                    )
+                                                                        ? "text-white"
+                                                                        : key ===
+                                                                          "Diseño"
                                                                         ? "text-green-500"
                                                                         : key ===
                                                                           "Desarrollo y Tecnología"
@@ -255,13 +289,70 @@ const BusquedaTabScreen = () => {
                         </View>
                     </Modal>
 
+                    <View className="flex flex-row flex-wrap items-center my-3 rounded-full">
+                        {volunteerValue.length > 0 &&
+                            volunteerValue.map((item, index) => {
+                                const category = Object.entries(
+                                    REGISTRATION_STEPS_VOLUNTARIO[2]?.options ||
+                                        {}
+                                ).find(([key, herramientas]) =>
+                                    herramientas.includes(item)
+                                );
+
+                                let backgroundColor;
+                                if (category) {
+                                    const [key] = category;
+                                    switch (key) {
+                                        case "Diseño":
+                                            backgroundColor = "bg-green-400";
+                                            break;
+                                        case "Desarrollo y Tecnología":
+                                            backgroundColor = "bg-purple-500";
+                                            break;
+                                        case "Marketing":
+                                            backgroundColor = "bg-yellow-400";
+                                            break;
+                                        case "Otros":
+                                            backgroundColor = "bg-pink-400";
+                                            break;
+                                        default:
+                                            backgroundColor = "bg-green-500";
+                                    }
+                                } else {
+                                    backgroundColor = "bg-gray-500";
+                                }
+
+                                return (
+                                    <TouchableOpacity
+                                        key={index}
+                                        className={`rounded-full px-4 py-2 m-1 ${backgroundColor}`}
+                                        onPress={() =>
+                                            setVolunteerValue(
+                                                volunteerValue.filter(
+                                                    (v) => v !== item
+                                                )
+                                            )
+                                        }
+                                    >
+                                        <Text className="text-white text-sm">
+                                            {item as string}
+                                        </Text>
+                                    </TouchableOpacity>
+                                );
+                            })}
+                    </View>
+
+                    <Text className="text-lg  font-semibold ">
+                        Tu búsqueda ha resultado en los siguientes proyectos:
+                    </Text>
+
                     {filteredProjects.length === 0 ? (
                         <Text className="text-xl text-center">
                             No existen proyectos aún
                         </Text>
                     ) : (
                         <FlatList
-                            className="mt-3"
+                            className="mt-3 "
                             data={filteredProjects}
                             renderItem={renderItem}
                             keyExtractor={(item) => item.id!}
