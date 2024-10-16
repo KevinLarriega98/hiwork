@@ -8,7 +8,6 @@ import {
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import InfoSVG from "../../components/Projects/svg/InfoSVG";
-import BellComponent from "../../components/Projects/BellComponent";
 import {
     getProjects,
     getSavedProjects,
@@ -186,61 +185,58 @@ const HomeTabScreen = () => {
     };
 
     return (
-        <View className="flex-1 bg-background">
-            <BellComponent />
-            <View className="px-4 flex-1">
-                <Text className="text-xl font-bold mb-4">
-                    Hola, {currentUser?.name}
+        <View className="flex-1 bg-background px-4 pt-4">
+            <Text className="text-xl font-bold mb-4">
+                Hola, {currentUser?.name}
+            </Text>
+            {/* TODO quitar el hardcode y hacer la lógica de mirar si tienes algún proyecto activo o no */}
+            <View className="bg-gray_1 p-4 rounded-2xl mb-4 flex flex-row items-center justify-evenly">
+                <InfoSVG />
+                <Text className="text-text_black text-center text-base">
+                    No tienes ningún proyecto activo
                 </Text>
-                {/* TODO quitar el hardcode y hacer la lógica de mirar si tienes algún proyecto activo o no */}
-                <View className="bg-gray_1 p-4 rounded-2xl mb-4 flex flex-row items-center justify-evenly">
-                    <InfoSVG />
-                    <Text className="text-text_black text-center text-base">
-                        No tienes ningún proyecto activo
-                    </Text>
-                </View>
-
-                {currentUser?.profileType === "ONG" && (
-                    <TouchableOpacity
-                        onPress={() => handleCreateProject()}
-                        className="bg-gray_1 p-4 rounded-lg mb-4 flex flex-row items-center "
-                    >
-                        <MaterialCommunityIcons
-                            name="pencil-outline"
-                            color={"#000000"}
-                            size={18}
-                        />
-                        <Text className="text-text_black text-center text-base ml-3">
-                            Crear un proyecto
-                        </Text>
-                    </TouchableOpacity>
-                )}
-
-                <Text className=" text-xl font-bold mb-1">Recomendados</Text>
-                <Text className="text-base  mb-4">
-                    Aquí tienes algunos proyectos que creemos que te podrían
-                    interesar...
-                </Text>
-                {loading ? (
-                    loader("Cargando proyectos...")
-                ) : localProjects.length <= 0 ? (
-                    <Text className=" text-xl text-center">
-                        No existen proyectos aún
-                    </Text>
-                ) : (
-                    <FlatList
-                        data={localProjects}
-                        renderItem={renderItem}
-                        keyExtractor={(item) => item.id!}
-                        refreshControl={
-                            <RefreshControl
-                                refreshing={refreshing}
-                                onRefresh={onRefresh}
-                            />
-                        }
-                    />
-                )}
             </View>
+
+            {currentUser?.profileType === "ONG" && (
+                <TouchableOpacity
+                    onPress={() => handleCreateProject()}
+                    className="bg-gray_1 p-4 rounded-lg mb-4 flex flex-row items-center "
+                >
+                    <MaterialCommunityIcons
+                        name="pencil-outline"
+                        color={"#000000"}
+                        size={18}
+                    />
+                    <Text className="text-text_black text-center text-base ml-3">
+                        Crear un proyecto
+                    </Text>
+                </TouchableOpacity>
+            )}
+
+            <Text className=" text-xl font-bold mb-1">Recomendados</Text>
+            <Text className="text-base  mb-4">
+                Aquí tienes algunos proyectos que creemos que te podrían
+                interesar...
+            </Text>
+            {loading ? (
+                loader("Cargando proyectos...")
+            ) : localProjects.length <= 0 ? (
+                <Text className=" text-xl text-center">
+                    No existen proyectos aún
+                </Text>
+            ) : (
+                <FlatList
+                    data={localProjects}
+                    renderItem={renderItem}
+                    keyExtractor={(item) => item.id!}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                        />
+                    }
+                />
+            )}
         </View>
     );
 };
