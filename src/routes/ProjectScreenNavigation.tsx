@@ -13,7 +13,7 @@ export const ProjectScreenNavigation = () => {
     return (
         <Stack.Navigator>
             <Stack.Screen
-                name="Home"
+                name="HomeTab"
                 component={HomeTabScreenWithSafeArea}
                 options={{
                     headerShown: false,

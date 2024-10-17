@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import ProjectInfoScreen from "../screens/project/tabs/ProjectInfoScreen";
 import CalendarScreen from "../screens/project/tabs/CalendarScreen";
@@ -22,6 +22,7 @@ const ProjectTabsNavigation = ({ project }: { project: ProjectState }) => {
                     tabBarStyle: {
                         elevation: 0,
                         borderWidth: 0,
+                        
                     },
                 }}
             >

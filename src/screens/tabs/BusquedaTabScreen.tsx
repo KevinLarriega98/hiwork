@@ -82,7 +82,7 @@ const BusquedaTabScreen = () => {
 
         return (
             <TouchableOpacity
-                className="bg-[#E6E6E6] p-3 rounded-lg mb-4  mx-1"
+                className="bg-[#E6E6E6] p-4 rounded-2xl mb-4 "
                 onPress={() => handleProjectPress(item)}
             >
                 <View className="flex flex-row w-full flex-wrap gap-1">
@@ -147,7 +147,7 @@ const BusquedaTabScreen = () => {
                 className="flex-1 bg-white"
                 onStartShouldSetResponder={() => true}
             >
-                <View className="px-6 pt-4 ">
+                <View className="p-4">
                     <View className="flex-row items-center justify-between">
                         <View className="flex flex-row flex-wrap relative">
                             <TextInput
@@ -354,6 +354,7 @@ const BusquedaTabScreen = () => {
                         <FlatList
                             className="mt-3 "
                             data={filteredProjects}
+                            showsVerticalScrollIndicator={false}
                             renderItem={renderItem}
                             keyExtractor={(item) => item.id!}
                         />

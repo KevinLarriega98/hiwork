@@ -123,7 +123,10 @@ const HomeTabScreen = () => {
                 <View className="flex flex-row justify-between items-start mb-2">
                     <View className="flex-1 flex flex-row gap-1 flex-wrap">
                         {item.roles.map((role, index) => (
-                            <View className="px-2 py-1 bg-gray_2 rounded-full justify-center items-center">
+                            <View
+                                key={index}
+                                className="px-2 py-1 bg-gray_2 rounded-full justify-center items-center"
+                            >
                                 <Text className="text-gray_1 text-xs font-normal leading-none">
                                     {role.role}
                                 </Text>
@@ -228,6 +231,7 @@ const HomeTabScreen = () => {
                 <FlatList
                     data={localProjects}
                     renderItem={renderItem}
+                    showsVerticalScrollIndicator={false}
                     keyExtractor={(item) => item.id!}
                     refreshControl={
                         <RefreshControl
