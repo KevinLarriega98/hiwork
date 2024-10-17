@@ -1,0 +1,36 @@
+{
+    "cli": {
+        "version": ">= 12.5.2",
+        "appVersionSource": "remote"
+    },
+    "build": {
+        "development": {
+            "env": {
+                "EXPO_PUBLIC_PROJECT_ID": "hiwork-43f78",
+                "EXPO_PUBLIC_API_KEY": "AIzaSyAPniDZiM4LjWlFDC5RSUxHkvWoEsIN9Y0"
+            },
+            "developmentClient": true,
+            "distribution": "internal"
+        },
+        "preview": {
+            "android": {
+                "buildType": "apk"
+            },
+            "env": {
+                "EXPO_PUBLIC_PROJECT_ID": "hiwork-43f78",
+                "EXPO_PUBLIC_API_KEY": "AIzaSyAPniDZiM4LjWlFDC5RSUxHkvWoEsIN9Y0"
+            },
+            "distribution": "internal"
+        },
+        "production": {
+            "env": {
+                "EXPO_PUBLIC_PROJECT_ID": "hiwork-43f78",
+                "EXPO_PUBLIC_API_KEY": "AIzaSyAPniDZiM4LjWlFDC5RSUxHkvWoEsIN9Y0"
+            },
+            "autoIncrement": true
+        }
+    },
+    "submit": {
+        "production": {}
+    }
+}

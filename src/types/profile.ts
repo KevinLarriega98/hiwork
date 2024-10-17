@@ -9,6 +9,7 @@ export interface UserState {
     currentUser: CurrentUser;
     image: string | null;
     description: string;
+    backgroundImage?: string;
 }
 
 export type CurrentUser = {
@@ -20,6 +21,7 @@ export type CurrentUser = {
     typeOfProjects: string;
     description: string;
     image: string;
+    backgroundImage?: string;
 } | null;
 
 export interface UserActions {

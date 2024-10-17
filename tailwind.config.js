@@ -21,6 +21,9 @@ module.exports = {
                 rosa: "#FFB2E2",
                 naranja_oscuro: "#FFAA00",
                 naranja_claro: "#FFC729",
+
+                cta_primary: "#FFB2E2",
+                cta_secondary: "#7F35E9",
             },
         },
     },

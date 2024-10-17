@@ -19,14 +19,58 @@ export const REGISTRATION_STEPS_VOLUNTARIO = [
     {
         key: "2",
         question: "¿Qué disciplinas eres experto?",
-        options: ["Reducir mi estrés", "Reducir mi estrés"],
+        options: ["Diseño", "Marketing", "Desarrollo y Tecnología", "Otros"],
         type: "options",
     },
     {
         key: "3",
-        question: "Selecciona en qué tipo de proyectos te gustaría participar",
-        options: ["Reducir mi estrés", "Reducir mi estrés"],
-        type: "options",
+        question: "¿Que herramientas dominas?",
+        options: {
+            Diseño: [
+                "Diseño Gráfico",
+                "Diseño Web",
+                "UX/UI",
+                "Diseño Editorial",
+                "Branding",
+                "Ilustración",
+                "Animación",
+                "Storyboard",
+            ],
+            Marketing: [
+                "Marketing de Contenidos",
+                "SEO",
+                "SEM",
+                "Social Media Marketing",
+                "Email Marketing",
+                "Influencer Marketing",
+                "Analítica de Marketing",
+                "Gestión de Proyectos",
+                "Project Management",
+                "Gestión de Equipos Creativos",
+            ],
+            "Desarrollo y Tecnología": [
+                "Desarrollo Frontend",
+                "Desarrollo Backend",
+                "Full Stack",
+                "Desarrollo de Aplicaciones",
+                "Desarrollo Web",
+                "Desarrollo de Videojuegos",
+                "Inteligencia Artificial",
+                "Realidad Aumentada",
+                "Realidad Virtual",
+                "Modelado 3D",
+            ],
+            Otros: [
+                "Fotografía",
+                "Video",
+                "Edición de Vídeo",
+                "Podcasting",
+                "Copywriting",
+                "Redacción de Contenidos",
+                "UX Writing",
+            ],
+        },
+        type: "herramientas",
     },
     {
         key: "4",
@@ -61,7 +105,7 @@ export const REGISTRATION_STEPS_ONG = [
     {
         key: "3",
         question: "Selecciona en qué tipo de proyectos te gustaría participar",
-        options: ["Reducir mi estrés", "Reducir mi estrés"],
+        options: ["Reducir mi estrés1", "Reducir mi estrés2"],
         type: "options",
     },
     {
@@ -97,12 +141,14 @@ export const renderItem = (
     image: string | null,
     progress: number
 ) => {
+    console.log(selectedOptions);
+
     return (
         <View
-            className="justify-center items-center p-6 mt-10 mx-10 rounded-2xl"
+            className="flex flex-col items-center p-6 mt-10 mx-10 rounded-2xl"
             style={{ width: width - 80 }}
         >
-            <Text className="text-lg font-bold mb-4 text-center">
+            <Text className="text-lg font-bold text-center">
                 {item.question || item.message}
             </Text>
 
@@ -139,7 +185,7 @@ export const renderItem = (
             )}
             {item.type === "input" && (
                 <TextInput
-                    className={`w-full p-2 border border-gray-300 rounded ${
+                    className={`w-full px-2 border border-gray-300 rounded ${
                         item.key === "4" ? "h-32" : "h-12"
                     }`}
                     placeholder={item.placeholder}
@@ -157,17 +203,39 @@ export const renderItem = (
                 item.options.map((option: string, index: React.Key) => (
                     <TouchableOpacity
                         key={index}
-                        className="w-full p-3 border border-gray-300 rounded mb-2 items-center"
-                        onPress={() =>
-                            setSelectedOptions({
-                                ...selectedOptions,
-                                [item.key]: option,
-                            })
+                        className={`${
+                            selectedOptions[item.key]?.includes(option) &&
+                            "bg-verde_claro"
                         }
+            w-full p-3 border border-gray-300 rounded mb-2 items-center
+            `}
+                        onPress={() => {
+                            setSelectedOptions((prevSelectedOptions) => {
+                                const currentOptions =
+                                    prevSelectedOptions[item.key] || [];
+
+                                const updatedOptions = currentOptions.includes(
+                                    option
+                                )
+                                    ? currentOptions.filter(
+                                          (opt: string) => opt !== option
+                                      )
+                                    : [...currentOptions, option];
+
+                                return {
+                                    ...prevSelectedOptions,
+                                    [item.key]: updatedOptions,
+                                };
+                            });
+                        }}
                     >
                         <Text className="text-black">{option}</Text>
                     </TouchableOpacity>
                 ))}
+            {/* 
+                {item.type === "herramientas" && (
+
+                )} */}
         </View>
     );
 };

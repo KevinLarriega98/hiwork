@@ -14,9 +14,6 @@ const Tab = createMaterialTopTabNavigator();
 const ProjectTabsNavigation = ({ project }: { project: ProjectState }) => {
     const { currentUser } = useAuthStore();
 
-    console.log("this is project", project.ongID);
-    console.log("this is current", currentUser?.id);
-
     return (
         <View style={{ flex: 1 }}>
             <Tab.Navigator

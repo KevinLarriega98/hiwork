@@ -57,7 +57,7 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
             );
 
             if (user) {
-                const userData = await getUserDataFromFirestore(user);
+                const userData = await getUserDataFromFirestore(user.uid);
 
                 set({
                     user: { ...user },
@@ -81,7 +81,7 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
     initializeAuth: () => {
         initializeAuth((user) => {
             if (user) {
-                getUserDataFromFirestore(user).then((userDataDB) => {
+                getUserDataFromFirestore(user.uid).then((userDataDB) => {
                     set({
                         user,
                         isAuthenticated: true,

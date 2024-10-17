@@ -1,20 +1,20 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import ProyectosTabScreen from "../screens/tabs/ProyectosTabScreen";
 import Project from "../screens/project/Project";
 import withSafeArea from "../util/withSafeArea";
 import ApplicatorProfile from "../screens/project/ApplicatorProfile";
+import HomeTabScreen from "../screens/tabs/HomeTabScreen";
 
 const Stack = createStackNavigator();
 
-const ProyectosTabScreenWithSafeArea = withSafeArea(ProyectosTabScreen);
+const HomeTabScreenWithSafeArea = withSafeArea(HomeTabScreen);
 
 export const ProjectScreenNavigation = () => {
     return (
         <Stack.Navigator>
             <Stack.Screen
-                name="Projects"
-                component={ProyectosTabScreenWithSafeArea}
+                name="Home"
+                component={HomeTabScreenWithSafeArea}
                 options={{
                     headerShown: false,
                 }}
