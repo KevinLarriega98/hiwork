@@ -8,6 +8,7 @@ const useUserStore = create<UserActions & RegisterState>((set) => ({
     name: "",
     discipline: "",
     typeOfProjects: "",
+    tools: [],
     description: "",
     setEmail: (email) => set({ email }),
     setPassword: (password) => set({ password }),
@@ -15,6 +16,7 @@ const useUserStore = create<UserActions & RegisterState>((set) => ({
     setName: (name) => set({ name }),
     setDiscipline: (discipline) => set({ discipline }),
     setTypeOfProjects: (typeOfProjects) => set({ typeOfProjects }),
+    setTools: (tools) => set({ tools }),
     clearSensitiveData: () =>
         set({
             email: "",

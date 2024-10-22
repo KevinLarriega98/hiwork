@@ -75,6 +75,8 @@ export const REGISTRATION_STEPS_VOLUNTARIO = [
     {
         key: "4",
         message: "Danos un poco de información sobre ti",
+        placeholder:
+            "Danos un poco mas de info sobre ti es lo que vera la gente",
         type: "input",
     },
     {
@@ -92,7 +94,7 @@ export const REGISTRATION_STEPS_VOLUNTARIO = [
 export const REGISTRATION_STEPS_ONG = [
     {
         key: "1",
-        question: "¿Cuál es tu nombre? ONG",
+        question: "¿Cuál El nombre de la organización?",
         placeholder: "Nombre",
         type: "input",
     },
@@ -141,25 +143,24 @@ export const renderItem = (
     image: string | null,
     progress: number
 ) => {
-    console.log(selectedOptions);
+    console.log(formData);
+
+    const selectedDiscipline = selectedOptions["2"];
 
     return (
-        <View
-            className="flex flex-col items-center p-6 mt-10 mx-10 rounded-2xl"
-            style={{ width: width - 80 }}
-        >
-            <Text className="text-lg font-bold text-center">
+        <View className="flex mx-10 rounded-2xl " style={{ width: width - 80 }}>
+            <Text className="text-lg font-bold text-center ">
                 {item.question || item.message}
             </Text>
 
             {item.type === "description" && (
-                <Text className="text-base text-gray-600 text-center">
+                <Text className="text-base text-gray-600 text-center  ">
                     {item.message}
                 </Text>
             )}
 
             {item.type === "image" && (
-                <>
+                <View className=" justify-center items-center h-full">
                     <TouchableOpacity
                         onPress={pickImage}
                         className="border border-gray-700 py-2 px-4 rounded mb-3"
@@ -174,68 +175,129 @@ export const renderItem = (
                             />
                         </View>
                     )}
-                </>
+                </View>
             )}
-            {item.type === "message" || (
-                <AnimatedCircularProgress
-                    size={200}
-                    width={4}
-                    fill={progress}
-                />
+
+            {item.type === "message" && (
+                <View className="flex items-center justify-center  h-full">
+                    <Text className=" text-xl mb-2">Hola {formData["1"]}</Text>
+                    <Text className="text-base text-gray-600 text-center ">
+                        Muchas gracias por elegir Volu a por la búsqueda de
+                        proyectos
+                    </Text>
+
+                    <AnimatedCircularProgress
+                        size={200}
+                        width={4}
+                        fill={progress}
+                    />
+                </View>
             )}
+
             {item.type === "input" && (
-                <TextInput
-                    className={`w-full px-2 border border-gray-300 rounded ${
-                        item.key === "4" ? "h-32" : "h-12"
-                    }`}
-                    placeholder={item.placeholder}
-                    value={formData[item.key] || ""}
-                    onChangeText={(text) =>
-                        setFormData({ ...formData, [item.key]: text })
-                    }
-                    multiline={item.key === "4"}
-                    numberOfLines={item.key === "4" ? 5 : 1}
-                    textAlignVertical={item.key === "4" ? "top" : "center"}
-                />
+                <View className=" flex items-center justify-center  h-full">
+                    <TextInput
+                        className={`w-full px-2 border border-gray-300 rounded  ${
+                            item.key === "4" ? "h-32" : "h-12"
+                        }`}
+                        placeholder={item.placeholder}
+                        value={formData[item.key] || ""}
+                        onChangeText={(text) =>
+                            setFormData({ ...formData, [item.key]: text })
+                        }
+                        multiline={item.key === "4"}
+                        numberOfLines={item.key === "4" ? 5 : 1}
+                        textAlignVertical={item.key === "4" ? "top" : "center"}
+                    />
+                </View>
+            )}
+            {item.type === "options" && (
+                <View className="flex items-center align-middle justify-center h-full">
+                    {item.options.map((option: string, index: React.Key) => (
+                        <TouchableOpacity
+                            key={index}
+                            className={`w-full p-3 border border-gray-300 rounded mb-2 items-center ${
+                                Array.isArray(selectedOptions[item.key]) &&
+                                selectedOptions[item.key]?.includes(option)
+                                    ? "bg-verde_claro"
+                                    : ""
+                            }`}
+                            onPress={() => {
+                                setSelectedOptions((prevSelectedOptions) => {
+                                    const currentOptions = Array.isArray(
+                                        prevSelectedOptions[item.key]
+                                    )
+                                        ? prevSelectedOptions[item.key]
+                                        : [];
+
+                                    const updatedOptions =
+                                        currentOptions.includes(option)
+                                            ? currentOptions.filter(
+                                                  (opt: string) =>
+                                                      opt !== option
+                                              )
+                                            : [...currentOptions, option];
+
+                                    return {
+                                        ...prevSelectedOptions,
+                                        [item.key]: updatedOptions,
+                                    };
+                                });
+                            }}
+                        >
+                            <Text className="text-black">{option}</Text>
+                        </TouchableOpacity>
+                    ))}
+                </View>
             )}
 
-            {item.type === "options" &&
-                item.options.map((option: string, index: React.Key) => (
-                    <TouchableOpacity
-                        key={index}
-                        className={`${
-                            selectedOptions[item.key]?.includes(option) &&
-                            "bg-verde_claro"
-                        }
-            w-full p-3 border border-gray-300 rounded mb-2 items-center
-            `}
-                        onPress={() => {
-                            setSelectedOptions((prevSelectedOptions) => {
-                                const currentOptions =
-                                    prevSelectedOptions[item.key] || [];
+            <View className=" flex justify-center w-full h-full">
+                {item.type === "herramientas" && selectedDiscipline && (
+                    <>
+                        <Text className="text-base text-gray-600 text-center mb-4">
+                            ¿Qué herramientas dominas en {selectedDiscipline}?
+                        </Text>
 
-                                const updatedOptions = currentOptions.includes(
-                                    option
-                                )
-                                    ? currentOptions.filter(
-                                          (opt: string) => opt !== option
-                                      )
-                                    : [...currentOptions, option];
+                        {REGISTRATION_STEPS_VOLUNTARIO[2].options[
+                            selectedDiscipline
+                        ]?.map((tool: string, index: React.Key) => (
+                            <TouchableOpacity
+                                key={index}
+                                className={`${
+                                    selectedOptions[item.key]?.includes(tool) &&
+                                    "bg-verde_claro"
+                                }
+                w-full p-3 border border-gray-300 rounded mb-2 items-center
+                `}
+                                onPress={() => {
+                                    setSelectedOptions(
+                                        (prevSelectedOptions) => {
+                                            const currentTools =
+                                                prevSelectedOptions[item.key] ||
+                                                [];
 
-                                return {
-                                    ...prevSelectedOptions,
-                                    [item.key]: updatedOptions,
-                                };
-                            });
-                        }}
-                    >
-                        <Text className="text-black">{option}</Text>
-                    </TouchableOpacity>
-                ))}
-            {/* 
-                {item.type === "herramientas" && (
+                                            const updatedTools =
+                                                currentTools.includes(tool)
+                                                    ? currentTools.filter(
+                                                          (t: string) =>
+                                                              t !== tool
+                                                      )
+                                                    : [...currentTools, tool];
 
-                )} */}
+                                            return {
+                                                ...prevSelectedOptions,
+                                                [item.key]: updatedTools,
+                                            };
+                                        }
+                                    );
+                                }}
+                            >
+                                <Text className="text-black">{tool}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </>
+                )}
+            </View>
         </View>
     );
 };

@@ -8,6 +8,7 @@ import {
     KeyboardAvoidingView,
     Platform,
     ScrollView,
+    Modal,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { Calendar } from "react-native-calendars";
@@ -18,6 +19,7 @@ import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../../types/navigation";
 import CollapsibleType from "./components/CollapsibleType";
 import ProjectDurationCard from "./components/ProjectDurationCard";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 type MarkedDatesType = {
     [key: string]: {
@@ -59,6 +61,9 @@ const CreateNewProject = () => {
 
     const [markedDates, setMarkedDates] = useState<MarkedDatesType>({});
     const [objectiveTimeline, setObjectiveTimeline] = useState<string[]>([]);
+    const [objectiveTimelineDates, setObjectiveTimelineDates] = useState<any[]>(
+        []
+    );
     const [newProjectData, setNewProjectData] = useState<ProjectData>({
         title: "",
         description: "",
@@ -68,6 +73,7 @@ const CreateNewProject = () => {
 
     const [startDate, setStartDate] = useState<string>("");
     const [isStartDatePicked, setIsStartDatePicked] = useState<boolean>(false);
+    const [showModal, setShowModal] = useState<boolean>(false);
 
     const CreateNewProjectSteps = [
         {
@@ -104,6 +110,14 @@ const CreateNewProject = () => {
             type: "review",
         },
     ];
+
+    const handleDayPress = (date: any) => {
+        let pinga = convertToObject(objectiveTimeline);
+        setShowModal(true);
+        let pinga2 = pinga.find((item) => item.date === date.item);
+        // console.log("this is pinga", pinga);
+        // console.log("this is pinga2", pinga2);
+    };
 
     const validateCurrentStep = () => {
         if (currentStep === 0) {
@@ -209,8 +223,11 @@ const CreateNewProject = () => {
             });
             setObjectiveTimeline(range);
             setIsStartDatePicked(false);
+            const prueba = convertToObject(range);
+            setObjectiveTimelineDates(prueba);
         }
     };
+    console.log("nasheeee", objectiveTimelineDates);
 
     const projectDuration = () => {
         const firstDay = objectiveTimeline[0];
@@ -281,6 +298,30 @@ const CreateNewProject = () => {
 
     return (
         <View className="flex-1 p-4 bg-white justify-center">
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={showModal}
+                onRequestClose={() => {
+                    setShowModal(!showModal);
+                }}
+            >
+                <View className="flex-1 items-center justify-center ">
+                    <View className="w-[80%] h-[70%] items-center justify-center bg-rosa rounded-lg">
+                        <View className="absolute top-0 right-0 p-2 rounded-full z-20">
+                            <TouchableOpacity
+                                onPress={() => setShowModal(!showModal)}
+                            >
+                                <MaterialCommunityIcons
+                                    name="close"
+                                    color={"#000000"}
+                                    size={18}
+                                />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 style={{ flex: 1 }}
@@ -373,22 +414,27 @@ const CreateNewProject = () => {
                                     markedDates={markedDates}
                                     onDayPress={onDayPress}
                                 />
-
                                 <Text className=" text-xl font-bold mb-3">
                                     Duración del proyecto
                                 </Text>
-
                                 {objectiveTimeline.length > 0 && (
-                                    <ProjectDurationCard
-                                        startDate={objectiveTimeline[0]}
-                                        endDate={
-                                            objectiveTimeline[
-                                                objectiveTimeline.length - 1
-                                            ]
-                                        }
-                                        description="Calendarización de 3 posts semanales, para este Julio."
-                                        newProjectData={newProjectData}
-                                        setNewProjectData={setNewProjectData}
+                                    <FlatList
+                                        data={objectiveTimelineDates}
+                                        renderItem={(item) => (
+                                            <ProjectDurationCard
+                                                item={item}
+                                                handleDayPress={handleDayPress}
+                                                length={
+                                                    objectiveTimeline.length
+                                                }
+                                                newProjectData={newProjectData}
+                                                setNewProjectData={
+                                                    setNewProjectData
+                                                }
+                                            />
+                                        )}
+                                        keyExtractor={(item) => item.index}
+                                        className=" max-h-[190px]"
                                     />
                                 )}
                             </View>
