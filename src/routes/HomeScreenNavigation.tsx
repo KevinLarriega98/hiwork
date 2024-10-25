@@ -2,35 +2,20 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import Project from "../screens/project/Project";
 import ApplicatorProfile from "../screens/project/ApplicatorProfile";
-import ProyectosTabScreen from "../screens/tabs/ProyectosTabScreen";
-import ProyectosONGTabScreen from "../screens/tabs/ProyectosONGTabScreen";
-import useAuthStore from "../stores/useAuthStore";
+import HomeTabScreen from "../screens/tabs/HomeTabScreen";
 
 const Stack = createStackNavigator();
 
-const ProjectScreenNavigation = () => {
-    const { currentUser } = useAuthStore();
-
+const HomeScreenNavigation = () => {
     return (
         <Stack.Navigator>
-            {currentUser?.profileType === "ONG" ? (
-                <Stack.Screen
-                    name="ONGHome"
-                    component={ProyectosONGTabScreen}
-                    options={{
-                        headerShown: false,
-                    }}
-                />
-            ) : (
-                <Stack.Screen
-                    name="HomeTab"
-                    component={ProyectosTabScreen}
-                    options={{
-                        headerShown: false,
-                    }}
-                />
-            )}
-
+            <Stack.Screen
+                name="HomeTab"
+                component={HomeTabScreen}
+                options={{
+                    headerShown: false,
+                }}
+            />
             <Stack.Screen
                 name="Project"
                 component={Project}
@@ -53,4 +38,4 @@ const ProjectScreenNavigation = () => {
     );
 };
 
-export default ProjectScreenNavigation;
+export default HomeScreenNavigation;

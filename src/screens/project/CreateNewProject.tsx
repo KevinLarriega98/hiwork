@@ -20,6 +20,7 @@ import { RootStackParamList } from "../../types/navigation";
 import CollapsibleType from "./components/CollapsibleType";
 import ProjectDurationCard from "./components/ProjectDurationCard";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { CalendarEvent } from "../../types/project";
 
 type MarkedDatesType = {
     [key: string]: {
@@ -48,6 +49,15 @@ type RegisterScreenNavigationProp = NavigationProp<
 >;
 
 const CreateNewProject = () => {
+    const convertToObject = (array: string[]) => {
+        return array.map((date) => ({
+            date: date,
+            name: "Evento",
+            data: "Haz clic para editar",
+            height: 0,
+            day: "",
+        }));
+    };
     const [currentStep, setCurrentStep] = useState(0);
     const [isValid, setIsValid] = useState(false);
 
@@ -62,7 +72,7 @@ const CreateNewProject = () => {
     const [markedDates, setMarkedDates] = useState<MarkedDatesType>({});
     const [objectiveTimeline, setObjectiveTimeline] = useState<string[]>([]);
     const [objectiveTimelineDates, setObjectiveTimelineDates] = useState<any[]>(
-        []
+        [convertToObject(objectiveTimeline)]
     );
     const [newProjectData, setNewProjectData] = useState<ProjectData>({
         title: "",
@@ -74,6 +84,7 @@ const CreateNewProject = () => {
     const [startDate, setStartDate] = useState<string>("");
     const [isStartDatePicked, setIsStartDatePicked] = useState<boolean>(false);
     const [showModal, setShowModal] = useState<boolean>(false);
+    const [dataDayPress, setDataDayPress] = useState<CalendarEvent>();
 
     const CreateNewProjectSteps = [
         {
@@ -106,17 +117,49 @@ const CreateNewProject = () => {
         {
             key: "4",
             step: "Paso 4",
-            question: "Revisa tu información antes de finalizar",
+            question: "Este sera tu nuevo proyecto:",
             type: "review",
         },
     ];
 
     const handleDayPress = (date: any) => {
-        let pinga = convertToObject(objectiveTimeline);
         setShowModal(true);
-        let pinga2 = pinga.find((item) => item.date === date.item);
-        // console.log("this is pinga", pinga);
-        // console.log("this is pinga2", pinga2);
+        let objectSameAsDate = objectiveTimelineDates.find(
+            (item) => item.date === date
+        );
+
+        setDataDayPress(objectSameAsDate);
+    };
+
+    const handleDateChange = (newData: string) => {
+        setDataDayPress((prevData) => {
+            return {
+                ...(prevData ?? {
+                    date: "",
+                    name: "Evento",
+                    height: 0,
+                    day: "",
+                }),
+                data: newData,
+            };
+        });
+
+        setObjectiveTimelineDates((prevDates) => {
+            const index = prevDates.findIndex(
+                (item) => item.date === dataDayPress?.date
+            );
+
+            if (index !== -1) {
+                const updatedDates = [...prevDates];
+                updatedDates[index] = {
+                    ...updatedDates[index],
+                    data: newData,
+                };
+                return updatedDates;
+            }
+
+            return prevDates;
+        });
     };
 
     const validateCurrentStep = () => {
@@ -201,7 +244,7 @@ const CreateNewProject = () => {
             const endDate = day.dateString;
             const range = getDateRange(startDate, endDate);
 
-            console.log("this is range", range);
+            // console.log("this is range", range);
 
             const rangeObject = range.reduce<MarkedDatesType>(
                 (acc, date, index) => {
@@ -227,7 +270,6 @@ const CreateNewProject = () => {
             setObjectiveTimelineDates(prueba);
         }
     };
-    console.log("nasheeee", objectiveTimelineDates);
 
     const projectDuration = () => {
         const firstDay = objectiveTimeline[0];
@@ -256,24 +298,16 @@ const CreateNewProject = () => {
         const totalHours = daysDiff * hoursPerDay;
 
         return (
-            <>
-                <Text>
+            <View className="flex flex-col mt-3">
+                <Text className=" text-base">
                     El proyecto iniciará el {startDateFormatted} y finalizará el{" "}
                     {endDateFormatted}.
                 </Text>
-                <Text>Aproximadamente {totalHours}h.</Text>
-            </>
+                <Text className=" text-base">
+                    Aproximadamente {totalHours}h.
+                </Text>
+            </View>
         );
-    };
-
-    const convertToObject = (array: string[]) => {
-        return array.map((date) => ({
-            date: date,
-            name: "Evento",
-            data: "lorem ipsum dolor sit amet",
-            height: 0,
-            day: "",
-        }));
     };
 
     const handleCreateProject = async () => {
@@ -306,8 +340,8 @@ const CreateNewProject = () => {
                     setShowModal(!showModal);
                 }}
             >
-                <View className="flex-1 items-center justify-center ">
-                    <View className="w-[80%] h-[70%] items-center justify-center bg-rosa rounded-lg">
+                <View className="flex-1 items-center justify-end ">
+                    <View className="w-[90%] h-[50%] items-center justify-center bg-rosa rounded-lg p-9">
                         <View className="absolute top-0 right-0 p-2 rounded-full z-20">
                             <TouchableOpacity
                                 onPress={() => setShowModal(!showModal)}
@@ -315,13 +349,27 @@ const CreateNewProject = () => {
                                 <MaterialCommunityIcons
                                     name="close"
                                     color={"#000000"}
-                                    size={18}
+                                    size={22}
                                 />
                             </TouchableOpacity>
                         </View>
+                        <Text className=" text-3xl">
+                            Day {dataDayPress?.date.split("-")[2]}
+                        </Text>
+                        <Text className=" text-gray-500 text-lg mt-5">
+                            Cambia la data del input para poder explicar la
+                            tarea para el dia {dataDayPress?.date.split("-")[2]}
+                        </Text>
+                        <TextInput
+                            placeholder={dataDayPress?.data}
+                            value={dataDayPress?.data}
+                            onChangeText={(e) => handleDateChange(e)}
+                            className=" border px-4 py-2 rounded-md mt-4 w-full"
+                        />
                     </View>
                 </View>
             </Modal>
+
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 style={{ flex: 1 }}
@@ -433,7 +481,12 @@ const CreateNewProject = () => {
                                                 }
                                             />
                                         )}
-                                        keyExtractor={(item) => item.index}
+                                        keyExtractor={(item) =>
+                                            "aa-" +
+                                            item.index +
+                                            "--" +
+                                            item.date
+                                        }
                                         className=" max-h-[190px]"
                                     />
                                 )}
@@ -443,33 +496,50 @@ const CreateNewProject = () => {
                         {CreateNewProjectSteps[currentStep].type ===
                             "review" && (
                             <View className="flex-1">
-                                <Text className=" font-bold text-xl">
+                                <Text className="  text-lg ">
+                                    Revisa que este todo correcto antes de
+                                    crearlo definitivamente.
+                                </Text>
+                                <Text className=" text-xl font-bold mt-3 mb-1">
+                                    Titulo de proyecto
+                                </Text>
+                                <Text className=" text-xl">
                                     {newProjectData.title}
                                 </Text>
-                                <Text className="text-gray-500 text-sm">
+                                <Text className=" text-xl font-bold mt-3 mb-1">
+                                    Descripción del proyecto
+                                </Text>
+                                <Text className="text-gray-500 text-base">
                                     {newProjectData.description}
                                 </Text>
                                 <View>
-                                    <Text className=" font-bold text-lg">
+                                    <Text className=" font-bold text-xl mt-3 mb-1">
                                         Profesionales solicitados:
                                     </Text>
                                     {newProjectData.roles.map((role, index) => (
-                                        <Text
-                                            key={index}
-                                            className="text-gray_3 text-sm"
-                                        >
-                                            {role.role} : {role.count}{" "}
-                                            {role.count > 1
-                                                ? "professionals"
-                                                : "professional"}
-                                        </Text>
+                                        <View className=" flex flex-row justify-between items-center">
+                                            <Text
+                                                key={index}
+                                                className="text-gray_3 text-base"
+                                            >
+                                                {role.role}
+                                            </Text>
+                                            <Text className=" text-base">
+                                                {role.count}{" "}
+                                                {role.count > 1
+                                                    ? "professionals"
+                                                    : "professional"}
+                                            </Text>
+                                        </View>
                                     ))}
                                 </View>
-                                <Text className=" font-bold text-lg">
+                                <Text className=" font-bold text-xl mt-3 mb-1">
                                     Duración:
                                 </Text>
 
-                                <View>{projectDuration()}</View>
+                                <Text className=" text-base">
+                                    {projectDuration()}
+                                </Text>
                             </View>
                         )}
                     </View>

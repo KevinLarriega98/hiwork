@@ -11,6 +11,7 @@ const useUserStore = create<UserActions & RegisterState>((set) => ({
     tools: [],
     description: "",
     setEmail: (email) => set({ email }),
+    setProyectosAplicados: (proyectosAplicados) => set({ proyectosAplicados }),
     setPassword: (password) => set({ password }),
     setProfileType: (profileType) => set({ profileType }),
     setName: (name) => set({ name }),

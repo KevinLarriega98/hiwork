@@ -18,11 +18,14 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 
 const ApplyToProjectButton = ({ projectID }: { projectID: string }) => {
     const { currentUser, user } = useAuthStore();
-    const [hasApplied, setHasApplied] = useState<boolean | null>(null);
+    const [hasApplied, setHasApplied] = useState<{
+        applied: boolean;
+        status?: string;
+    }>({ applied: false });
     const [loading, setLoading] = useState<boolean>(false);
     const [modalBoolean, setModalBoolean] = useState(false);
 
-    const [formData, setFormData] = useState<string>();
+    const [formData, setFormData] = useState<string>("");
 
     useEffect(() => {
         const checkApplicationStatus = async () => {
@@ -30,7 +33,7 @@ const ApplyToProjectButton = ({ projectID }: { projectID: string }) => {
             if (user?.uid) {
                 try {
                     const applied = await checkIfApplied(projectID, user.uid);
-                    setHasApplied(applied);
+                    setHasApplied(applied); // Recibimos { applied, status } del servicio
                 } catch (error) {
                     console.error("Error al verificar la aplicación:", error);
                 } finally {
@@ -43,7 +46,7 @@ const ApplyToProjectButton = ({ projectID }: { projectID: string }) => {
     }, [projectID, user?.uid]);
 
     const handleApply = async () => {
-        if (hasApplied) {
+        if (hasApplied.applied) {
             Alert.alert("Ya has aplicado", "Ya has aplicado a este proyecto.");
             return;
         }
@@ -56,7 +59,8 @@ const ApplyToProjectButton = ({ projectID }: { projectID: string }) => {
                 user?.uid,
                 currentUser?.name,
                 user?.email,
-                formData ? formData : currentUser?.description
+                formData ? formData : currentUser?.description,
+                currentUser?.typeOfProjects
             );
 
             console.log("Aplicación ID:", applicationID);
@@ -64,7 +68,7 @@ const ApplyToProjectButton = ({ projectID }: { projectID: string }) => {
                 "Aplicación Enviada",
                 "Has aplicado exitosamente al proyecto."
             );
-            setHasApplied(true);
+            setHasApplied({ applied: true });
         } catch (error) {
             Alert.alert("Error", "Hubo un error al aplicar al proyecto.");
         } finally {
@@ -88,7 +92,6 @@ const ApplyToProjectButton = ({ projectID }: { projectID: string }) => {
                 transparent={true}
                 visible={modalBoolean}
                 onRequestClose={() => {
-                    Alert.alert("Modal has been closed.");
                     setModalBoolean(!modalBoolean);
                 }}
             >
@@ -106,21 +109,22 @@ const ApplyToProjectButton = ({ projectID }: { projectID: string }) => {
                             </Pressable>
                         </View>
 
-                        <View className=" w-full items-center flex gap-4">
+                        <View className="w-full items-center flex gap-4">
                             <Text>Carta de presentación para la ONG</Text>
-                            <Text className=" text-xs text-gray-500">
-                                Si lo dejas vació enviaremos tu descripción
+                            <Text className="text-xs text-gray-500">
+                                Si lo dejas vacío, enviaremos tu descripción
                             </Text>
                             <TextInput
-                                className="w-full p-2 border border-gray-300 rounded h-32 "
+                                className="w-full p-2 border border-gray-300 rounded h-32"
                                 placeholder={currentUser?.description}
+                                value={formData}
                                 onChangeText={(text) => setFormData(text)}
                                 multiline
                                 numberOfLines={5}
                                 textAlignVertical={"top"}
                             />
                             <TouchableOpacity
-                                className=" border border-gray-600 rounded-lg px-5 py-4 mt-4"
+                                className="border border-gray-600 rounded-lg px-5 py-4 mt-4"
                                 onPress={handleApply}
                             >
                                 <Text>Enviar</Text>
@@ -129,16 +133,21 @@ const ApplyToProjectButton = ({ projectID }: { projectID: string }) => {
                     </View>
                 </View>
             </Modal>
-            <View className=" absolute bottom-14 flex justify-center w-full h-fit left-2  items-center">
+
+            <View className="absolute bottom-14 flex justify-center w-full h-fit left-2  items-center">
                 <TouchableOpacity
-                    className={`rounded-lg  px-5  py-4 elevation-5  w-[60%]  border border-gray-600 flex items-center  ${
-                        hasApplied ? " opacity-50" : " opacity-100"
+                    className={`rounded-lg px-5 py-4 elevation-5 w-[80%] border border-gray-600 flex items-center ${
+                        hasApplied.applied ? "opacity-50" : "opacity-100"
                     }`}
                     onPress={() => setModalBoolean(!modalBoolean)}
-                    disabled={loading || hasApplied}
+                    disabled={loading || hasApplied.applied === true}
                 >
                     <Text className="text-black text-base font-bold">
-                        {hasApplied ? "Ya Aplicado" : "Aplicar"}
+                        {hasApplied.applied
+                            ? hasApplied.status === "accepted"
+                                ? "Felicidades estas dentro"
+                                : "Ya Aplicado"
+                            : "Aplicar"}
                     </Text>
                 </TouchableOpacity>
             </View>

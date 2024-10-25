@@ -10,11 +10,7 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import { getApplications } from "../../../service/api/projectService";
 import useAuthStore from "../../../stores/useAuthStore";
-import {
-    RouteProp,
-    useNavigation,
-    useRoute,
-} from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { RootStackParamList } from "../../../types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
 
@@ -32,8 +28,6 @@ const ApplicatorsTab = () => {
     const [applications, setApplications] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [refreshing, setRefreshing] = useState(false);
-
-    console.log(currentUser);
 
     const fetchApplications = async () => {
         if (

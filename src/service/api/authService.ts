@@ -7,7 +7,7 @@ import {
     updateProfile,
     User,
 } from "firebase/auth";
-import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { auth, db } from "./firebase";
 import {
     getStorage,
@@ -208,5 +208,27 @@ export const updateUserNameAndDescription = async (
         return prueba;
     } catch (error) {
         console.log(error);
+    }
+};
+
+export const updateUserById = async (
+    id: string,
+    newProject: any,
+    status: any
+) => {
+    try {
+        const userDocRef = doc(db, "Users", id);
+
+        const updateData = {
+            proyectosAplicados: arrayUnion(newProject, status),
+        };
+
+        await updateDoc(userDocRef, updateData);
+        console.log("Usuario actualizado exitosamente");
+
+        return true;
+    } catch (error) {
+        console.log("Error al actualizar el usuario:", error);
+        throw error;
     }
 };

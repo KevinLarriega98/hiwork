@@ -18,6 +18,13 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
         set({ user, isAuthenticated: !!user }),
     setToken: (token: string | null) => set({ token }),
     setCurrentUser: (currentUser: UserState | null) => set({ currentUser }),
+    setSavedProjects: (savedProjects: string[] | null) =>
+        set((state) => ({
+            currentUser: {
+                ...state.currentUser,
+                savedProjects,
+            },
+        })),
 
     logout: async () => {
         try {

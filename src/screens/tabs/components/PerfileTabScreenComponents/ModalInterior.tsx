@@ -95,8 +95,6 @@ const ModalInterior = ({
         } as UserState);
     };
 
-    console.log(currentUser);
-
     return (
         <View className="flex-1 bg-white flex justify-between">
             <View className="p-4 bg-white">

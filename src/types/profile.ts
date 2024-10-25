@@ -11,6 +11,7 @@ export interface UserState {
     description: string;
     backgroundImage?: string;
     tools: string[];
+    proyectosAplicados?: string[];
 }
 
 export type CurrentUser = {
@@ -24,6 +25,8 @@ export type CurrentUser = {
     image: string;
     tools: string[];
     backgroundImage?: string;
+    proyectosAplicados?: string[];
+    savedProjects?: string[];
 } | null;
 
 export interface UserActions {
@@ -36,6 +39,7 @@ export interface UserActions {
     clearSensitiveData: () => void;
     setDescription: (description: string) => void;
     setTools: (tools: string[]) => void;
+    setProyectosAplicados?: (proyectosAplicados: string[]) => void;
 }
 
 export interface RegisterState {
@@ -47,4 +51,5 @@ export interface RegisterState {
     typeOfProjects: string;
     description: string;
     tools: string[];
+    proyectosAplicados?: string[];
 }

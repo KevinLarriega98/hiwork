@@ -9,10 +9,26 @@ const CompletedTasksScreen = () => {
     const route = useRoute<ProjectScreenRouteProp>();
     const { project } = route.params;
 
+    console.log(project.objectiveTimeline);
+
     return (
         <View className="flex-1 p-6 bg-white">
-            <Text>{project.title}</Text>
-            
+            {project.objectiveTimeline.map((item, index) => (
+                <View
+                    key={index}
+                    className="flex-row justify-between items-center  bg-gray_5 mb-3 p-2 rounded-lg"
+                >
+                    <View>
+                        <Text className=" mb-1 text-base">{item.date}</Text>
+                        <Text className="font-semibold text-lg">
+                            {item.data}
+                        </Text>
+                    </View>
+                    <View>
+                        <Text>qweqwe</Text>
+                    </View>
+                </View>
+            ))}
         </View>
     );
 };

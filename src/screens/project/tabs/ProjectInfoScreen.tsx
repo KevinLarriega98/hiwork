@@ -21,11 +21,18 @@ const ProjectInfoScreen = () => {
 
     const weekRange = calculateWeeksRange(project.objectiveTimeline);
 
+    const countOfRoles = project.roles.map((role) => role.role);
+
+    const countOfPersons = project.roles.reduce(
+        (acc, role) => acc + role.count,
+        0
+    );
+
     return (
         <View className="flex-1 p-6 bg-white">
-            <View className="flex-1 bg-[#D9D9D9] rounded-lg p-2 justify-between">
+            <View className="flex-1  justify-between">
                 <View className="flex">
-                    <View className="flex flex-row">
+                    <View className="flex flex-row items-center">
                         <Image
                             source={{
                                 uri: currentUser?.image
@@ -34,7 +41,7 @@ const ProjectInfoScreen = () => {
                             }}
                             className="w-10 h-10 rounded-full"
                         />
-                        <View className=" flex-col gap-0 px-2">
+                        <View className=" flex-col  px-2">
                             <Text className="font-bold text-xl ">
                                 {project.title}
                             </Text>
@@ -43,12 +50,33 @@ const ProjectInfoScreen = () => {
                             </Text>
                         </View>
                     </View>
-                    <Text className="text-[15px] px-2 pt-1">
-                        {currentUser?.description}
-                    </Text>
+                    <View className=" flex flex-row mt-2">
+                        <View className=" flex flex-row items-center">
+                            <MaterialCommunityIcons
+                                name="calendar-multiselect"
+                                color={"#1E1E1E"}
+                                size={18}
+                            />
+                            <Text>{weekRange}</Text>
+                        </View>
+
+                        <View className=" flex flex-row items-center ml-3">
+                            <MaterialCommunityIcons
+                                name="account-outline"
+                                color={"#1E1E1E"}
+                                size={18}
+                            />
+                            <Text>{countOfPersons}</Text>
+                        </View>
+                    </View>
+                    <View className="flex flex-row mt-2">
+                        <Text className=" text-lila_oscuro">
+                            {countOfRoles.join(" / ")}
+                        </Text>
+                    </View>
                 </View>
 
-                <View className=" bg-[#F9F9FA] flex-1 mt-3 rounded-lg p-2 justify-between">
+                <View className="  flex-1 mt-3 rounded-lg justify-between">
                     <View>
                         <Text className=" text-lg font-bold">
                             Descripción del proyecto
@@ -56,20 +84,6 @@ const ProjectInfoScreen = () => {
                         <Text className="text-base mb-2" numberOfLines={13}>
                             {project.description}
                         </Text>
-
-                        <Text className=" text-lg font-bold">
-                            Duración del proyecto
-                        </Text>
-                        <View className=" flex">
-                            <View className="flex flex-row items-center">
-                                <MaterialCommunityIcons
-                                    name="square-rounded"
-                                    color={"#7f7f7f"}
-                                    size={18}
-                                />
-                                <Text>{weekRange}</Text>
-                            </View>
-                        </View>
                     </View>
 
                     {currentUser?.profileType === "Voluntario" && (

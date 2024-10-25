@@ -7,7 +7,7 @@ const TabBarCustomProfile: React.FC<TabBarProps<Route>> = React.memo(
         const { index, routes } = navigationState;
 
         return (
-            <View className="bg-white w-full flex items-center px-6 py-2">
+            <View className=" w-full flex items-center px-6 py-2">
                 <View className="flex-row bg-verde_claro rounded-full w-full">
                     {routes.map(({ key, title }, i: number) => {
                         const isFocused = i === index;

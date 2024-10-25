@@ -3,8 +3,6 @@ import { createMaterialBottomTabNavigator } from "@react-navigation/material-bot
 import BusquedaTabScreen from "../screens/tabs/BusquedaTabScreen";
 import ChatTabScreen from "../screens/tabs/ChatTabScreen";
 import PerfilTabScreen from "../screens/tabs/PerfilTabScreen";
-import withSafeArea from "../util/withSafeArea";
-import { ProjectScreenNavigation } from "./ProjectScreenNavigation";
 import usePruebaHideStore from "../stores/pruebaHide";
 import ProyectosTabScreen from "../screens/tabs/ProyectosTabScreen";
 import CenterIcon from "../screens/tabs/components/Icons/CenterIcons/CenterIcon";
@@ -20,13 +18,16 @@ import ProfileIcon from "../screens/tabs/components/Icons/Profile/ProfileIcon";
 import SearchIcon from "../screens/tabs/components/Icons/Search/SearchIcon";
 import SearchIconFocused from "../screens/tabs/components/Icons/Search/SearchIconFocused";
 import { useTheme } from "react-native-paper";
+import ProjectScreenNavigation from "./ProjectScreenNavigation";
+import HomeScreenNavigation from "./HomeScreenNavigation";
+import ChatScreenNavigation from "./ChatScreenNavigation";
 
 const Tab = createMaterialBottomTabNavigator();
 
 export const TabsBottomNavigation = () => {
     const { hide } = usePruebaHideStore();
 
-    const notification = true;
+    const notification = false;
 
     const theme = useTheme();
 
@@ -34,9 +35,6 @@ export const TabsBottomNavigation = () => {
 
     return (
         <Tab.Navigator
-            // sceneAnimationType="opacity"
-            // sceneAnimationEnabled={true}
-
             labeled={false}
             barStyle={{
                 display: hide ? "none" : "flex",
@@ -46,7 +44,7 @@ export const TabsBottomNavigation = () => {
         >
             <Tab.Screen
                 name="Home"
-                component={ProjectScreenNavigation}
+                component={HomeScreenNavigation}
                 options={{
                     tabBarLabel: "Home",
                     tabBarIcon: ({ focused }) =>
@@ -55,7 +53,7 @@ export const TabsBottomNavigation = () => {
             />
             <Tab.Screen
                 name="Búsqueda"
-                component={withSafeArea(BusquedaTabScreen)}
+                component={BusquedaTabScreen}
                 options={{
                     tabBarLabel: "Búsqueda",
                     tabBarIcon: ({ focused }) =>
@@ -64,7 +62,7 @@ export const TabsBottomNavigation = () => {
             />
             <Tab.Screen
                 name="Proyectos"
-                component={withSafeArea(ProyectosTabScreen)}
+                component={ProjectScreenNavigation}
                 options={{
                     tabBarLabel: "Proyectos",
                     tabBarIcon: ({ focused }) =>
@@ -73,7 +71,7 @@ export const TabsBottomNavigation = () => {
             />
             <Tab.Screen
                 name="Chat"
-                component={withSafeArea(ChatTabScreen)}
+                component={ChatScreenNavigation}
                 options={{
                     tabBarLabel: "Chat",
                     tabBarIcon: ({ focused }) =>
@@ -92,7 +90,7 @@ export const TabsBottomNavigation = () => {
             />
             <Tab.Screen
                 name="Perfil"
-                component={withSafeArea(PerfilTabScreen)}
+                component={PerfilTabScreen}
                 options={{
                     tabBarLabel: "Perfil",
                     tabBarIcon: ({ focused }) =>

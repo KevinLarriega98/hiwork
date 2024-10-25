@@ -39,7 +39,7 @@ const ApplicatorProfile = () => {
                     </View>
                 </View>
                 <View className="flex-1 p-6 bg-white rounded-lg mt-3">
-                    <Text className="text-lg font-bold"> Description </Text>
+                    <Text className="text-lg font-bold">Description </Text>
                     <Text>{volunteer?.description}</Text>
                     <Text className="text-lg font-bold">Discipline</Text>
                     <Text>{volunteer?.discipline}</Text>

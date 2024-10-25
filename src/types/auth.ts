@@ -24,6 +24,6 @@ export interface AuthActions {
         description: string
     ) => Promise<User | null | Error>;
     initializeAuth: () => void;
-
+    setSavedProjects: (savedProjects: string[] | null) => void;
     setCurrentUser: (currentUser: UserState | null) => void;
 }

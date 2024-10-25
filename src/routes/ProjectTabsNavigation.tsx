@@ -22,7 +22,6 @@ const ProjectTabsNavigation = ({ project }: { project: ProjectState }) => {
                     tabBarStyle: {
                         elevation: 0,
                         borderWidth: 0,
-                        
                     },
                 }}
             >
@@ -31,7 +30,7 @@ const ProjectTabsNavigation = ({ project }: { project: ProjectState }) => {
                     component={ProjectInfoScreen}
                     initialParams={{ project }}
                     options={{
-                        title: "Proyecto",
+                        title: "Descripción",
                     }}
                 />
                 <Tab.Screen
