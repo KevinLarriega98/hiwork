@@ -36,8 +36,10 @@ const ChatTabScreen = ({ navigation }: any) => {
             setOng(data);
         };
 
-        fetchOngById();
-        fetchProjects();
+        {
+            currentUser?.profileType === "ONG" && fetchOngById();
+            fetchProjects();
+        }
     }, [currentUser?.id]);
 
     const handleChatPress = (projectId: string) => {
