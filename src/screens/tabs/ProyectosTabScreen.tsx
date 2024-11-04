@@ -12,7 +12,7 @@ import useAuthStore from "../../stores/useAuthStore";
 import {
     getProjectsByIds,
     getApplications,
-} from "../../service/api/projectService"; // Importa la nueva función
+} from "../../service/api/projectService";
 import CardProject from "./components/CardProject";
 import loader from "../../util/loader";
 import withSafeArea from "../../util/withSafeArea";
@@ -30,6 +30,9 @@ const ProyectosTabScreen = () => {
     const [activeProject, setActiveProject] = useState<any>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
+    console.log("this is projects", projects);
+
+    // FIXME mirar esto porque no funciona como quiero
     useEffect(() => {
         if (currentUser?.proyectosAplicados) {
             const fetchProjectsAndListenApplications = async () => {
@@ -39,10 +42,10 @@ const ProyectosTabScreen = () => {
                         currentUser.proyectosAplicados
                     );
 
-                    // Para cada proyecto, escucha su subcolección de aplicaciones
+                    console.log(projectsData);
+
                     const unsubscribeArray = projectsData.map((project: any) =>
                         getApplications(project.id, (applications) => {
-                            // Encontrar la aplicación de este usuario
                             const userApplication = applications.find(
                                 (application: any) =>
                                     application.volunteerID === currentUser.id
@@ -67,7 +70,6 @@ const ProyectosTabScreen = () => {
 
                     setLoading(false);
 
-                    // Limpia las suscripciones al desmontar el componente
                     return () =>
                         unsubscribeArray.forEach((unsubscribe) =>
                             unsubscribe()
@@ -82,11 +84,9 @@ const ProyectosTabScreen = () => {
         }
     }, [currentUser?.proyectosAplicados]);
 
-    // Lista de proyectos activos y aplicados
     const renderListaScreen = useCallback(
         () => (
             <View className="flex-1 px-6">
-                {/* Sección de Proyecto Activo */}
                 <View className=" max-h-1/2 min-h-[200px]">
                     <Text className=" text-2xl my-3">Proyecto Activo</Text>
 
@@ -99,7 +99,6 @@ const ProyectosTabScreen = () => {
                     )}
                 </View>
 
-                {/* Sección de Proyectos Aplicados */}
                 <View className=" max-h-1/2 min-h-[200px]">
                     <Text className=" text-2xl my-3">Proyectos Aplicados</Text>
                     {projects.length > 0 ? (
@@ -136,7 +135,6 @@ const ProyectosTabScreen = () => {
 
     const initialLayout = { width: Dimensions.get("window").width };
 
-    // Crear una función personalizada para renderizar escenas
     const renderScene = ({ route }: { route: any }) => {
         switch (route.key) {
             case "lista":
@@ -158,8 +156,6 @@ const ProyectosTabScreen = () => {
                     onIndexChange={setIndex}
                     initialLayout={initialLayout}
                     renderTabBar={(props) => <TabBarCustomProfile {...props} />}
-                    lazy={true}
-                    lazyPreloadDistance={1}
                 />
             </View>
         </ImageBackground>

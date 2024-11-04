@@ -49,8 +49,6 @@ const RegistrationApp: React.FC = () => {
 
     const [progress, setProgress] = useState(0);
 
-    console.log(selectedOptions);
-
     const {
         setName,
         setDiscipline,
@@ -89,7 +87,6 @@ const RegistrationApp: React.FC = () => {
     const handleNextStep = () => {
         const step = REGISTRATION_STEPS[activeIndex];
 
-        console.log(step.key);
         if (step.key === "1") {
             setName(formData[step.key] || "");
         } else if (step.key === "2") {
@@ -191,7 +188,8 @@ const RegistrationApp: React.FC = () => {
                         setSelectedOptions,
                         pickImage,
                         image,
-                        progress
+                        progress,
+                        profileType
                     )
                 }
                 ref={flatListRef}

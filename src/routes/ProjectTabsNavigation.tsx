@@ -23,6 +23,7 @@ const ProjectTabsNavigation = ({ project }: { project: ProjectState }) => {
                         elevation: 0,
                         borderWidth: 0,
                     },
+                    lazy: true,
                 }}
             >
                 <Tab.Screen

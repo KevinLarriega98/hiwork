@@ -8,6 +8,7 @@ import {
     FlatList,
 } from "react-native";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
+import useUserStore from "../stores/useRegisterStore";
 
 export const REGISTRATION_STEPS_VOLUNTARIO = [
     {
@@ -94,21 +95,9 @@ export const REGISTRATION_STEPS_VOLUNTARIO = [
 export const REGISTRATION_STEPS_ONG = [
     {
         key: "1",
-        question: "¿Cuál El nombre de la organización?",
+        question: "¿Cuál es el nombre de la organización?",
         placeholder: "Nombre",
         type: "input",
-    },
-    {
-        key: "2",
-        question: "¿Qué disciplinas eres experto?",
-        options: ["Reducir el meu estrés", "Reducir el meu estrés"],
-        type: "options",
-    },
-    {
-        key: "3",
-        question: "Selecciona en qué tipo de proyectos te gustaría participar",
-        options: ["Reducir mi estrés1", "Reducir mi estrés2"],
-        type: "options",
     },
     {
         key: "4",
@@ -122,7 +111,7 @@ export const REGISTRATION_STEPS_ONG = [
     },
     {
         key: "6",
-        message: "Ya está tu perfil creado.\n¡A buscar proyectos!",
+        message: "Ya está tu perfil creado.\n¡A crear proyectos!",
         type: "message",
     },
 ];
@@ -141,10 +130,9 @@ export const renderItem = (
     setSelectedOptions: (data: { [key: string]: string }) => void,
     pickImage: () => void,
     image: string | null,
-    progress: number
+    progress: number,
+    profileType: "Voluntario" | "ONG"
 ) => {
-    console.log(formData);
-
     const selectedDiscipline = selectedOptions["2"];
 
     return (
@@ -178,11 +166,27 @@ export const renderItem = (
                 </View>
             )}
 
-            {item.type === "message" && (
+            {item.type === "message" && profileType === "Voluntario" && (
                 <View className="flex items-center justify-center  h-full">
                     <Text className=" text-xl mb-2">Hola {formData["1"]}</Text>
                     <Text className="text-base text-gray-600 text-center ">
                         Muchas gracias por elegir Volu a por la búsqueda de
+                        proyectos
+                    </Text>
+
+                    <AnimatedCircularProgress
+                        size={200}
+                        width={4}
+                        fill={progress}
+                    />
+                </View>
+            )}
+
+            {item.type === "message" && profileType === "ONG" && (
+                <View className="flex items-center justify-center  h-full">
+                    <Text className=" text-xl mb-2">Hola {formData["1"]}</Text>
+                    <Text className="text-base text-gray-600 text-center ">
+                        Muchas gracias por elegir Volu a por la creación de
                         proyectos
                     </Text>
 
@@ -223,6 +227,7 @@ export const renderItem = (
                                     : ""
                             }`}
                             onPress={() => {
+                                //@ts-ignore
                                 setSelectedOptions((prevSelectedOptions) => {
                                     const currentOptions = Array.isArray(
                                         prevSelectedOptions[item.key]
@@ -271,6 +276,7 @@ export const renderItem = (
                 `}
                                 onPress={() => {
                                     setSelectedOptions(
+                                        //@ts-ignore
                                         (prevSelectedOptions) => {
                                             const currentTools =
                                                 prevSelectedOptions[item.key] ||

@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, Image } from "react-native";
+import React, { useState } from "react";
+import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import useAuthStore from "../../../stores/useAuthStore";
@@ -17,20 +17,26 @@ const ProjectInfoScreen = () => {
     const createdAtDate = project.createdAt ? project.createdAt.toDate() : null;
     const updatedAtDate = project.updatedAt ? project.updatedAt.toDate() : null;
 
-    let updatedAtFormatted = "";
-
     const weekRange = calculateWeeksRange(project.objectiveTimeline);
-
     const countOfRoles = project.roles.map((role) => role.role);
-
     const countOfPersons = project.roles.reduce(
         (acc, role) => acc + role.count,
         0
     );
 
+    const [expanded, setExpanded] = useState(false);
+    const [showSeeMore, setShowSeeMore] = useState(false);
+
+    const handleTextLayout = (e: { nativeEvent: { lines: any } }) => {
+        const { lines } = e.nativeEvent;
+        if (lines.length > 16) {
+            setShowSeeMore(true);
+        }
+    };
+
     return (
         <View className="flex-1 p-6 bg-white">
-            <View className="flex-1  justify-between">
+            <View className="flex-1 justify-between">
                 <View className="flex">
                     <View className="flex flex-row items-center">
                         <Image
@@ -41,8 +47,8 @@ const ProjectInfoScreen = () => {
                             }}
                             className="w-10 h-10 rounded-full"
                         />
-                        <View className=" flex-col  px-2">
-                            <Text className="font-bold text-xl ">
+                        <View className="flex-col px-2">
+                            <Text className="font-bold text-xl">
                                 {project.title}
                             </Text>
                             <Text className="font-semibold text-base">
@@ -50,8 +56,8 @@ const ProjectInfoScreen = () => {
                             </Text>
                         </View>
                     </View>
-                    <View className=" flex flex-row mt-2">
-                        <View className=" flex flex-row items-center">
+                    <View className="flex flex-row mt-2">
+                        <View className="flex flex-row items-center">
                             <MaterialCommunityIcons
                                 name="calendar-multiselect"
                                 color={"#1E1E1E"}
@@ -60,7 +66,7 @@ const ProjectInfoScreen = () => {
                             <Text>{weekRange}</Text>
                         </View>
 
-                        <View className=" flex flex-row items-center ml-3">
+                        <View className="flex flex-row items-center ml-3">
                             <MaterialCommunityIcons
                                 name="account-outline"
                                 color={"#1E1E1E"}
@@ -70,20 +76,38 @@ const ProjectInfoScreen = () => {
                         </View>
                     </View>
                     <View className="flex flex-row mt-2">
-                        <Text className=" text-lila_oscuro">
+                        <Text className="text-lila_oscuro">
                             {countOfRoles.join(" / ")}
                         </Text>
                     </View>
                 </View>
 
-                <View className="  flex-1 mt-3 rounded-lg justify-between">
+                <View className="flex-1 mt-3 rounded-lg justify-between">
                     <View>
-                        <Text className=" text-lg font-bold">
+                        <Text className="text-lg font-bold">
                             Descripción del proyecto
                         </Text>
-                        <Text className="text-base mb-2" numberOfLines={13}>
-                            {project.description}
-                        </Text>
+                        <ScrollView className="max-h-[90%]">
+                            <Text
+                                className="text-base mb-2"
+                                numberOfLines={expanded ? undefined : 10}
+                                onTextLayout={handleTextLayout}
+                            >
+                                {project.description}
+                            </Text>
+
+                            {showSeeMore && !expanded && (
+                                <TouchableOpacity
+                                    onPress={() => setExpanded(true)}
+                                >
+                                    <Text
+                                        style={{ color: "blue", marginTop: 5 }}
+                                    >
+                                        Ver más
+                                    </Text>
+                                </TouchableOpacity>
+                            )}
+                        </ScrollView>
                     </View>
 
                     {currentUser?.profileType === "Voluntario" && (
@@ -99,7 +123,9 @@ const ProjectInfoScreen = () => {
                         </Text>
                         <Text className="text-[#666] text-sm">
                             Updated At:{" "}
-                            {updatedAtFormatted ? updatedAtFormatted : "N/A"}
+                            {updatedAtDate
+                                ? updatedAtDate.toLocaleDateString()
+                                : "N/A"}
                         </Text>
                     </View>
                 </View>

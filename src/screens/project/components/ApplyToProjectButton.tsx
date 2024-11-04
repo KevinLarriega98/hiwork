@@ -33,7 +33,7 @@ const ApplyToProjectButton = ({ projectID }: { projectID: string }) => {
             if (user?.uid) {
                 try {
                     const applied = await checkIfApplied(projectID, user.uid);
-                    setHasApplied(applied); // Recibimos { applied, status } del servicio
+                    setHasApplied(applied);
                 } catch (error) {
                     console.error("Error al verificar la aplicación:", error);
                 } finally {
@@ -54,7 +54,7 @@ const ApplyToProjectButton = ({ projectID }: { projectID: string }) => {
         setLoading(true);
 
         try {
-            const applicationID = await applyToProject(
+            await applyToProject(
                 projectID,
                 user?.uid,
                 currentUser?.name,
@@ -63,7 +63,6 @@ const ApplyToProjectButton = ({ projectID }: { projectID: string }) => {
                 currentUser?.typeOfProjects
             );
 
-            console.log("Aplicación ID:", applicationID);
             Alert.alert(
                 "Aplicación Enviada",
                 "Has aplicado exitosamente al proyecto."

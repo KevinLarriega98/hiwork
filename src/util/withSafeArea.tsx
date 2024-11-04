@@ -1,10 +1,11 @@
 import React from "react";
-import { View } from "react-native";
+import { ImageBackground, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const withSafeArea =
     (WrappedComponent: React.ComponentType) => (props: any) => {
         const insets = useSafeAreaInsets();
+        const backgroundImg = require("../assets/backgroundVolu.png");
         return (
             <View
                 style={{

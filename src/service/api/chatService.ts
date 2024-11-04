@@ -25,12 +25,14 @@ export const subscribeToChatMessages = (
 export const sendMessage = async (
     projectId: string,
     userId: string,
-    message: string
+    message: string,
+    name: string
 ) => {
     try {
         const newMessage = {
             senderId: userId,
             text: message,
+            name: name,
             timestamp: new Date().toISOString(),
         };
         const messagesRef = collection(doc(db, "projects", projectId), "chat");

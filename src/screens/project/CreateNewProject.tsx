@@ -56,6 +56,7 @@ const CreateNewProject = () => {
             data: "Haz clic para editar",
             height: 0,
             day: "",
+            isChecked: false,
         }));
     };
     const [currentStep, setCurrentStep] = useState(0);
@@ -85,6 +86,8 @@ const CreateNewProject = () => {
     const [isStartDatePicked, setIsStartDatePicked] = useState<boolean>(false);
     const [showModal, setShowModal] = useState<boolean>(false);
     const [dataDayPress, setDataDayPress] = useState<CalendarEvent>();
+
+    console.log(dataDayPress);
 
     const CreateNewProjectSteps = [
         {
@@ -124,26 +127,15 @@ const CreateNewProject = () => {
 
     const handleDayPress = (date: any) => {
         setShowModal(true);
+
         let objectSameAsDate = objectiveTimelineDates.find(
-            (item) => item.date === date
+            (item) => item.date === date.date
         );
 
         setDataDayPress(objectSameAsDate);
     };
 
-    const handleDateChange = (newData: string) => {
-        setDataDayPress((prevData) => {
-            return {
-                ...(prevData ?? {
-                    date: "",
-                    name: "Evento",
-                    height: 0,
-                    day: "",
-                }),
-                data: newData,
-            };
-        });
-
+    const handleDateChange = () => {
         setObjectiveTimelineDates((prevDates) => {
             const index = prevDates.findIndex(
                 (item) => item.date === dataDayPress?.date
@@ -153,11 +145,12 @@ const CreateNewProject = () => {
                 const updatedDates = [...prevDates];
                 updatedDates[index] = {
                     ...updatedDates[index],
-                    data: newData,
+                    data: dataDayPress?.data,
+                    name: dataDayPress?.name,
                 };
+                setShowModal(false);
                 return updatedDates;
             }
-
             return prevDates;
         });
     };
@@ -229,6 +222,37 @@ const CreateNewProject = () => {
         return range;
     };
 
+    const handleDateChangeModal = (newData: string) => {
+        setDataDayPress((prevData) => {
+            return {
+                ...(prevData ?? {
+                    date: "",
+                    name: "Evento",
+                    height: 0,
+                    day: "",
+                    isChecked: false,
+                }),
+                data: newData,
+            };
+        });
+    };
+
+    const handleNameChangeModal = (newData: string) => {
+        setDataDayPress((prevData) => {
+            return {
+                ...(prevData ?? {
+                    date: "",
+                    name: "Evento",
+                    height: 0,
+                    day: "",
+                    data: "",
+                    isChecked: false,
+                }),
+                name: newData,
+            };
+        });
+    };
+
     const onDayPress = (day: any) => {
         if (!isStartDatePicked) {
             setIsStartDatePicked(true);
@@ -243,8 +267,6 @@ const CreateNewProject = () => {
         } else {
             const endDate = day.dateString;
             const range = getDateRange(startDate, endDate);
-
-            // console.log("this is range", range);
 
             const rangeObject = range.reduce<MarkedDatesType>(
                 (acc, date, index) => {
@@ -298,15 +320,15 @@ const CreateNewProject = () => {
         const totalHours = daysDiff * hoursPerDay;
 
         return (
-            <View className="flex flex-col mt-3">
-                <Text className=" text-base">
+            <>
+                <Text className="text-base w-full">
                     El proyecto iniciará el {startDateFormatted} y finalizará el{" "}
                     {endDateFormatted}.
                 </Text>
-                <Text className=" text-base">
+                <Text className="text-base mt-2">
                     Aproximadamente {totalHours}h.
                 </Text>
-            </View>
+            </>
         );
     };
 
@@ -340,8 +362,13 @@ const CreateNewProject = () => {
                     setShowModal(!showModal);
                 }}
             >
-                <View className="flex-1 items-center justify-end ">
-                    <View className="w-[90%] h-[50%] items-center justify-center bg-rosa rounded-lg p-9">
+                <View
+                    className="flex-1 items-center justify-center "
+                    style={{
+                        backgroundColor: "rgba(0,0,0,0.5)",
+                    }}
+                >
+                    <View className="w-[90%]   bg-white rounded-lg p-8 py-6 ">
                         <View className="absolute top-0 right-0 p-2 rounded-full z-20">
                             <TouchableOpacity
                                 onPress={() => setShowModal(!showModal)}
@@ -353,19 +380,44 @@ const CreateNewProject = () => {
                                 />
                             </TouchableOpacity>
                         </View>
-                        <Text className=" text-3xl">
+                        <Text className=" text-3xl text-center">
                             Day {dataDayPress?.date.split("-")[2]}
                         </Text>
                         <Text className=" text-gray-500 text-lg mt-5">
                             Cambia la data del input para poder explicar la
                             tarea para el dia {dataDayPress?.date.split("-")[2]}
                         </Text>
+                        <Text className=" text-black font-semibold text-lg mt-5">
+                            Titulo
+                        </Text>
+                        <TextInput
+                            placeholder={dataDayPress?.name}
+                            value={dataDayPress?.name}
+                            onChangeText={handleNameChangeModal}
+                            className="border px-4 py-2 rounded-md mt-1 w-full border-black focus:border-lila_oscuro"
+                        />
+                        <Text className=" text-black font-semibold text-lg mt-3">
+                            Descripción
+                        </Text>
                         <TextInput
                             placeholder={dataDayPress?.data}
                             value={dataDayPress?.data}
-                            onChangeText={(e) => handleDateChange(e)}
-                            className=" border px-4 py-2 rounded-md mt-4 w-full"
+                            onChangeText={handleDateChangeModal}
+                            multiline
+                            numberOfLines={5}
+                            textAlignVertical={"top"}
+                            className=" border px-4 py-2 rounded-md mt-1 w-full border-black focus:border-lila_oscuro"
                         />
+                        <View className="w-full mt-4 items-center">
+                            <TouchableOpacity
+                                className="bg-rosa items-center rounded-lg py-2 px-3 w-1/2"
+                                onPress={handleDateChange}
+                            >
+                                <Text className="text-lila_oscuro text-lg font-semibold">
+                                    Save Data
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
             </Modal>
@@ -470,15 +522,8 @@ const CreateNewProject = () => {
                                         data={objectiveTimelineDates}
                                         renderItem={(item) => (
                                             <ProjectDurationCard
-                                                item={item}
+                                                item={item.item}
                                                 handleDayPress={handleDayPress}
-                                                length={
-                                                    objectiveTimeline.length
-                                                }
-                                                newProjectData={newProjectData}
-                                                setNewProjectData={
-                                                    setNewProjectData
-                                                }
                                             />
                                         )}
                                         keyExtractor={(item) =>
@@ -533,13 +578,15 @@ const CreateNewProject = () => {
                                         </View>
                                     ))}
                                 </View>
-                                <Text className=" font-bold text-xl mt-3 mb-1">
-                                    Duración:
-                                </Text>
 
-                                <Text className=" text-base">
-                                    {projectDuration()}
-                                </Text>
+                                <View className="flex flex-col w-full ">
+                                    <Text className=" font-bold text-xl mt-3 mb-1">
+                                        Duración:
+                                    </Text>
+                                    <View className=" text-base w-full mt-1">
+                                        {projectDuration()}
+                                    </View>
+                                </View>
                             </View>
                         )}
                     </View>

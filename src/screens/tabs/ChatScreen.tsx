@@ -3,9 +3,9 @@ import {
     View,
     Text,
     TextInput,
-    Button,
     FlatList,
     ImageBackground,
+    TouchableOpacity,
     StyleSheet,
 } from "react-native";
 import {
@@ -31,7 +31,12 @@ const ChatScreen = ({ route }: any) => {
     const handleSendMessage = async () => {
         if (newMessage.trim()) {
             try {
-                await sendMessage(projectId, currentUser?.id, newMessage);
+                await sendMessage(
+                    projectId,
+                    currentUser?.id,
+                    newMessage,
+                    currentUser?.name
+                );
                 setNewMessage("");
             } catch (error) {
                 console.error("Error sending message:", error);
@@ -39,32 +44,41 @@ const ChatScreen = ({ route }: any) => {
         }
     };
 
-    const renderItem = ({ item }: { item: any }) => (
-        <View style={styles.messageContainer}>
-            <Text>
-                {item.senderId}: {item.text}
-            </Text>
-        </View>
-    );
+    const renderItem = ({ item }: { item: any }) => {
+        return (
+            <View className="mb-2 mx-2 bg-naranja_claro rounded-xl self-start p-2">
+                <Text className=" py-2 pr-2 ">
+                    {item.name}: {item.text}
+                </Text>
+            </View>
+        );
+    };
 
     return (
         <ImageBackground className="flex-1" source={backgroundImg}>
-            <View style={styles.container}>
+            <View className="flex-1 justify-between">
                 <FlatList
                     data={messages}
                     keyExtractor={(item) => item.id}
                     renderItem={renderItem}
                     contentContainerStyle={styles.messageList}
-                    inverted // Esto invierte la lista para mostrar el último mensaje en la parte inferior
+                    inverted
                 />
-                <View style={styles.inputContainer}>
+                <View className="flex-row p-2 border-t border-gray-300">
                     <TextInput
-                        style={styles.input}
+                        className="flex-1 border border-gray-300 rounded p-2 bg-white focus:border-lila_oscuro"
                         value={newMessage}
                         onChangeText={setNewMessage}
                         placeholder="Escribe un mensaje..."
                     />
-                    <Button title="Enviar" onPress={handleSendMessage} />
+                    <TouchableOpacity
+                        onPress={handleSendMessage}
+                        className="bg-rosa  px-3 py-2 rounded-lg ml-2 items-center justify-center"
+                    >
+                        <Text className=" text-lila_oscuro font-semibold">
+                            Enviar
+                        </Text>
+                    </TouchableOpacity>
                 </View>
             </View>
         </ImageBackground>
@@ -72,31 +86,8 @@ const ChatScreen = ({ route }: any) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "space-between",
-    },
     messageList: {
-        padding: 10,
-    },
-    messageContainer: {
-        marginBottom: 10,
-        padding: 10,
-        backgroundColor: "#ffffff",
-        borderRadius: 5,
-    },
-    inputContainer: {
-        flexDirection: "row",
-        padding: 10,
-        borderTopWidth: 1,
-        borderTopColor: "#ccc",
-    },
-    input: {
-        flex: 1,
-        borderWidth: 1,
-        borderColor: "#ccc",
-        borderRadius: 5,
-        padding: 10,
+        maxHeight: 300,
     },
 });
 

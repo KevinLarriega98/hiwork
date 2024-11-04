@@ -18,8 +18,9 @@
         },
         "android": {
             "adaptiveIcon": {
-                "foregroundImage": "./assets/volu-icon-sin-fondo.png",
-                "backgroundColor": "#004932"
+                "foregroundImage": "./assets/iconVolu.png",
+                "backgroundColor": "#004932",
+                "padding": 5
             },
             "package": "com.anonymous.Navigation",
             "permissions": ["android.permission.RECORD_AUDIO"]

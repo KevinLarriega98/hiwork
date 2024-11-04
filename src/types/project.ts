@@ -8,13 +8,7 @@ export interface ProjectState {
     title: string;
     description: string;
     roles: any[];
-    objectiveTimeline: {
-        date: string;
-        name: string;
-        data: string;
-        height: number;
-        day: string;
-    }[];
+    objectiveTimeline: CalendarEvent[];
     createdAt: Timestamp | null;
     updatedAt: Timestamp | null;
 }
@@ -58,4 +52,5 @@ export interface CalendarEvent {
     data: string;
     height: number;
     day: string;
+    isChecked: boolean;
 }

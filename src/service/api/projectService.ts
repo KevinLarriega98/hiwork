@@ -332,10 +332,6 @@ export const updateStatusApplicator = async (
     volunteerID: string,
     status: string
 ) => {
-    console.log(status);
-    console.log(volunteerID);
-    console.log(projectID);
-
     try {
         const projectDocRef = doc(
             db,
@@ -352,7 +348,6 @@ export const updateStatusApplicator = async (
 
         console.log("Status actualizado en el proyecto:", status);
 
-        // Obtener el documento del usuario
         const userDocRef = doc(db, "Users", volunteerID);
         const userDocSnap = await getDoc(userDocRef);
 
@@ -363,16 +358,13 @@ export const updateStatusApplicator = async (
             const userData = userDocSnap.data();
             const proyectosAplicados = userData.proyectosAplicados || [];
 
-            // Buscar si el proyecto ya existe en "proyectosAplicados"
             const updatedProjects = proyectosAplicados.map((project: any) => {
                 if (project.projectID === projectID) {
-                    // Si el proyecto existe, actualizamos su status
                     return { ...project, status };
                 }
                 return project;
             });
 
-            // Actualizar el array de proyectos aplicados en el perfil del usuario
             await updateDoc(userDocRef, {
                 proyectosAplicados: updatedProjects,
                 updatedAt: serverTimestamp(),

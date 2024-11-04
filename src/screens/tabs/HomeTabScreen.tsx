@@ -98,10 +98,6 @@ const HomeTabScreen = () => {
         }
     }, []);
 
-    const handleProjectPress = (project: ProjectState) => {
-        navigation.navigate("Project", { project });
-    };
-
     const handleCreateProject = () => {
         navigation2.navigate("CreateNewProject");
     };

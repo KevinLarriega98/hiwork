@@ -14,7 +14,7 @@ import { ProjectState } from "../../types/project";
 import { BlurView } from "expo-blur";
 import { getUserDataFromFirestore } from "../../service/api/authService";
 import { subscribeToChatMessages } from "../../service/api/chatService";
-import moment from "moment"; // Para manejar fechas de manera más sencilla
+import moment from "moment";
 
 const ChatTabScreen = ({ navigation }: any) => {
     const backgroundImg = require("../../assets/backgroundVolu.png");
@@ -54,10 +54,8 @@ const ChatTabScreen = ({ navigation }: any) => {
             return () => unsubscribe();
         }, [item.id]);
 
-        // Obtener el último mensaje y la fecha
         const lastMessage = messages[messages.length - 1];
 
-        // Verificaciones para evitar errores
         const lastMessageText = lastMessage
             ? lastMessage.text
             : "No hay mensajes";

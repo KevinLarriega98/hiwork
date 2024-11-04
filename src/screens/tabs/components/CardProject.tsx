@@ -22,6 +22,9 @@ const CardProject = ({ item }: { item: ProjectState }) => {
     >(null);
     const [loading, setLoading] = useState<boolean>(true);
 
+    const totalCount = item.roles.reduce((sum, item) => sum + item.count, 0);
+    const uniqueRoles = [...new Set(item.roles.map((item) => item.role))];
+
     const fetchApplications = async () => {
         if (currentUser?.id) {
             try {
@@ -79,18 +82,16 @@ const CardProject = ({ item }: { item: ProjectState }) => {
             className="bg-gray_1 p-4 rounded-2xl mb-4 w-full "
             onPress={() => handleProjectPress(item)}
         >
-            <View className="flex flex-row justify-between items-start mb-2 ">
-                <View className="flex-1 flex flex-row gap-1 flex-wrap">
-                    {item.roles.map((role, index) => (
-                        <View
-                            key={index}
-                            className="px-2 py-1 bg-gray_2 rounded-full justify-center items-center"
-                        >
-                            <Text className="text-gray_1 text-xs font-normal leading-none">
-                                {role.role}
-                            </Text>
-                        </View>
-                    ))}
+            <View className="flex flex-row justify-between items-start ">
+                <View className="flex flex-row gap-2 mb-1 items-center">
+                    <MaterialCommunityIcons
+                        name="checkbox-blank-circle"
+                        color={"red"}
+                        size={18}
+                    />
+                    <Text className="text-text_black text-xl">
+                        {item.ongName}
+                    </Text>
                 </View>
 
                 <TouchableOpacity
@@ -120,24 +121,15 @@ const CardProject = ({ item }: { item: ProjectState }) => {
                 </TouchableOpacity>
             </View>
 
-            <Text className="text-xl font-medium mb-1 text-text_black">
+            <Text className="text-2xl font-medium mb-1 text-text_black">
                 {item.title}
             </Text>
-
             <View className="flex flex-row justify-between items-center">
                 <View>
-                    <View className="flex flex-row gap-1 mb-1">
-                        <MaterialCommunityIcons
-                            name="checkbox-blank-circle"
-                            color={"black"}
-                            size={18}
-                        />
-                        <Text className="text-text_black">{item.ongName}</Text>
-                    </View>
-                    <View className="flex flex-col items-start mb-1">
+                    <View className="flex flex-row items-start mb-1">
                         <View className="flex flex-row items-center mb-1">
                             <MaterialCommunityIcons
-                                name="square-rounded"
+                                name="calendar-text-outline"
                                 color={"#7f7f7f"}
                                 size={18}
                             />
@@ -145,9 +137,21 @@ const CardProject = ({ item }: { item: ProjectState }) => {
                                 {weeksRange}
                             </Text>
                         </View>
+                        <View className="flex flex-row items-center mb-1">
+                            <MaterialCommunityIcons
+                                name="account-outline"
+                                color={"#7f7f7f"}
+                                size={18}
+                            />
+                            <Text className="text-text_black mr-2">
+                                {totalCount}
+                                {totalCount <= 1
+                                    ? " voluntario"
+                                    : " voluntarios"}
+                            </Text>
+                        </View>
                     </View>
                 </View>
-                {}
                 {loading ? (
                     loader("Cargando...")
                 ) : (
@@ -159,6 +163,11 @@ const CardProject = ({ item }: { item: ProjectState }) => {
                         )}
                     </View>
                 )}
+            </View>
+            <View className="flex-1 flex flex-row gap-1 flex-wrap">
+                <Text className=" text-verde_oscuro font-semibold">
+                    {uniqueRoles.join(" - ")}
+                </Text>
             </View>
         </TouchableOpacity>
     );
