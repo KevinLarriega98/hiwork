@@ -16,9 +16,10 @@ import {
     uploadBackGroundImage,
     uploadImage,
 } from "../../../../service/api/authService";
-import { UserState } from "../../../../types/profile";
 import * as ImagePicker from "expo-image-picker";
-import { Asset } from "expo-asset";
+import { User } from "../../../../types/User";
+
+import profileImage from "../../../../assets/profile-image.jpg";
 
 const ModalInterior = ({
     setModalVisible,
@@ -31,7 +32,9 @@ const ModalInterior = ({
 
     const [name, setName] = useState(currentUser?.name);
     const [description, setDescription] = useState(currentUser?.description);
-    const [image, setImage] = useState<string>(currentUser?.image);
+    const [image, setImage] = useState<string>(
+        currentUser?.image ?? profileImage
+    );
     const [backgroundImage, setBackGroundImage] = useState<string>(
         "../../../../../images/pruebaFondo.png"
     );
@@ -70,18 +73,21 @@ const ModalInterior = ({
     };
 
     const handleUpdateUserNameAndDescriptionAndImage = async () => {
-        if (image !== currentUser?.image) {
+        if (image !== currentUser?.image && currentUser?.email) {
             uploadImage(image, currentUser?.email);
         }
 
-        if (backgroundImage !== currentUser?.backgroundImage) {
+        if (
+            backgroundImage !== currentUser?.backgroundImg &&
+            currentUser?.email
+        ) {
             uploadBackGroundImage(backgroundImage, currentUser?.email);
         }
 
         updateUserNameAndDescription(
-            currentUser?.id,
-            name,
-            description,
+            currentUser?.uid!,
+            name!,
+            description!,
             image,
             backgroundImage
         );
@@ -92,7 +98,7 @@ const ModalInterior = ({
             description: description,
             image: image,
             backgroundImage: backgroundImage,
-        } as UserState);
+        } as User);
     };
 
     return (
@@ -118,9 +124,9 @@ const ModalInterior = ({
                     {currentUser?.profileType === "ONG" ? (
                         <ImageBackground
                             source={{
-                                uri: backgroundImage
-                                    ? backgroundImage
-                                    : "https://firebasestorage.googleapis.com/v0/b/hiwork-43f78.appspot.com/o/profileImage%2FProjectCard.jpg?alt=media&token=6ccef7bd-888c-40bf-bbd5-8c5c5a7deb2e",
+                                uri:
+                                    backgroundImage ??
+                                    "https://firebasestorage.googleapis.com/v0/b/hiwork-43f78.appspot.com/o/profileImage%2FProjectCard.jpg?alt=media&token=6ccef7bd-888c-40bf-bbd5-8c5c5a7deb2e",
                             }}
                             resizeMode="cover"
                             imageStyle={{
@@ -149,7 +155,7 @@ const ModalInterior = ({
                             >
                                 <Image
                                     source={{
-                                        uri: image || currentUser?.image,
+                                        uri: image,
                                     }}
                                     className="w-[140px] h-[140px] rounded-full"
                                 />
@@ -183,7 +189,7 @@ const ModalInterior = ({
                             >
                                 <Image
                                     source={{
-                                        uri: image || currentUser?.image,
+                                        uri: image,
                                     }}
                                     className="w-[140px] h-[140px] rounded-full"
                                 />

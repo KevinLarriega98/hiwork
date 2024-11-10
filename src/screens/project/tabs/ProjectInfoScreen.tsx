@@ -3,9 +3,10 @@ import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import useAuthStore from "../../../stores/useAuthStore";
-import { RootStackParamList } from "../../../types/navigation";
 import { calculateWeeksRange } from "../../../util/calculateWeeksRange";
 import ApplyToProjectButton from "../components/ApplyToProjectButton";
+import { RootStackParamList } from "../../../types/Navigation";
+import { Timestamp } from "firebase/firestore";
 
 type ProjectScreenRouteProp = RouteProp<RootStackParamList, "Project">;
 
@@ -14,13 +15,13 @@ const ProjectInfoScreen = () => {
     const route = useRoute<ProjectScreenRouteProp>();
     const { project } = route.params;
 
-    const createdAtDate = project.createdAt ? project.createdAt.toDate() : null;
-    const updatedAtDate = project.updatedAt ? project.updatedAt.toDate() : null;
+    const createdAtDate = (project.createdAt as Timestamp)?.toDate() ?? null;
+    const updatedAtDate = (project.updatedAt as Timestamp)?.toDate() ?? null;
 
     const weekRange = calculateWeeksRange(project.objectiveTimeline);
     const countOfRoles = project.roles.map((role) => role.role);
     const countOfPersons = project.roles.reduce(
-        (acc, role) => acc + role.count,
+        (acc, role) => acc + role.quantity,
         0
     );
 

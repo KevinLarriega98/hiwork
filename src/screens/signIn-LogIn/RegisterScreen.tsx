@@ -3,8 +3,8 @@ import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
 import useUserStore from "../../stores/useRegisterStore";
-import { RootStackParamList } from "../../types/navigation";
 import ButtonCustom from "../../components/buttons/ButtonCustom";
+import { RootStackParamList } from "../../types/Navigation";
 
 type RegisterScreenNavigationProp = NavigationProp<
     RootStackParamList,

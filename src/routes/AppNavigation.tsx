@@ -2,7 +2,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import CreateNewProject from "../screens/project/CreateNewProject";
 import { TabsBottomNavigation } from "./TabsBottomNavigation";
 import React, { useState } from "react";
-import { RootStackParamList } from "../types/navigation";
+import { RootStackParamList } from "../types/Navigation";
 
 const Stack = createStackNavigator<any>();
 

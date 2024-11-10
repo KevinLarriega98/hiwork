@@ -54,14 +54,7 @@ const ApplyToProjectButton = ({ projectID }: { projectID: string }) => {
         setLoading(true);
 
         try {
-            await applyToProject(
-                projectID,
-                user?.uid,
-                currentUser?.name,
-                user?.email,
-                formData ? formData : currentUser?.description,
-                currentUser?.typeOfProjects
-            );
+            await applyToProject(projectID, user?.uid!, currentUser?.name!);
 
             Alert.alert(
                 "Aplicación Enviada",

@@ -1,15 +1,13 @@
 import { View, Text, ScrollView } from "react-native";
 import React, { useState } from "react";
 import { RouteProp, useRoute } from "@react-navigation/native";
-import { RootStackParamList } from "../../../types/navigation";
-import { CalendarEvent } from "../../../types/project";
+import { RootStackParamList } from "../../../types/Navigation";
 
 type ProjectScreenRouteProp = RouteProp<RootStackParamList, "Project">;
 
 const CompletedTasksScreen = () => {
     const route = useRoute<ProjectScreenRouteProp>();
     const { project } = route.params;
-    const [localProject, setLocalProject] = useState(project);
 
     return (
         <View className="flex-1 pt-5 px-6 bg-white ">

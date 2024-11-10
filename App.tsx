@@ -1,6 +1,6 @@
 import "react-native-gesture-handler";
 import React, { useEffect } from "react";
-import { ImageBackground, View } from "react-native";
+import { View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import LoginStackNavigation from "./src/routes/LoginStackNavigation";
@@ -9,10 +9,12 @@ import { AppNavigation } from "./src/routes/AppNavigation";
 
 const App = () => {
     const { initializeAuth, currentUser } = useAuthStore();
-    const backgroundImg = require("./src/assets/backgroundVolu.png");
 
     useEffect(() => {
-        initializeAuth();
+        const unsubscribe = initializeAuth();
+        return () => {
+            if (unsubscribe) unsubscribe();
+        };
     }, [initializeAuth]);
 
     return (

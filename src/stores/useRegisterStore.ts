@@ -1,33 +1,40 @@
-import { create } from "zustand";
-import { RegisterState, UserActions } from "../types/profile";
+// useUserStore.ts
 
-const useUserStore = create<UserActions & RegisterState>((set) => ({
+import { create } from "zustand";
+import { RegisterState } from "../types/RegisterState";
+import { RegisterActions } from "../types/RegisterActions";
+
+const useUserStore = create<RegisterActions & RegisterState>((set) => ({
     email: "",
     password: "",
     profileType: "Voluntario",
     name: "",
     discipline: "",
-    typeOfProjects: "",
+    typeOfProjects: [],
     tools: [],
     description: "",
-    setEmail: (email) => set({ email }),
-    setProyectosAplicados: (proyectosAplicados) => set({ proyectosAplicados }),
-    setPassword: (password) => set({ password }),
-    setProfileType: (profileType) => set({ profileType }),
-    setName: (name) => set({ name }),
-    setDiscipline: (discipline) => set({ discipline }),
-    setTypeOfProjects: (typeOfProjects) => set({ typeOfProjects }),
-    setTools: (tools) => set({ tools }),
+    proyectosAplicados: [],
+
+    setEmail: (email: string) => set({ email }),
+    setPassword: (password: string) => set({ password }),
+    setProfileType: (profileType: "ONG" | "Voluntario") => set({ profileType }),
+    setName: (name: string) => set({ name }),
+    setDiscipline: (discipline: string) => set({ discipline }),
+    setTypeOfProjects: (typeOfProjects: string[]) => set({ typeOfProjects }),
+    setTools: (tools: string[]) => set({ tools }),
+    setProyectosAplicados: (proyectosAplicados: string[]) =>
+        set({ proyectosAplicados }),
+    setDescription: (description: string) => set({ description }),
+
     clearSensitiveData: () =>
         set({
             email: "",
             password: "",
             name: "",
             discipline: "",
-            typeOfProjects: "",
+            typeOfProjects: [],
             description: "",
         }),
-    setDescription: (description) => set({ description }),
 }));
 
 export default useUserStore;

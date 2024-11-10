@@ -16,11 +16,11 @@ import useProjectStore from "../../stores/useProjectStore";
 import useAuthStore from "../../stores/useAuthStore";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 
-import { RootStackParamList } from "../../types/navigation";
 import CollapsibleType from "./components/CollapsibleType";
 import ProjectDurationCard from "./components/ProjectDurationCard";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { CalendarEvent } from "../../types/project";
+import { RootStackParamList } from "../../types/Navigation";
+import { CalendarEvent } from "../../types/Project";
 
 type MarkedDatesType = {
     [key: string]: {
@@ -339,8 +339,8 @@ const CreateNewProject = () => {
 
         try {
             await createProject(
-                currentUser?.id,
-                currentUser?.name,
+                currentUser?.uid!,
+                currentUser?.name!,
                 title,
                 description,
                 roles,
@@ -532,7 +532,7 @@ const CreateNewProject = () => {
                                             "--" +
                                             item.date
                                         }
-                                        className=" max-h-[190px]"
+                                        className="max-h-[18vh] "
                                     />
                                 )}
                             </View>
@@ -562,7 +562,10 @@ const CreateNewProject = () => {
                                         Profesionales solicitados:
                                     </Text>
                                     {newProjectData.roles.map((role, index) => (
-                                        <View className=" flex flex-row justify-between items-center">
+                                        <View
+                                            key={index}
+                                            className=" flex flex-row justify-between items-center"
+                                        >
                                             <Text
                                                 key={index}
                                                 className="text-gray_3 text-base"

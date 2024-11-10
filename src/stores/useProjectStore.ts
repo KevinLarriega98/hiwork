@@ -1,8 +1,10 @@
 import { create } from "zustand";
-import { ProjectActions, ProjectState } from "../types/project";
 import { createProject as createProjectService } from "../service/api/projectService";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, Timestamp } from "firebase/firestore";
 import { db } from "../service/api/firebase";
+import { Project, CalendarEvent } from "../types/Project";
+import { ProjectActions } from "../types/ProjectActions";
+import { ProjectState, RoleData } from "../types/ProjectState";
 
 const useProjectStore = create<ProjectActions & ProjectState>((set) => ({
     projects: [],
@@ -14,27 +16,22 @@ const useProjectStore = create<ProjectActions & ProjectState>((set) => ({
     createdAt: null,
     updatedAt: null,
 
-    setProjects: (projects) => set({ projects }),
-    setOng: (ongName) => set({ ongName }),
-    setTitle: (title) => set({ title }),
-    setDescription: (description) => set({ description }),
-    setObjectiveTimeline: (objectiveTimeline) => set({ objectiveTimeline }),
-    setCreatedAt: (createdAt) => set({ createdAt }),
-    setUpdatedAt: (updatedAt) => set({ updatedAt }),
+    setProjects: (projects: Project[]) => set({ projects }),
+    setOng: (ongName: string) => set({ ongName }),
+    setTitle: (title: string) => set({ title }),
+    setDescription: (description: string) => set({ description }),
+    setObjectiveTimeline: (objectiveTimeline: CalendarEvent[]) =>
+        set({ objectiveTimeline }),
+    setCreatedAt: (createdAt: Timestamp | null) => set({ createdAt }),
+    setUpdatedAt: (updatedAt: Timestamp | null) => set({ updatedAt }),
 
     createProject: async (
         ongID: string,
         ongName: string,
         title: string,
         description: string,
-        roles: any[],
-        objectiveTimeline: {
-            date: string;
-            name: string;
-            data: string;
-            height: number;
-            day: string;
-        }[]
+        roles: RoleData[],
+        objectiveTimeline: CalendarEvent[]
     ) => {
         try {
             const project = await createProjectService(
@@ -45,7 +42,7 @@ const useProjectStore = create<ProjectActions & ProjectState>((set) => ({
                 roles,
                 objectiveTimeline
             );
-            set((state) => ({
+            set((state: ProjectState) => ({
                 projects: [...state.projects, project],
             }));
             return project;
@@ -62,7 +59,7 @@ const useProjectStore = create<ProjectActions & ProjectState>((set) => ({
             const projects = querySnapshot.docs.map((doc) => ({
                 id: doc.id,
                 ...doc.data(),
-            }));
+            })) as Project[];
             set({ projects });
             return projects;
         } catch (error) {

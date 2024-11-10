@@ -1,75 +1,36 @@
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
-import {
-    getApplications,
-    saveProjectUser,
-    getUserApplications,
-} from "../../../service/api/projectService";
-import { ProjectState } from "../../../types/project";
+
 import { calculateWeeksRange } from "../../../util/calculateWeeksRange";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation } from "@react-navigation/native";
 import useAuthStore from "../../../stores/useAuthStore";
-import loader from "../../../util/loader";
+import { Project } from "../../../types/Project";
+import { saveProjectUser } from "../../../service/api/projectService";
 
-const CardProject = ({ item }: { item: ProjectState }) => {
+const CardProject = ({ item }: { item: Project }) => {
     const navigation = useNavigation<any>();
     const { currentUser } = useAuthStore();
 
-    const [applicators, setApplicators] = useState<any[]>([]);
+    const [applicators, setApplicators] = useState<any[]>(item.applications);
     const [userApplicationStatus, setUserApplicationStatus] = useState<
         string | null
     >(null);
-    const [loading, setLoading] = useState<boolean>(true);
-
-    const totalCount = item.roles.reduce((sum, item) => sum + item.count, 0);
-    const uniqueRoles = [...new Set(item.roles.map((item) => item.role))];
-
-    const fetchApplications = async () => {
-        if (currentUser?.id) {
-            try {
-                return getApplications(item.id!, (apps) =>
-                    setApplicators(apps)
-                );
-            } catch (error) {
-                Alert.alert("Error", "No se pudieron cargar las aplicaciones.");
-            } finally {
-                setLoading(false);
-            }
-        } else {
-            setLoading(false);
-        }
-    };
-
-    const fetchUserApplicationStatus = async () => {
-        if (currentUser?.id) {
-            try {
-                return getUserApplications(
-                    currentUser.id,
-                    (appliedProjects) => {
-                        const userApplication = appliedProjects.find(
-                            (project: any) => project.projectID === item.id
-                        );
-                        setUserApplicationStatus(
-                            userApplication?.status || null
-                        );
-                    }
-                );
-            } catch (error) {
-                console.error(
-                    "Error al obtener el estado de la aplicación del usuario:",
-                    error
-                );
-            }
-        }
-    };
 
     useEffect(() => {
-        fetchApplications();
-        fetchUserApplicationStatus();
-    }, [currentUser?.id]);
+        const applicatorStatus = applicators.find(
+            (app) => app.volunteerID === currentUser?.uid
+        );
 
-    const handleProjectPress = (project: ProjectState) => {
+        if (applicatorStatus) {
+            setUserApplicationStatus(applicatorStatus.status);
+        }
+    }, [currentUser?.proyectosAplicados]);
+
+    const totalCount = item.roles.reduce((sum, item) => sum + item.quantity, 0);
+    const uniqueRoles = [...new Set(item.roles.map((item) => item.role))];
+
+    const handleProjectPress = (project: Project) => {
         navigation.navigate("Project", { project });
     };
 
@@ -79,7 +40,7 @@ const CardProject = ({ item }: { item: ProjectState }) => {
 
     return (
         <TouchableOpacity
-            className="bg-gray_1 p-4 rounded-2xl mb-4 w-full "
+            className="bg-gray_1 p-4 rounded-2xl mb-4 w-full"
             onPress={() => handleProjectPress(item)}
         >
             <View className="flex flex-row justify-between items-start ">
@@ -99,8 +60,8 @@ const CardProject = ({ item }: { item: ProjectState }) => {
                     onPress={() =>
                         saveProjectUser(
                             item.id!,
-                            currentUser?.id,
-                            currentUser?.savedProjects
+                            currentUser?.uid!,
+                            currentUser?.savedProjects!
                         )
                     }
                 >
@@ -124,8 +85,8 @@ const CardProject = ({ item }: { item: ProjectState }) => {
             <Text className="text-2xl font-medium mb-1 text-text_black">
                 {item.title}
             </Text>
-            <View className="flex flex-row justify-between items-center">
-                <View>
+            <View className="flex flex-col justify-between items-center">
+                <View className="flex flex-row justify-between items-center w-full">
                     <View className="flex flex-row items-start mb-1">
                         <View className="flex flex-row items-center mb-1">
                             <MaterialCommunityIcons
@@ -152,9 +113,12 @@ const CardProject = ({ item }: { item: ProjectState }) => {
                         </View>
                     </View>
                 </View>
-                {loading ? (
-                    loader("Cargando...")
-                ) : (
+                <View className=" flex flex-row w-full">
+                    <View className="flex-1 flex flex-row gap-1 flex-wrap">
+                        <Text className=" text-verde_oscuro font-semibold">
+                            {uniqueRoles.join(" - ")}
+                        </Text>
+                    </View>
                     <View>
                         {userApplicationStatus !== null && (
                             <Text>
@@ -162,12 +126,7 @@ const CardProject = ({ item }: { item: ProjectState }) => {
                             </Text>
                         )}
                     </View>
-                )}
-            </View>
-            <View className="flex-1 flex flex-row gap-1 flex-wrap">
-                <Text className=" text-verde_oscuro font-semibold">
-                    {uniqueRoles.join(" - ")}
-                </Text>
+                </View>
             </View>
         </TouchableOpacity>
     );

@@ -1,5 +1,4 @@
-import { Applicator } from "./applicator";
-import { ProjectState } from "./project";
+import { Project } from "./Project";
 
 export type RootStackParamList = {
     Home: undefined;
@@ -8,9 +7,9 @@ export type RootStackParamList = {
     RegisterUserScreens: { profileType: "Voluntario" | "ONG" };
     RegisterTypeUser: undefined;
     TabsBottom: undefined;
-    Project: { project: ProjectState };
-    ApplicatorProfile: { item: Applicator; project: ProjectState };
+    Project: { project: Project };
     CreateNewProject: { profileType: "Voluntario" | "ONG" };
     Welcome: undefined;
     Tabs: undefined;
+    ApplicatorProfile: { item: any; project: Project };
 };

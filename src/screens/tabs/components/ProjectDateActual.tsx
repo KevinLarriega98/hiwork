@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import React from "react";
-import { CalendarEvent } from "../../../types/project";
+import { CalendarEvent } from "../../../types/Project";
 
 const ProjectDateActual = ({ item }: { item: CalendarEvent }) => {
     const formatDate = (dateString: string) => {

@@ -1,51 +1,38 @@
-import { Timestamp } from "firebase/firestore";
+import { FieldValue, Timestamp } from "firebase/firestore";
 
-export interface ProjectState {
-    id?: string;
-    ongID?: string;
-    projects: any[];
-    ongName: string;
+// Tipo para la información de un proyecto
+export interface Project {
+    id: string;
+    ongID: string; // ID de la ONG que creó el proyecto
     title: string;
+    ongName: string;
     description: string;
-    roles: any[];
-    objectiveTimeline: CalendarEvent[];
-    createdAt: Timestamp | null;
-    updatedAt: Timestamp | null;
+    roles: RoleData[]; // Roles requeridos para el proyecto
+    objectiveTimeline: CalendarEvent[]; // Cronograma de objetivos del proyecto
+    createdAt: Timestamp | FieldValue | null; // Fecha de creación
+    updatedAt: Timestamp | FieldValue | null; // Fecha de última actualización
+    applications: Application[]; // Aplicaciones de voluntarios
+    chatId?: string; // ID del chat (puedes usarlo para asociar un chat con el proyecto)
 }
 
-export interface ProjectActions {
-    setProjects: (projects: any[]) => void;
-    setOng: (ong: string) => void;
-    setTitle: (title: string) => void;
-    setDescription: (description: string) => void;
-    setObjectiveTimeline: (
-        objectiveTimeline: {
-            date: string;
-            name: string;
-            data: string;
-            height: number;
-            day: string;
-        }[]
-    ) => void;
-    setCreatedAt: (createdAt: Timestamp | null) => void;
-    setUpdatedAt: (updatedAt: Timestamp | null) => void;
-    createProject: (
-        ongID: string,
-        ongName: string,
-        title: string,
-        description: string,
-        roles: any[],
-        objectiveTimeline: {
-            date: string;
-            name: string;
-            data: string;
-            height: number;
-            day: string;
-        }[]
-    ) => Promise<any>;
-    fetchProjects: () => Promise<{ id: string }[] | undefined>;
+// Tipo para la aplicación de un voluntario a un proyecto
+export interface Application {
+    volunteerID: string; // ID del voluntario que aplica
+    status: "pending" | "accepted" | "rejected"; // Estado de la aplicación
+    appliedAt?: Timestamp | FieldValue; // Fecha de la aplicación
+    volunteerName: string; // Nombre del voluntario
+    chatId?: string; // ID del chat asociado a esta aplicación (si es aceptada)
 }
 
+// Tipo para los mensajes de chat
+export interface ChatMessage {
+    senderId: string; // ID del usuario que envía el mensaje
+    text: string; // Contenido del mensaje
+    sentAt: Timestamp; // Fecha de envío
+    read: boolean; // Estado de lectura del mensaje
+}
+
+// Tipo para los eventos de calendario
 export interface CalendarEvent {
     date: string;
     name: string;
@@ -53,4 +40,10 @@ export interface CalendarEvent {
     height: number;
     day: string;
     isChecked: boolean;
+}
+
+// Tipo para los roles necesarios en el proyecto
+export interface RoleData {
+    role: string;
+    quantity: number;
 }

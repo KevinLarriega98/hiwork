@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import { CalendarEvent } from "../../../types/project";
+import { CalendarEvent } from "../../../types/Project";
 
 interface ProjectDurationCardProps {
     item: CalendarEvent | any;
@@ -19,7 +19,6 @@ const ProjectDurationCard: React.FC<ProjectDurationCardProps> = ({
             month: "short",
         });
     };
-
 
     const startDateFormatted = formatDate(date);
 

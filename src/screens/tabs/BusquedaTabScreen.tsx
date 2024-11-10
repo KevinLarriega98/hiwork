@@ -12,12 +12,11 @@ import {
 import React, { useEffect, useState } from "react";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import useProjectStore from "../../stores/useProjectStore";
-
 import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { ProjectState } from "../../types/project";
-import { RootStackParamList } from "../../types/navigation";
 import { REGISTRATION_STEPS_VOLUNTARIO } from "../../util/loginStepsAndUtils";
 import withSafeArea from "../../util/withSafeArea";
+import { RootStackParamList } from "../../types/Navigation";
+import { Project } from "../../types/Project";
 
 type ProjectDetailScreenNavigationProp = NavigationProp<
     RootStackParamList,
@@ -50,23 +49,23 @@ const BusquedaTabScreen = () => {
         else return `${Math.floor(diffInWeeks)}+ weeks`;
     };
 
-    const filteredProjects = projects.filter((project: ProjectState) => {
+    const filteredProjects = projects.filter((project: Project) => {
         if (volunteerValue.length === 0) {
             return true;
         }
 
         const matchesAllFilters = volunteerValue.every((filter) =>
-            project.roles.some((role) => role.role === filter)
+            project.roles.some((role) => role === filter)
         );
 
         return matchesAllFilters;
     });
 
-    const handleProjectPress = (project: ProjectState) => {
+    const handleProjectPress = (project: Project) => {
         navigation.navigate("Project", { project });
     };
 
-    const renderItem = ({ item }: { item: ProjectState }) => {
+    const renderItem = ({ item }: { item: Project }) => {
         if (
             !item.roles ||
             item.roles.length === 0 ||

@@ -1,29 +1,27 @@
-import { User } from "firebase/auth";
-import { DocumentData } from "firebase/firestore";
-import { CurrentUser, UserActions, UserState } from "./profile";
+import { User } from "./User";
+import { User as UserFirebase } from "firebase/auth";
 
 export interface AuthState {
-    user: UserState | DocumentData | null;
-    token: string | null;
-    isAuthenticated: boolean;
-    currentUser: CurrentUser | DocumentData;
+    user: UserFirebase | null; // Información básica del usuario autenticado
+    token: string | null; // Token de autenticación
+    isAuthenticated: boolean; // Estado de autenticación
+    currentUser: User | null; // Información detallada del usuario actual
 }
 
 export interface AuthActions {
-    setUser: (user: UserActions | null) => void;
-    setToken: (token: string | null) => void;
-    logout: () => Promise<void>;
+    setUser: (user: UserFirebase | null) => void; // Establecer el usuario actual
+    setToken: (token: string | null) => void; // Establecer el token
+    setCurrentUser: (currentUser: User | null) => void; // Establecer información detallada del usuario
+    logout: () => Promise<void>; // Cerrar sesión del usuario
     register: (
         email: string,
         password: string,
         profileType: string,
         name: string,
         discipline: string,
-        typeOfProjects: string,
+        typeOfProjects: string[],
         downloadURL: string,
         description: string
-    ) => Promise<User | null | Error>;
-    initializeAuth: () => void;
-    setSavedProjects: (savedProjects: string[] | null) => void;
-    setCurrentUser: (currentUser: UserState | null) => void;
+    ) => Promise<UserFirebase | null>; // Registrar un nuevo usuario
+    initializeAuth: () => (() => void) | void;
 }

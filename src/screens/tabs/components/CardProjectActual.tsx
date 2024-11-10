@@ -1,21 +1,12 @@
 import { View, Text, TouchableOpacity, Alert, Image } from "react-native";
-import React, { useEffect, useState } from "react";
-import {
-    getApplications,
-    saveProjectUser,
-    getUserApplications,
-} from "../../../service/api/projectService";
-import { ProjectState, CalendarEvent } from "../../../types/project";
-import { calculateWeeksRange } from "../../../util/calculateWeeksRange";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import useAuthStore from "../../../stores/useAuthStore";
-import loader from "../../../util/loader";
 import { BlurView } from "expo-blur";
-import ProjectDurationCard from "../../project/components/ProjectDurationCard";
 import ProjectDateActual from "./ProjectDateActual";
+import { CalendarEvent, Project } from "../../../types/Project";
 
-const CardProjectActual = ({ item }: { item: ProjectState }) => {
+const CardProjectActual = ({ item }: { item: Project }) => {
     const navigation = useNavigation<any>();
     const { currentUser } = useAuthStore();
 
@@ -37,17 +28,11 @@ const CardProjectActual = ({ item }: { item: ProjectState }) => {
 
     const closestEvent = findClosestEvent(item.objectiveTimeline);
 
-    console.log(closestEvent);
-
     const roles = item.roles.map((role) => role.role);
 
-    const handleProjectPress = (project: ProjectState) => {
+    const handleProjectPress = (project: Project) => {
         navigation.navigate("Project", { project });
     };
-
-    const weeksRange = item.objectiveTimeline
-        ? calculateWeeksRange(item.objectiveTimeline)
-        : "No dates available";
 
     return (
         <TouchableOpacity
@@ -64,8 +49,12 @@ const CardProjectActual = ({ item }: { item: ProjectState }) => {
                         }}
                         className="w-12 h-12 rounded-full border-2 border-white"
                     />
-                    <View className="ml-4">
-                        <Text className="text-2xl font-bold text-verde_oscuro">
+                    <View className="ml-4 flex-1">
+                        <Text
+                            className="text-xl font-bold text-verde_oscuro"
+                            numberOfLines={1}
+                            ellipsizeMode="tail"
+                        >
                             {item.ongName}: {item.title}
                         </Text>
                     </View>

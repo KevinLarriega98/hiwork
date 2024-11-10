@@ -13,8 +13,8 @@ import {
     login,
     sendPasswordResetEmailAuth,
 } from "../../service/api/authService";
-import { RootStackParamList } from "../../types/navigation";
 import ButtonCustom from "../../components/buttons/ButtonCustom";
+import { RootStackParamList } from "../../types/Navigation";
 
 type LoginScreenNavigationProp = NavigationProp<RootStackParamList, "Login">;
 
@@ -28,11 +28,30 @@ const LoginScreen: React.FC = () => {
 
     const handleLogin = async () => {
         setLoading(true);
-        const savedUser = await login(user.email, user.password);
-        if (!savedUser) {
-            setError("Usuario o contraseña incorrectos");
+
+        if (!user.email || !user.password) {
+            setError("El correo electrónico y la contraseña son obligatorios.");
+            setLoading(false);
+            return;
         }
-        setLoading(false);
+
+        if (!/\S+@\S+\.\S+/.test(user.email)) {
+            setError("Formato de correo electrónico no válido.");
+            setLoading(false);
+            return;
+        }
+
+        try {
+            const savedUser = await login(user.email, user.password);
+            if (!savedUser) {
+                setError("Usuario o contraseña incorrectos");
+            }
+        } catch (error: any) {
+            setError(error.message);
+            console.log("Error de login:", error);
+        } finally {
+            setLoading(false);
+        }
 
         setTimeout(() => {
             setError("");

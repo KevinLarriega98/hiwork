@@ -25,7 +25,8 @@ import useUserStore from "../../stores/useRegisterStore";
 import useAuthStore from "../../stores/useAuthStore";
 import * as ImagePicker from "expo-image-picker";
 import { uploadImage } from "../../service/api/authService";
-import { RootStackParamList } from "../../types/navigation";
+import useRegisterStore from "../../stores/useRegisterStore";
+import { RootStackParamList } from "../../types/Navigation";
 
 type RegistrationAppRouteProp = RouteProp<
     RootStackParamList,
@@ -56,7 +57,7 @@ const RegistrationApp: React.FC = () => {
         clearSensitiveData,
         setDescription,
         description,
-    } = useUserStore();
+    } = useRegisterStore();
 
     const register = useAuthStore((state) => state.register);
 

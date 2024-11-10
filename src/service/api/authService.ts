@@ -7,7 +7,14 @@ import {
     updateProfile,
     User,
 } from "firebase/auth";
-import { doc, setDoc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import {
+    doc,
+    setDoc,
+    getDoc,
+    updateDoc,
+    arrayUnion,
+    onSnapshot,
+} from "firebase/firestore";
 import { auth, db } from "./firebase";
 import {
     getStorage,
@@ -16,25 +23,57 @@ import {
     getDownloadURL,
 } from "firebase/storage";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
+import { User as UserType } from "../../types/User";
 
 export const getUserDataFromFirestore = async (id: User["uid"]) => {
     const docRef = doc(db, "Users", id);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-        return docSnap.data();
+        return docSnap.data() as UserType;
     }
     throw new Error("No data found for the user.");
 };
 
-export const login = async (email: string, password: string): Promise<User> => {
-    const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-    );
+interface AuthError {
+    code: string;
+    message: string;
+}
 
-    return userCredential.user;
+export const login = async (email: string, password: string): Promise<User> => {
+    try {
+        const userCredential = await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+        );
+        return userCredential.user;
+    } catch (error: any) {
+        const authError: AuthError = { code: error.code, message: "" };
+
+        switch (error.code) {
+            case "auth/invalid-email":
+                authError.message =
+                    "El formato del correo electrónico es incorrecto.";
+                break;
+            case "auth/user-not-found":
+                authError.message = "No existe un usuario con este correo.";
+                break;
+            case "auth/wrong-password":
+                authError.message = "La contraseña es incorrecta.";
+                break;
+            case "auth/invalid-credential":
+                authError.message =
+                    "Las credenciales proporcionadas no son válidas.";
+                break;
+            default:
+                authError.message =
+                    "Ocurrió un error inesperado. Intenta nuevamente.";
+                break;
+        }
+
+        throw new Error(authError.message);
+    }
 };
 
 export const register = async (
@@ -43,7 +82,7 @@ export const register = async (
     profileType: string,
     name: string,
     discipline: string,
-    typeOfProjects: string,
+    typeOfProjects: string[],
     downloadURL: string,
     description: string
 ): Promise<User | null> => {
@@ -61,16 +100,31 @@ export const register = async (
         });
 
         const docRef = doc(db, "Users", user.uid);
-        await setDoc(docRef, {
-            id: user.uid,
-            email: email,
-            name: name,
-            discipline: discipline,
-            typeOfProjects: typeOfProjects,
-            image: downloadURL,
-            description: description,
-            profileType: profileType,
-        });
+
+        profileType === "Voluntario"
+            ? await setDoc(docRef, {
+                  uid: user.uid,
+                  email: email,
+                  name: name,
+                  discipline: discipline,
+                  typeOfProjects: typeOfProjects,
+                  image: downloadURL,
+                  description: description,
+                  profileType: profileType,
+                  proyectosAplicados: [],
+                  savedProjects: [],
+              })
+            : await setDoc(docRef, {
+                  uid: user.uid,
+                  email: email,
+                  name: name,
+                  discipline: discipline,
+                  image: downloadURL,
+                  description: description,
+                  profileType: profileType,
+                  savedProjects: [],
+                  backgroundImg: "",
+              });
 
         return user;
     } catch (error) {
@@ -86,10 +140,6 @@ export const logout = async (): Promise<void> => {
     } catch (error) {
         console.error("Error al hacer logout:", error);
     }
-};
-
-export const initializeAuth = (callback: (user: User | null) => void): void => {
-    onAuthStateChanged(auth, callback);
 };
 
 export const sendPasswordResetEmailAuth = async (
@@ -230,5 +280,58 @@ export const updateUserById = async (
     } catch (error) {
         console.log("Error al actualizar el usuario:", error);
         throw error;
+    }
+};
+
+// Mantiene la suscripción para cambios en el usuario
+export const subscribeToUserUpdates = (
+    userID: string,
+    callback: (userData: UserType | null) => void
+) => {
+    const userDocRef = doc(db, "Users", userID);
+
+    // Configura la suscripción en el documento de usuario
+    return onSnapshot(userDocRef, (docSnapshot) => {
+        if (docSnapshot.exists()) {
+            callback(docSnapshot.data() as UserType);
+        } else {
+            callback(null);
+        }
+    });
+};
+
+export const initializeAuth = (
+    onAuthChange: (user: User | null) => void,
+    onUserDataChange: (userData: UserType | null) => void
+): void => {
+    onAuthStateChanged(auth, (user) => {
+        onAuthChange(user);
+        if (user) {
+            const unsubscribe = subscribeToUserUpdates(
+                user.uid,
+                onUserDataChange
+            );
+            return unsubscribe;
+        } else {
+            onUserDataChange(null);
+        }
+    });
+};
+
+export const getUserImage = async (uid: string): Promise<string | null> => {
+    try {
+        const userDocRef = doc(db, "Users", uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+            const userData = userDoc.data();
+            // Retorna la URL de la imagen del usuario
+            return userData?.image || null; // Si no tiene imagen, devuelve null
+        } else {
+            throw new Error("Usuario no encontrado");
+        }
+    } catch (error) {
+        console.error("Error al obtener la imagen del usuario:", error);
+        return null;
     }
 };

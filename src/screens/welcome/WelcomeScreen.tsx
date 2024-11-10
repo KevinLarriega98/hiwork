@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text } from "react-native";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { RootStackParamList } from "../../types/navigation";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
+import { RootStackParamList } from "../../types/Navigation";
 
 type WelcomeTypeUserScreenNavigationProp = NavigationProp<
     RootStackParamList,

@@ -33,9 +33,9 @@ const ChatScreen = ({ route }: any) => {
             try {
                 await sendMessage(
                     projectId,
-                    currentUser?.id,
+                    currentUser?.uid!,
                     newMessage,
-                    currentUser?.name
+                    currentUser?.name!
                 );
                 setNewMessage("");
             } catch (error) {

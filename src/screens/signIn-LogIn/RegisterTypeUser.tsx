@@ -1,9 +1,9 @@
 import React from "react";
-import {  Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import useUserStore from "../../stores/useRegisterStore";
-import { RootStackParamList } from "../../types/navigation";
 import ButtonCustom from "../../components/buttons/ButtonCustom";
+import { RootStackParamList } from "../../types/Navigation";
 
 type RegisterTypeUserScreenNavigationProp = NavigationProp<
     RootStackParamList,

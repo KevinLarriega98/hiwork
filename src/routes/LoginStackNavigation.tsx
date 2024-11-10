@@ -6,8 +6,8 @@ import RegisterScreen from "../screens/signIn-LogIn/RegisterScreen";
 import withSafeArea from "../util/withSafeArea";
 import RegisterUserScreens from "../screens/signIn-LogIn/RegisterUserScreens";
 import RegisterTypeUser from "../screens/signIn-LogIn/RegisterTypeUser";
-import { RootStackParamList } from "../types/navigation";
 import WelcomeScreen from "../screens/welcome/WelcomeScreen";
+import { RootStackParamList } from "../types/Navigation";
 
 const SafeHomeScreen = withSafeArea(HomeScreen);
 const SafeLoginScreen = withSafeArea(LoginScreen);

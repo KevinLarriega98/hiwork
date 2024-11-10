@@ -1,4 +1,3 @@
-// useAuthStore.ts
 import { create } from "zustand";
 import {
     register,
@@ -6,25 +5,19 @@ import {
     initializeAuth,
     getUserDataFromFirestore,
 } from "../service/api/authService";
-import { AuthState, AuthActions } from "../types/auth";
-import { UserActions, UserState } from "../types/profile";
+import { User } from "../types/User";
+import { User as UserFirebase } from "firebase/auth";
+import { AuthActions, AuthState } from "../types/Auth";
 
 const useAuthStore = create<AuthState & AuthActions>((set) => ({
     user: null,
     token: null,
     isAuthenticated: false,
     currentUser: null,
-    setUser: (user: UserActions | null) =>
+    setUser: (user: UserFirebase | null) =>
         set({ user, isAuthenticated: !!user }),
     setToken: (token: string | null) => set({ token }),
-    setCurrentUser: (currentUser: UserState | null) => set({ currentUser }),
-    setSavedProjects: (savedProjects: string[] | null) =>
-        set((state) => ({
-            currentUser: {
-                ...state.currentUser,
-                savedProjects,
-            },
-        })),
+    setCurrentUser: (currentUser: User | null) => set({ currentUser }),
 
     logout: async () => {
         try {
@@ -47,7 +40,7 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
         profileType: string,
         name: string,
         discipline: string,
-        typeOfProjects: string,
+        typeOfProjects: string[],
         downloadURL: string,
         description: string
     ) => {
@@ -86,19 +79,23 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
     },
 
     initializeAuth: () => {
-        initializeAuth((user) => {
-            if (user) {
-                getUserDataFromFirestore(user.uid).then((userDataDB) => {
+        initializeAuth(
+            (user) => {
+                if (user) {
+                    set({ user, isAuthenticated: true });
+                } else {
                     set({
-                        user,
-                        isAuthenticated: true,
-                        currentUser: userDataDB,
+                        user: null,
+                        isAuthenticated: false,
+                        currentUser: null,
                     });
-                });
-            } else {
-                set({ user: null, isAuthenticated: false, currentUser: null });
+                }
+            },
+            (userDataDB) => {
+                set({ currentUser: userDataDB });
+                console.log("Información actualizada del usuario:", userDataDB);
             }
-        });
+        );
     },
 }));
 

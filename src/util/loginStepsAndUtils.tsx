@@ -8,7 +8,6 @@ import {
     FlatList,
 } from "react-native";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
-import useUserStore from "../stores/useRegisterStore";
 
 export const REGISTRATION_STEPS_VOLUNTARIO = [
     {
@@ -102,6 +101,9 @@ export const REGISTRATION_STEPS_ONG = [
     {
         key: "4",
         message: "Danos un poco de información sobre ti",
+        placeholder:
+            "Danos un poco mas de info sobre tu organización",
+
         type: "input",
     },
     {
@@ -125,7 +127,9 @@ export const renderItem = (
     { item }: { item: any },
     width: number,
     formData: { [key: string]: string },
-    selectedOptions: { [key: string]: string },
+    selectedOptions: {
+        [key: string]: string;
+    },
     setFormData: (data: { [key: string]: string }) => void,
     setSelectedOptions: (data: { [key: string]: string }) => void,
     pickImage: () => void,
@@ -207,7 +211,10 @@ export const renderItem = (
                         placeholder={item.placeholder}
                         value={formData[item.key] || ""}
                         onChangeText={(text) =>
-                            setFormData({ ...formData, [item.key]: text })
+                            setFormData({
+                                ...formData,
+                                [item.key]: text,
+                            })
                         }
                         multiline={item.key === "4"}
                         numberOfLines={item.key === "4" ? 5 : 1}
@@ -263,44 +270,53 @@ export const renderItem = (
                             ¿Qué herramientas dominas en {selectedDiscipline}?
                         </Text>
 
-                        {REGISTRATION_STEPS_VOLUNTARIO[2].options[
-                            selectedDiscipline
-                        ]?.map((tool: string, index: React.Key) => (
-                            <TouchableOpacity
-                                key={index}
-                                className={`${
-                                    selectedOptions[item.key]?.includes(tool) &&
-                                    "bg-verde_claro"
-                                }
+                        {(
+                            REGISTRATION_STEPS_VOLUNTARIO[2].options as {
+                                [key: string]: string[];
+                            }
+                        )[selectedDiscipline]?.map(
+                            (tool: string, index: React.Key) => (
+                                <TouchableOpacity
+                                    key={index}
+                                    className={`${
+                                        selectedOptions[item.key]?.includes(
+                                            tool
+                                        ) && "bg-verde_claro"
+                                    }
                 w-full p-3 border border-gray-300 rounded mb-2 items-center
                 `}
-                                onPress={() => {
-                                    setSelectedOptions(
-                                        //@ts-ignore
-                                        (prevSelectedOptions) => {
-                                            const currentTools =
-                                                prevSelectedOptions[item.key] ||
-                                                [];
+                                    onPress={() => {
+                                        setSelectedOptions(
+                                            //@ts-ignore
+                                            (prevSelectedOptions) => {
+                                                const currentTools =
+                                                    prevSelectedOptions[
+                                                        item.key
+                                                    ] || [];
 
-                                            const updatedTools =
-                                                currentTools.includes(tool)
-                                                    ? currentTools.filter(
-                                                          (t: string) =>
-                                                              t !== tool
-                                                      )
-                                                    : [...currentTools, tool];
+                                                const updatedTools =
+                                                    currentTools.includes(tool)
+                                                        ? currentTools.filter(
+                                                              (t: string) =>
+                                                                  t !== tool
+                                                          )
+                                                        : [
+                                                              ...currentTools,
+                                                              tool,
+                                                          ];
 
-                                            return {
-                                                ...prevSelectedOptions,
-                                                [item.key]: updatedTools,
-                                            };
-                                        }
-                                    );
-                                }}
-                            >
-                                <Text className="text-black">{tool}</Text>
-                            </TouchableOpacity>
-                        ))}
+                                                return {
+                                                    ...prevSelectedOptions,
+                                                    [item.key]: updatedTools,
+                                                };
+                                            }
+                                        );
+                                    }}
+                                >
+                                    <Text className="text-black">{tool}</Text>
+                                </TouchableOpacity>
+                            )
+                        )}
                     </>
                 )}
             </View>
@@ -312,7 +328,9 @@ export const isNextDisabled = (
     activeIndex: number,
     REGISTRATION_STEPS: any[],
     formData: { [key: string]: string },
-    selectedOptions: { [key: string]: string },
+    selectedOptions: {
+        [key: string]: string;
+    },
     image: string | null
 ) => {
     const step = REGISTRATION_STEPS[activeIndex];
@@ -334,7 +352,9 @@ export const handleNext = (
     flatListRef: React.RefObject<FlatList<any>>,
     setActiveIndex: (index: number) => void
 ) => {
-    flatListRef.current?.scrollToIndex({ index: activeIndex + 1 });
+    flatListRef.current?.scrollToIndex({
+        index: activeIndex + 1,
+    });
     setActiveIndex(activeIndex + 1);
 };
 
@@ -343,6 +363,8 @@ export const handlePrev = (
     flatListRef: React.RefObject<FlatList<any>>,
     setActiveIndex: (index: number) => void
 ) => {
-    flatListRef.current?.scrollToIndex({ index: activeIndex - 1 });
+    flatListRef.current?.scrollToIndex({
+        index: activeIndex - 1,
+    });
     setActiveIndex(activeIndex - 1);
 };

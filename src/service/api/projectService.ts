@@ -3,37 +3,42 @@ import {
     addDoc,
     serverTimestamp,
     doc,
-    getDocs,
     query,
     where,
     onSnapshot,
     updateDoc,
     getDoc,
-    deleteDoc,
-    setDoc,
-    documentId,
     arrayUnion,
+    QuerySnapshot,
+    arrayRemove,
+    Timestamp,
+    DocumentData,
+    Query,
 } from "firebase/firestore";
 import { db } from "./firebase";
-import { CalendarEvent, ProjectState } from "../../types/project";
+import { CalendarEvent, Project, RoleData } from "../../types/Project";
+import { createChatForAcceptedVolunteer } from "./chatService";
 
+// Crear un proyecto
 export const createProject = async (
     ongID: string,
     ongName: string,
     title: string,
     description: string,
-    roles: string[],
-    objectiveTimeline: {}[]
-): Promise<any> => {
-    const project = {
+    roles: RoleData[],
+    objectiveTimeline: CalendarEvent[]
+): Promise<Project> => {
+    const project: Omit<Project, "id"> = {
         ongID,
         ongName,
         title,
         description,
-        objectiveTimeline,
         roles,
+        objectiveTimeline,
         createdAt: serverTimestamp(),
         updatedAt: null,
+        applications: [],
+        chatId: "",
     };
 
     try {
@@ -48,66 +53,74 @@ export const createProject = async (
     }
 };
 
+// Aplicar a un proyecto
 export const applyToProject = async (
     projectID: string,
     volunteerID: string,
-    volunteerName: string,
-    volunteerEmail: string,
-    coverLetter: string,
-    userType: string
-) => {
+    volunteerName: string
+): Promise<void> => {
     const application = {
         volunteerID,
         volunteerName,
-        volunteerEmail,
-        coverLetter,
         status: "pending",
-        appliedAt: serverTimestamp(),
-        userType,
     };
 
     try {
-        // 1. Añadir aplicación en la subcolección "applications" dentro del proyecto
-        const applicationsColRef = collection(
-            doc(db, "projects", projectID),
-            "applications"
-        );
-        const docRef = doc(applicationsColRef, volunteerID);
-        await setDoc(docRef, application);
+        const projectDocRef = doc(db, "projects", projectID);
 
-        // 2. Actualizar la lista de proyectos aplicados en el usuario
+        await updateDoc(projectDocRef, {
+            applications: arrayUnion(application),
+        });
+
+        const projectDocSnap = await getDoc(projectDocRef);
+
+        if (projectDocSnap.exists()) {
+            const applications = projectDocSnap.data()?.applications || [];
+
+            const updatedApplications = applications.map((app: any) =>
+                app.volunteerID === volunteerID
+                    ? { ...app, appliedAt: Timestamp.now() }
+                    : app
+            );
+
+            await updateDoc(projectDocRef, {
+                applications: updatedApplications,
+            });
+        }
+
         const userDocRef = doc(db, "Users", volunteerID);
         await updateDoc(userDocRef, {
             proyectosAplicados: arrayUnion({ projectID, status: "pending" }),
         });
-        return docRef.id;
+
+        console.log("Aplicación enviada exitosamente.");
     } catch (error) {
         console.error("Error al enviar la aplicación:", error);
         throw new Error("No se pudo enviar la aplicación.");
     }
 };
 
+// Verificar si el voluntario ya aplicó a un proyecto y obtener el estado
 export const checkIfApplied = async (
     projectID: string,
     volunteerID: string
-): Promise<{ applied: boolean; status?: string }> => {
+): Promise<{
+    applied: boolean;
+    status?: "pending" | "accepted" | "rejected";
+}> => {
     try {
-        const applicationsColRef = collection(
-            doc(db, "projects", projectID),
-            "applications"
-        );
+        const projectDocRef = doc(db, "projects", projectID);
+        const projectDoc = await getDoc(projectDocRef);
 
-        const q = query(
-            applicationsColRef,
-            where("volunteerID", "==", volunteerID)
-        );
+        if (projectDoc.exists()) {
+            const projectData = projectDoc.data() as Project;
+            const application = projectData.applications.find(
+                (app) => app.volunteerID === volunteerID
+            );
 
-        const querySnapshot = await getDocs(q);
-
-        if (!querySnapshot.empty) {
-            const applicationData = querySnapshot.docs[0].data();
-            const status = applicationData.status;
-            return { applied: true, status };
+            if (application) {
+                return { applied: true, status: application.status };
+            }
         }
 
         return { applied: false };
@@ -117,138 +130,23 @@ export const checkIfApplied = async (
     }
 };
 
-export const getApplications = (
-    projectID: string,
-    callback: (applications: any[]) => void
+// Obtener proyectos con sus aplicaciones
+export const getProjects = (
+    setProjects: (projects: Project[]) => void,
+    ongID?: string
 ) => {
-    try {
-        const applicationsColRef = collection(
-            doc(db, "projects", projectID),
-            "applications"
-        );
-
-        const unsubscribe = onSnapshot(applicationsColRef, (querySnapshot) => {
-            const applications = querySnapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
-            callback(applications);
-        });
-
-        return unsubscribe;
-    } catch (error) {
-        console.error("Error al escuchar las aplicaciones:", error);
-        throw new Error("No se pudo escuchar las aplicaciones.");
-    }
-};
-
-export const getUserApplications = (
-    userId: string,
-    callback: (appliedProjects: any[]) => void
-) => {
-    try {
-        const userDocRef = doc(db, "Users", userId);
-
-        // Escuchar en tiempo real las aplicaciones del usuario
-        const unsubscribe = onSnapshot(userDocRef, (docSnapshot) => {
-            if (docSnapshot.exists()) {
-                const appliedProjects =
-                    docSnapshot.data().proyectosAplicados || [];
-                callback(appliedProjects);
-            } else {
-                console.error(
-                    "El usuario no tiene datos de proyectos aplicados."
-                );
-                callback([]);
-            }
-        });
-
-        return unsubscribe;
-    } catch (error) {
-        console.error("Error al escuchar las aplicaciones del usuario:", error);
-        throw new Error("No se pudieron obtener las aplicaciones del usuario.");
-    }
-};
-
-export const updateProjectObjectiveTimeline = async (
-    projectID: string,
-    newObjectiveTimeline: CalendarEvent
-): Promise<void> => {
-    try {
-        const docRef = doc(db, "projects", projectID);
-
-        const docSnap = await getDoc(docRef);
-
-        if (!docSnap.exists()) {
-            throw new Error("El documento no existe");
-        }
-
-        const projectData = docSnap.data();
-        const currentTimeline: CalendarEvent[] =
-            projectData?.objectiveTimeline || [];
-
-        const updatedTimeline = currentTimeline.map((event) =>
-            event.date === newObjectiveTimeline.date
-                ? newObjectiveTimeline
-                : event
-        );
-
-        await updateDoc(docRef, {
-            objectiveTimeline: updatedTimeline,
-            updatedAt: serverTimestamp(),
-        });
-
-        console.log(
-            "Proyecto actualizado exitosamente en la subcolección 'objectiveTimeline'."
-        );
-    } catch (error) {
-        console.error(
-            "Error al actualizar el proyecto en la subcolección 'objectiveTimeline'",
-            error
-        );
-        throw new Error(
-            "No se pudo actualizar el proyecto en la subcolección."
-        );
-    }
-};
-
-export const getObjectiveTimelineProjects = (
-    projectID: string,
-    callback: (projects: any[]) => void
-) => {
-    try {
-        const projectDocRef = doc(db, "projects", projectID);
-
-        const unsubscribe = onSnapshot(projectDocRef, (docSnapshot) => {
-            if (docSnapshot.exists()) {
-                const projectData = docSnapshot.data();
-
-                const objectiveTimeline = projectData.objectiveTimeline || [];
-
-                console.log("Objective Timeline:", objectiveTimeline);
-                callback(objectiveTimeline);
-            } else {
-                console.log("No such document!");
-                callback([]);
-            }
-        });
-
-        return unsubscribe;
-    } catch (error) {
-        console.error("Error al escuchar las aplicaciones:", error);
-        throw new Error("No se pudo escuchar las aplicaciones.");
-    }
-};
-
-export const getProjects = (setProjects: (projects: any[]) => void) => {
     try {
         const projectsColRef = collection(db, "projects");
 
-        const unsubscribe = onSnapshot(projectsColRef, (querySnapshot) => {
+        const projectsQuery: Query<DocumentData> = ongID
+            ? query(projectsColRef, where("ongID", "==", ongID))
+            : query(projectsColRef);
+
+        const unsubscribe = onSnapshot(projectsQuery, (querySnapshot) => {
             const projects = querySnapshot.docs.map((doc) => ({
                 id: doc.id,
                 ...doc.data(),
-            }));
+            })) as Project[];
             setProjects(projects);
         });
 
@@ -259,67 +157,72 @@ export const getProjects = (setProjects: (projects: any[]) => void) => {
     }
 };
 
-export const getProjectsByOngId = async (ongId: string) => {
-    try {
-        const projectsRef = collection(db, "projects");
-
-        const q = query(projectsRef, where("ongID", "==", ongId));
-
-        const snapshot = await getDocs(q);
-
-        const projects = snapshot.docs.map((doc) => doc.data() as ProjectState);
-
-        return projects;
-    } catch (error) {
-        console.error("Error fetching projects:", error);
-        throw new Error("Failed to fetch projects. Please try again later.");
-    }
-};
-
-export const getSavedProjects = async (
-    userID: string,
-    setSavedProjects: (savedProjects: string[]) => void
+// Obtener proyectos por ID de ONG
+export const getProjectsByOngId = (
+    ongId: string,
+    onUpdate: (projects: Project[]) => void,
+    onError?: (error: Error) => void
 ) => {
     try {
-        const savedProjectsColRef = collection(
-            doc(db, "Voluntarios", userID),
-            "savedProjects"
-        );
+        const projectsRef = collection(db, "projects");
+        const q = query(projectsRef, where("ongID", "==", ongId));
 
-        const unsubscribe = onSnapshot(savedProjectsColRef, (querySnapshot) => {
-            const savedProjects = querySnapshot.docs.map((doc) => {
-                const data = doc.data();
-                return data.projectID;
-            });
-            setSavedProjects(savedProjects);
-        });
+        const unsubscribe = onSnapshot(
+            q,
+            (snapshot: QuerySnapshot) => {
+                const projects = snapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                })) as Project[];
+                onUpdate(projects);
+            },
+            (error) => {
+                console.error(
+                    "Error al obtener proyectos en tiempo real:",
+                    error
+                );
+                if (onError) {
+                    onError(
+                        error instanceof Error
+                            ? error
+                            : new Error("Unknown error")
+                    );
+                }
+            }
+        );
 
         return unsubscribe;
     } catch (error) {
-        console.error("Error al escuchar las aplicaciones:", error);
-        throw new Error("No se pudo escuchar las aplicaciones.");
+        console.error(
+            "Error al configurar la suscripción en tiempo real:",
+            error
+        );
+        if (onError) {
+            onError(
+                error instanceof Error ? error : new Error("Unknown error")
+            );
+        }
     }
 };
 
+// Guardar o desguardar un proyecto para un voluntario
 export const saveProjectUser = async (
     projectID: string,
     userID: string,
     savedProjects: string[]
 ) => {
     try {
-        const projectDocRef = doc(
-            db,
-            "Voluntarios",
-            userID,
-            "savedProjects",
-            projectID
-        );
+        const userDocRef = doc(db, "Users", userID);
 
         if (savedProjects.includes(projectID)) {
-            await deleteDoc(projectDocRef);
+            await updateDoc(userDocRef, {
+                savedProjects: arrayRemove(projectID),
+            });
             console.log("Proyecto desguardado.");
         } else {
-            await setDoc(projectDocRef, { projectID });
+            await updateDoc(userDocRef, {
+                savedProjects: arrayUnion(projectID),
+            });
             console.log("Proyecto guardado.");
         }
     } catch (error) {
@@ -327,89 +230,74 @@ export const saveProjectUser = async (
     }
 };
 
+// Actualizar el estado de una aplicación en el perfil del usuario y el proyecto
 export const updateStatusApplicator = async (
     projectID: string,
     volunteerID: string,
-    status: string
+    status: "pending" | "accepted" | "rejected"
 ) => {
     try {
-        const projectDocRef = doc(
-            db,
-            "projects",
-            projectID,
-            "applications",
-            volunteerID
-        );
+        const projectDocRef = doc(db, "projects", projectID);
+        const projectDoc = await getDoc(projectDocRef);
 
-        await updateDoc(projectDocRef, {
-            status,
-            updatedAt: serverTimestamp(),
-        });
+        if (projectDoc.exists()) {
+            const projectData = projectDoc.data() as Project;
+            const updatedApplications = projectData.applications.map((app) =>
+                app.volunteerID === volunteerID ? { ...app, status } : app
+            );
 
-        console.log("Status actualizado en el proyecto:", status);
+            await updateDoc(projectDocRef, {
+                applications: updatedApplications,
+            });
+        }
 
         const userDocRef = doc(db, "Users", volunteerID);
-        const userDocSnap = await getDoc(userDocRef);
+        const userDoc = await getDoc(userDocRef);
 
-        console.log("ref", userDocRef);
-        console.log("user", userDocSnap);
-
-        if (userDocSnap.exists()) {
-            const userData = userDocSnap.data();
-            const proyectosAplicados = userData.proyectosAplicados || [];
-
-            const updatedProjects = proyectosAplicados.map((project: any) => {
-                if (project.projectID === projectID) {
-                    return { ...project, status };
-                }
-                return project;
-            });
+        if (userDoc.exists()) {
+            const userData = userDoc.data();
+            const updatedProjects = (userData.proyectosAplicados || []).map(
+                (project: any) =>
+                    project.projectID === projectID
+                        ? { ...project, status }
+                        : project
+            );
 
             await updateDoc(userDocRef, {
                 proyectosAplicados: updatedProjects,
-                updatedAt: serverTimestamp(),
             });
+        }
 
-            console.log(
-                "Aplicación actualizada exitosamente en el perfil del usuario."
-            );
-        } else {
-            console.error("No se encontró el usuario con ID:", volunteerID);
+        if (status === "accepted") {
+            const projectDocRef = doc(db, "projects", projectID);
+            const projectDoc = await getDoc(projectDocRef);
+
+            if (projectDoc.exists()) {
+                const projectData = projectDoc.data() as Project;
+                const ongId = projectData.ongID;
+
+                await createChatForAcceptedVolunteer(
+                    projectID,
+                    volunteerID,
+                    ongId
+                );
+            }
         }
     } catch (error) {
-        console.error(
-            "Error al actualizar la aplicación en el perfil del usuario",
-            error
-        );
-        throw new Error(
-            "No se pudo actualizar la aplicación en el perfil del usuario."
-        );
+        console.error("Error al actualizar la aplicación:", error);
+        throw new Error("No se pudo actualizar la aplicación.");
     }
 };
-
-export const getProjectsByIds = async (ids: { projectID: string }[]) => {
-    if (!ids || ids.length === 0) {
-        console.error("El array de IDs está vacío o indefinido.");
-        return [];
-    }
-
-    const idList = ids.map((item) => item.projectID);
-
+export const updateProject = async (
+    projectID: string,
+    updatedFields: Partial<Project>
+): Promise<void> => {
     try {
-        const projectsRef = collection(db, "projects");
-
-        const q = query(projectsRef, where(documentId(), "in", idList));
-
-        const querySnapshot = await getDocs(q);
-
-        const projects = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-        }));
-
-        return projects;
+        const projectDocRef = doc(db, "projects", projectID);
+        await updateDoc(projectDocRef, updatedFields);
+        console.log("Proyecto actualizado correctamente.");
     } catch (error) {
-        console.error("Error al obtener proyectos:", error);
-        throw new Error("No se pudieron obtener los proyectos.");
+        console.error("Error al actualizar el proyecto:", error);
+        throw new Error("No se pudo actualizar el proyecto.");
     }
 };

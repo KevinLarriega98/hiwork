@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Dimensions,
     View,
@@ -9,6 +9,8 @@ import {
     Modal,
     TouchableWithoutFeedback,
     ImageBackground,
+    FlatList,
+    RefreshControl,
 } from "react-native";
 import { TabView, SceneMap } from "react-native-tab-view";
 import Prueba from "../../components/profile/TabBarCustomProfile";
@@ -19,6 +21,9 @@ import EditProfileAndLogOut from "./components/PerfileTabScreenComponents/EditPr
 import ModalInterior from "./components/PerfileTabScreenComponents/ModalInterior";
 
 import withSafeArea from "../../util/withSafeArea";
+import { getProjects } from "../../service/api/projectService";
+import { Project } from "../../types/Project";
+import CardProject from "./components/CardProject";
 
 const PerfilTabScreen = () => {
     const backgroundImg = require("../../assets/backgroundVolu.png");
@@ -28,6 +33,8 @@ const PerfilTabScreen = () => {
         { key: "perfil", title: "Perfil" },
         { key: "proyectos", title: "Proyectos App" },
     ]);
+
+    const [savedProjectsLocal, setSavedProjectsLocal] = useState<Project[]>([]);
 
     const [modalUpdateProfileVisible, setModalUpdateProfileVisible] =
         useState(false);
@@ -43,6 +50,26 @@ const PerfilTabScreen = () => {
     const logOutFunction = async () => {
         await logout();
     };
+
+    useEffect(() => {
+        const unsubscribe = getProjects((projects) => {
+            const savedProjects = currentUser?.savedProjects || [];
+
+            console.log(savedProjects);
+            const proyectos = projects.filter((project) =>
+                savedProjects.some((app) => app === project.id)
+            );
+            setSavedProjectsLocal(proyectos);
+        });
+
+        return () => {
+            if (unsubscribe) {
+                unsubscribe();
+            }
+        };
+    }, [currentUser?.proyectosAplicados]);
+
+    console.log("123123", savedProjectsLocal);
 
     const PerfilScreen = () => (
         <View className="flex-1 px-6">
@@ -64,8 +91,21 @@ const PerfilTabScreen = () => {
     );
 
     const ProyectosScreen = () => (
-        <View className="flex-1 items-center">
-            <Text>23 trabajos realizados</Text>
+        <View className="flex-1 px-6">
+            <Text className="text-2xl mb-4 text-center">
+                Proyectos guardados
+            </Text>
+            <FlatList
+                data={savedProjectsLocal}
+                renderItem={({ item }) => <CardProject item={item} />}
+                keyExtractor={(item) => item.id}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={false}
+                        onRefresh={() => console.log("refresh")}
+                    />
+                }
+            />
         </View>
     );
 
@@ -82,8 +122,8 @@ const PerfilTabScreen = () => {
                 {currentUser?.profileType === "ONG" ? (
                     <ImageBackground
                         source={{
-                            uri: currentUser.backgroundImage
-                                ? currentUser.backgroundImage
+                            uri: currentUser.backgroundImg
+                                ? currentUser.backgroundImg
                                 : "https://firebasestorage.googleapis.com/v0/b/hiwork-43f78.appspot.com/o/profileImage%2FProjectCard.jpg?alt=media&token=6ccef7bd-888c-40bf-bbd5-8c5c5a7deb2e",
                         }}
                         className="w-full"

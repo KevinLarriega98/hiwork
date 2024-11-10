@@ -1,10 +1,8 @@
 import React from "react";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import BusquedaTabScreen from "../screens/tabs/BusquedaTabScreen";
-import ChatTabScreen from "../screens/tabs/ChatTabScreen";
 import PerfilTabScreen from "../screens/tabs/PerfilTabScreen";
 import usePruebaHideStore from "../stores/pruebaHide";
-import ProyectosTabScreen from "../screens/tabs/ProyectosTabScreen";
 import CenterIcon from "../screens/tabs/components/Icons/CenterIcons/CenterIcon";
 import CenterIconFocused from "../screens/tabs/components/Icons/CenterIcons/CenterIconFocused";
 import HomeIcon from "../screens/tabs/components/Icons/CenterIcons/HomeIcon";

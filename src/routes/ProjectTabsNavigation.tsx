@@ -4,14 +4,14 @@ import ProjectInfoScreen from "../screens/project/tabs/ProjectInfoScreen";
 import CalendarScreen from "../screens/project/tabs/CalendarScreen";
 import CompletedTasksScreen from "../screens/project/tabs/CompletedTasksScreen";
 import CustomTabBar from "../components/createProjectONG/CustomTabBar";
-import { ProjectState } from "../types/project";
 import { View } from "react-native";
 import useAuthStore from "../stores/useAuthStore";
 import ApplicatorsTab from "../screens/project/tabs/ApplicatorsTab";
+import { Project } from "../types/Project";
 
 const Tab = createMaterialTopTabNavigator();
 
-const ProjectTabsNavigation = ({ project }: { project: ProjectState }) => {
+const ProjectTabsNavigation = ({ project }: { project: Project }) => {
     const { currentUser } = useAuthStore();
 
     return (
@@ -46,7 +46,7 @@ const ProjectTabsNavigation = ({ project }: { project: ProjectState }) => {
                     initialParams={{ project }}
                     options={{ title: "Hecho" }}
                 />
-                {currentUser?.id === project.ongID && (
+                {currentUser?.uid === project.ongID && (
                     <Tab.Screen
                         name="Applicators"
                         component={ApplicatorsTab}

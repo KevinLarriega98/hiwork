@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
     Dimensions,
     View,
@@ -7,15 +7,15 @@ import {
     ImageBackground,
 } from "react-native";
 import { TabView } from "react-native-tab-view";
+import { Calendar, DateData } from "react-native-calendars";
 import TabBarCustomProfile from "../../components/profile/TabBarCustomProfile";
 import useAuthStore from "../../stores/useAuthStore";
-import {
-    getProjectsByIds,
-    getApplications,
-} from "../../service/api/projectService";
+
 import CardProject from "./components/CardProject";
 import loader from "../../util/loader";
 import withSafeArea from "../../util/withSafeArea";
+import { getProjects } from "../../service/api/projectService";
+import { Project } from "../../types/Project";
 
 const ProyectosTabScreen = () => {
     const backgroundImg = require("../../assets/backgroundVolu.png");
@@ -26,63 +26,87 @@ const ProyectosTabScreen = () => {
         { key: "lista", title: "Lista" },
         { key: "calendario", title: "Calendario" },
     ]);
-    const [projects, setProjects] = useState<any>([]);
-    const [activeProject, setActiveProject] = useState<any>(null);
+    const [localProjects, setLocalProjects] = useState<Project[]>([]);
+    const [activeProject, setActiveProject] = useState<Project | null>(null);
+    const [appliedProjects, setAppliedProjects] = useState<Project[]>([]);
+    const [savedProjects, setSavedProjects] = useState<Project[]>([]);
+    const [calendarDates, setCalendarDates] = useState({});
     const [loading, setLoading] = useState<boolean>(true);
 
-    console.log("this is projects", projects);
+    const unsubscribeRef = useRef<() => void | undefined>();
 
-    // FIXME mirar esto porque no funciona como quiero
     useEffect(() => {
-        if (currentUser?.proyectosAplicados) {
-            const fetchProjectsAndListenApplications = async () => {
-                setLoading(true);
-                try {
-                    const projectsData = await getProjectsByIds(
-                        currentUser.proyectosAplicados
+        setLoading(true);
+
+        const unsubscribe = getProjects((projects) => {
+            if (currentUser?.profileType === "Voluntario") {
+                const active = projects.find((project) =>
+                    project.applications.some(
+                        (app) =>
+                            app.volunteerID === currentUser.uid &&
+                            app.status === "accepted"
+                    )
+                );
+
+                const applied = projects.filter((project) =>
+                    project.applications.some(
+                        (app) =>
+                            app.volunteerID === currentUser.uid &&
+                            app.status === "pending"
+                    )
+                );
+
+                setActiveProject(active || null);
+                setAppliedProjects(applied);
+
+                // Configurar las fechas del calendario a partir del objectiveTimeline del proyecto activo
+                if (active?.objectiveTimeline) {
+                    const dates = active.objectiveTimeline.reduce(
+                        (
+                            acc: {
+                                [key: string]: {
+                                    marked: boolean;
+                                    dotColor: string;
+                                    selected: boolean;
+                                    selectedColor: string;
+                                };
+                            },
+                            event
+                        ) => {
+                            acc[event.date] = {
+                                marked: true,
+                                dotColor: event.isChecked ? "green" : "red",
+                                selected: event.isChecked,
+                                selectedColor: event.isChecked
+                                    ? "green"
+                                    : "red",
+                            };
+                            return acc;
+                        },
+                        {} as {
+                            [key: string]: {
+                                marked: boolean;
+                                dotColor: string;
+                                selected: boolean;
+                                selectedColor: string;
+                            };
+                        }
                     );
-
-                    console.log(projectsData);
-
-                    const unsubscribeArray = projectsData.map((project: any) =>
-                        getApplications(project.id, (applications) => {
-                            const userApplication = applications.find(
-                                (application: any) =>
-                                    application.volunteerID === currentUser.id
-                            );
-
-                            if (userApplication) {
-                                project.status = userApplication.status;
-                            }
-
-                            const activeProj = projectsData.find(
-                                (proj: any) => proj.status === "accepted"
-                            );
-                            setActiveProject(activeProj || null);
-
-                            const appliedProjects = projectsData.filter(
-                                (proj: any) => proj.status !== "accepted"
-                            );
-
-                            setProjects(appliedProjects);
-                        })
-                    );
-
-                    setLoading(false);
-
-                    return () =>
-                        unsubscribeArray.forEach((unsubscribe) =>
-                            unsubscribe()
-                        );
-                } catch (error) {
-                    console.error("Error fetching projects:", error);
-                    setLoading(false);
+                    setCalendarDates(dates);
                 }
-            };
+            }
+            setLocalProjects(projects);
+            setLoading(false);
+        });
 
-            fetchProjectsAndListenApplications();
-        }
-    }, [currentUser?.proyectosAplicados]);
+        unsubscribeRef.current = unsubscribe;
+
+        return () => {
+            if (unsubscribeRef.current) {
+                unsubscribeRef.current();
+            }
+        };
+    }, [currentUser]);
 
     const renderListaScreen = useCallback(
         () => (
@@ -101,36 +125,56 @@ const ProyectosTabScreen = () => {
 
                 <View className=" max-h-1/2 min-h-[200px]">
                     <Text className=" text-2xl my-3">Proyectos Aplicados</Text>
-                    {projects.length > 0 ? (
+                    {appliedProjects.length > 0 ? (
                         loading ? (
                             loader("Cargando...")
                         ) : (
                             <FlatList
-                                data={projects}
+                                data={appliedProjects}
                                 keyExtractor={(item) => item.id}
-                                renderItem={(item) => (
-                                    <CardProject item={item.item} />
+                                renderItem={({ item }) => (
+                                    <CardProject item={item} />
                                 )}
                             />
                         )
                     ) : (
                         <Text className=" text-base text-center">
-                            Aun no tienes proyectos aplicados
+                            Aún no tienes proyectos aplicados.
                         </Text>
                     )}
                 </View>
             </View>
         ),
-        [projects, activeProject, loading]
+        [appliedProjects, activeProject, savedProjects, loading]
     );
 
+    // Renderizar la pantalla del calendario con las fechas del proyecto activo
     const renderCalendarioScreen = useCallback(
         () => (
             <View className="flex-1 items-center">
-                <Text>Calendario</Text>
+                <Text className="text-2xl mb-4">Calendario</Text>
+                {activeProject ? (
+                    <Calendar
+                        markedDates={calendarDates}
+                        onDayPress={(day: DateData) => {
+                            const event = activeProject.objectiveTimeline.find(
+                                (ev) => ev.date === day.dateString
+                            );
+                            if (event) {
+                                console.log("Evento:", event.name, event.data);
+                            } else {
+                                console.log("No hay eventos en esta fecha.");
+                            }
+                        }}
+                    />
+                ) : (
+                    <Text>
+                        No hay proyectos activos para mostrar en el calendario.
+                    </Text>
+                )}
             </View>
         ),
-        []
+        [calendarDates, activeProject]
     );
 
     const initialLayout = { width: Dimensions.get("window").width };
